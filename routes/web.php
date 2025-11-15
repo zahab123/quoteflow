@@ -9,6 +9,8 @@ Route::get('/', function () {
 });
 
 
+
+// Clients crud operations
 Route::get('/client', function () {
     return view('client');
 });
@@ -17,6 +19,18 @@ route::get('/clientlist',[ClientController::class , 'clientlist']);
 route::get('/updateclient/{id}',[ClientController::class , 'updateclient'])->name('updateclient');
 route::post('/updateclient/{id}',[ClientController::class , 'postupdateclient'])->name('postupdateclient');
 route::get('/deleteclient/{id}',[ClientController::class , 'deleteclient'])->name('deleteclient');
+
+
+// Quotation crud operation
+Route::get('/quotations', function () {
+    return view('quotations');
+});
+Route::get('/quotationlist', function () {
+    return view('quotationlist');
+});
+
+
+
 
 
 
