@@ -100,7 +100,7 @@
 
                 <form action="{{route('postupdateclient',$clients->id)}}" method="POST">
                     @csrf
-
+                    
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div>
                             <label class="block text-gray-700 font-medium">Client name</label>

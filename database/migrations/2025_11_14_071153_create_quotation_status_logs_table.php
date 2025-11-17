@@ -13,14 +13,12 @@ return new class extends Migration
     {
         Schema::create('quotation_status_logs', function (Blueprint $table) {
             $table->id(); 
-            $table->unsignedBigInteger('quotation_id'); 
+            $table->foreignid('quotation_id')->constrained()->onDelete('cascade');
             $table->enum('status', ['sent', 'viewed', 'accepted', 'declined']); 
             $table->dateTime('changed_at'); 
             $table->text('remarks')->nullable(); 
             $table->timestamps(); 
-
-            
-            $table->foreign('quotation_id')->references('id')->on('quotations')->onDelete('cascade');
+           
         });
     }
 

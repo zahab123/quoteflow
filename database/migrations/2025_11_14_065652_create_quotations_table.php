@@ -9,28 +9,20 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        Schema::create('quotations', function (Blueprint $table) {
-            $table->id(); 
-            $table->unsignedBigInteger('id'); 
-            $table->unsignedBigInteger('id'); 
-            $table->string('title'); 
-            $table->decimal('total', 15, 2); 
-            $table->decimal('tax', 15, 2); 
-            $table->decimal('discount', 15, 2); 
-            $table->enum('status', ['draft', 'sent', 'viewed', 'accepted', 'declined'])->default('draft'); // Current status
-            $table->string('pdf_path')->nullable();
-            $table->dateTime('sent_at')->nullable(); 
-            $table->dateTime('viewed_at')->nullable();
-            $table->dateTime('accepted_at')->nullable();
-            $table->dateTime('declined_at')->nullable();
-            $table->timestamps(); 
-
-            
-            $table->foreign('id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('id')->references('id')->on('clients')->onDelete('cascade');
+            public function up(): void
+            {
+            Schema::create('quotations', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');   // This is required
+            $table->foreignId('client_id')->constrained()->onDelete('cascade');
+            $table->string('title');
+            $table->decimal('total', 15, 2);
+            $table->decimal('tax', 15, 2)->default(0);
+            $table->decimal('discount', 15, 2)->default(0);
+            $table->enum('status', ['draft', 'sent', 'accepted', 'declined'])->default('draft');
+            $table->timestamps();
         });
+
     }
 
     /**

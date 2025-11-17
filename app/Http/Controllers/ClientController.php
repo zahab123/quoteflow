@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Http\Controllers\User;
 use Illuminate\Http\Request;
 use App\Models\Clients;
 
@@ -10,6 +10,7 @@ class ClientController extends Controller
     public function addclient(Request $request)
     {
         $clients = new clients();
+        $clients->user_id = auth()->id(); 
         $clients->name=$request->name;
         $clients->company=$request->company;
         $clients->email=$request->email;

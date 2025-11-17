@@ -11,21 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('quotation_items', function (Blueprint $table) {
-             $table->id(); 
-            $table->unsignedBigInteger('id');
-            $table->string('description'); 
-            $table->integer('qty'); 
-            $table->decimal('unit_price', 15, 2); 
-            $table->decimal('tax', 8, 2); 
-            $table->decimal('discount', 8, 2); 
-            $table->decimal('total', 15, 2); 
-            $table->timestamps(); 
+       Schema::create('quotation_items', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('quotation_id')->constrained('quotations')->onDelete('cascade');
+    $table->string('description');           // was 'item'
+    $table->integer('qty');                  // was 'quantity'
+    $table->decimal('unit_price', 15, 2);   // was 'price'
+    $table->decimal('tax', 10, 2)->default(0);
+    $table->decimal('discount', 10, 2)->default(0);
+    $table->decimal('total', 15, 2);
+    $table->timestamps();
+});
 
-            
-            $table->foreign('id')->references('id')->on('quotations')->onDelete('cascade');
-        });
+
     }
+
 
     /**
      * Reverse the migrations.

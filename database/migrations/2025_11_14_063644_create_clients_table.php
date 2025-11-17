@@ -13,17 +13,16 @@ return new class extends Migration
     {
         Schema::create('clients', function (Blueprint $table) {
             $table->id(); 
-           // $table->unsignedBigInteger('id'); //
-            $table->string('name'); 
-            $table->string('company'); 
-            $table->string('email'); 
-            $table->string('phone'); 
-            $table->text('address'); 
-            $table->text('notes')->nullable(); 
-            $table->timestamps(); 
+            $table->foreignId('user_id')->constrained()->onDelete('cascade'); 
+            $table->string('name');
+            $table->string('company')->nullable();
+            $table->string('email')->unique();
+            $table->string('phone')->nullable();
+            $table->string('address')->nullable();
+            $table->text('notes')->nullable();
+            $table->timestamps();
 
-            
-           // $table->foreign('id')->references('id')->on('users')->onDelete('cascade');
+        
         });
     }
 
