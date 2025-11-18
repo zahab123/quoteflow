@@ -4,7 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Models\QuotationItems; 
+use App\Models\QuotationStatusLog;
 class Quotations extends Model
 {
     use HasFactory;
@@ -23,13 +24,28 @@ class Quotations extends Model
         'accepted_at',
         'declined_at',
     ];
+
     public function client()
     {
         return $this->belongsTo(Clients::class, 'client_id');
     }
 
-    public function Quotatioitems()
+    public function items()
     {
-        return $this->hasMany(Quotationitems::class, 'quotation_id');
+        return $this->hasMany(QuotationItems::class, 'quotation_id'); 
     }
+    
+     
+    public function statusLogs()
+    {
+        return $this->hasMany(QuotationStatusLog::class, 'quotation_id');
+    }
+
+    public function latestStatus()
+    {
+        return $this->hasOne(QuotationStatusLog::class, 'quotation_id')->latestOfMany('changed_at');
+    }
+
+
+
 }

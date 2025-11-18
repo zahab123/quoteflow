@@ -5,11 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Quotation_items extends Model
+class QuotationItems extends Model
 {
     use HasFactory;
 
-    // Explicitly define the table name
     protected $table = 'quotation_items';
 
     protected $fillable = [
@@ -24,6 +23,6 @@ class Quotation_items extends Model
 
     public function quotation()
     {
-        return $this->belongsTo(Quotation::class);
+        return $this->belongsTo(Quotations::class, 'quotation_id');
     }
 }
