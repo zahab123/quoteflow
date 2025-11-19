@@ -1,8 +1,11 @@
 <?php
 
+namespace App\Http\Controllers;   // <-- REQUIRED!
+
 use App\Models\Quotations;
 use App\Models\QuotationStatusLog;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class QuotationStatusController extends Controller
 {

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Clients;
 use App\Models\Quotations;
 use App\Models\QuotationItems;
+use App\Models\QuotationStatusLog;
 use Illuminate\Support\Facades\Auth;
 
 class QuotationController extends Controller
@@ -20,6 +21,13 @@ class QuotationController extends Controller
     // Add quotation function
     public function addquotation(Request $request)
     {
+        $request->validate([
+            'client_id' => 'required|exists:clients,id',
+            'title' => 'required|string|max:255',
+            'items' => 'required|array',
+            'status' => 'required|in:sent,draft'
+        ]);
+
         $total = 0;
         $taxTotal = 0;
         $discountTotal = 0;
@@ -31,6 +39,7 @@ class QuotationController extends Controller
             $discountTotal += ($item['discount'] ?? 0);
         }
 
+        // Create quotation
         $quotation = Quotations::create([
             'user_id' => Auth::id(),
             'client_id' => $request->client_id,
@@ -38,10 +47,11 @@ class QuotationController extends Controller
             'total' => $total,
             'tax' => $taxTotal,
             'discount' => $discountTotal,
-            'status' => 'draft',
+            'status' => $request->status,
             'notes' => $request->notes ?? null
         ]);
 
+        // Save line items
         foreach ($request->items as $item) {
             $itemTotal = ($item['qty'] * $item['unit_price']) + ($item['tax'] ?? 0) - ($item['discount'] ?? 0);
 
@@ -56,13 +66,100 @@ class QuotationController extends Controller
             ]);
         }
 
-        return back()->with('success', 'Quotation added successfully!');
+        // Log initial status
+        QuotationStatusLog::create([
+            'quotation_id' => $quotation->id,
+            'status' => $request->status,
+            'changed_at' => now(),
+            'remarks' => null
+        ]);
+
+        return redirect()->route('quotationlist')->with('success', 'Quotation added successfully!');
     }
 
-    // List all quotations
-    public function quotationlist()
+    // Update a quotation
+    public function update(Request $request, $id)
     {
-        $quotations = Quotations::with('items', 'client')->get();
+        $request->validate([
+            'client_id' => 'required|exists:clients,id',
+            'title' => 'required|string|max:255',
+            'items' => 'required|array',
+            'status' => 'required|in:sent,draft'
+        ]);
+
+        $quotation = Quotations::with('items')->findOrFail($id);
+
+        $total = 0;
+        $taxTotal = 0;
+        $discountTotal = 0;
+
+        // Delete old items
+        $quotation->items()->delete();
+
+        // Save new items and calculate totals
+        foreach ($request->items as $item) {
+            $itemTotal = ($item['qty'] * $item['unit_price']) + ($item['tax'] ?? 0) - ($item['discount'] ?? 0);
+
+            QuotationItems::create([
+                'quotation_id' => $quotation->id,
+                'description' => $item['description'],
+                'qty' => $item['qty'],
+                'unit_price' => $item['unit_price'],
+                'tax' => $item['tax'] ?? 0,
+                'discount' => $item['discount'] ?? 0,
+                'total' => $itemTotal
+            ]);
+
+            $total += $itemTotal;
+            $taxTotal += $item['tax'] ?? 0;
+            $discountTotal += $item['discount'] ?? 0;
+        }
+
+        // Update quotation
+        $quotation->update([
+            'client_id' => $request->client_id,
+            'title' => $request->title,
+            'total' => $total,
+            'tax' => $taxTotal,
+            'discount' => $discountTotal,
+            'status' => $request->status,
+            'notes' => $request->notes ?? null
+        ]);
+
+        // Log status update
+        QuotationStatusLog::create([
+            'quotation_id' => $quotation->id,
+            'status' => $request->status,
+            'changed_at' => now(),
+            'remarks' => null
+        ]);
+
+        return redirect()->route('quotationlist')->with('success', 'Quotation updated successfully!');
+    }
+
+    // List all quotations with search & filter
+    public function quotationlist(Request $request)
+    {
+        $query = Quotations::with('items', 'client');
+
+        // Search by quotation title or client name
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%$search%")
+                  ->orWhereHas('client', function($q2) use ($search) {
+                      $q2->where('name', 'like', "%$search%");
+                  });
+            });
+        }
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $quotations = $query->orderBy('created_at', 'desc')->paginate(12);
+
         return view('quotationlist', compact('quotations'));
     }
 
@@ -101,48 +198,20 @@ class QuotationController extends Controller
         return view('editquotation', compact('quotation', 'clients'));
     }
 
-    // Update a quotation
-    public function update(Request $request, $id)
+    // Copy a quotation
+    public function copy($id)
     {
-        $quotation = Quotations::with('items')->findOrFail($id);
+        $original = Quotations::with('items')->findOrFail($id);
 
+        $copy = $original->replicate(); // clone the quotation
+        $copy->status = 'Draft';        // mark copy as draft
+        $copy->save();
 
-        $total = 0;
-        $taxTotal = 0;
-        $discountTotal = 0;
-
-        // Delete old items
-        $quotation->items()->delete();
-
-        // Save new items and calculate totals
-        foreach ($request->items as $item) {
-            $itemTotal = ($item['qty'] * $item['unit_price']) + ($item['tax'] ?? 0) - ($item['discount'] ?? 0);
-
-            QuotationItems::create([
-                'quotation_id' => $quotation->id,
-                'description' => $item['description'],
-                'qty' => $item['qty'],
-                'unit_price' => $item['unit_price'],
-                'tax' => $item['tax'] ?? 0,
-                'discount' => $item['discount'] ?? 0,
-                'total' => $itemTotal
-            ]);
-
-            $total += $itemTotal;
-            $taxTotal += $item['tax'] ?? 0;
-            $discountTotal += $item['discount'] ?? 0;
+        // copy items
+        foreach ($original->items as $item) {
+            $copy->items()->create($item->toArray());
         }
 
-        // Update quotation
-        $quotation->update([
-            'client_id' => $request->client_id,
-            'title' => $request->title,
-            'total' => $total,
-            'tax' => $taxTotal,
-            'discount' => $discountTotal,
-            'notes' => $request->notes ?? null
-        ]);
-
-        return redirect()->route('quotationlist')->with('success', 'Quotation updated successfully!');
+        return redirect()->route('quotationlist')->with('success', 'Quotation copied successfully!');
     }
 }

@@ -48,7 +48,7 @@
                 </a>
             </li>
             <li>
-                <a href="/reports"
+                <a href="/report"
                    class="flex items-center px-6 py-3 transition rounded-lg
                         {{ request()->is('reports') 
                             ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow' 
@@ -58,7 +58,7 @@
                 </a>
             </li>
             <li>
-                <a href="/settings"
+                <a href="/setting"
                    class="flex items-center px-6 py-3 transition rounded-lg
                         {{ request()->is('settings') 
                             ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow' 

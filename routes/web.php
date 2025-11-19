@@ -1,78 +1,68 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\QuotationController;
 use App\Http\Controllers\QuotationStatusController;
+use Illuminate\Support\Facades\Route;
 
+// Public routes
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Authenticated routes
+Route::middleware(['auth', 'verified'])->group(function () {
 
-Route::middleware('auth')->group(function () {
+    // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // Clients CRUD
+    Route::get('/client', function () {
+        return view('client');
+    });
+    Route::post('/client', [ClientController::class, 'addclient'])->name('addclient');
+    Route::get('/clientlist', [ClientController::class, 'clientlist'])->name('clientlist');
+    Route::get('/updateclient/{id}', [ClientController::class, 'updateclient'])->name('updateclient');
+    Route::post('/updateclient/{id}', [ClientController::class, 'postupdateclient'])->name('postupdateclient');
+    Route::get('/deleteclient/{id}', [ClientController::class, 'deleteclient'])->name('deleteclient');
 
-        // Clients crud operations
-        Route::get('/client', function () {
-            return view('client');
-        });
-        route::post('/client',[ClientController::class , 'addclient'])->name('addclient');
-        route::get('/clientlist',[ClientController::class , 'clientlist']);
-        route::get('/updateclient/{id}',[ClientController::class , 'updateclient'])->name('updateclient');
-        route::post('/updateclient/{id}',[ClientController::class , 'postupdateclient'])->name('postupdateclient');
-        route::get('/deleteclient/{id}',[ClientController::class , 'deleteclient'])->name('deleteclient');
+    // Quotations CRUD
+    Route::get('/quotations', [QuotationController::class, 'create'])->name('quotations');
+    Route::post('/quotations', [QuotationController::class, 'addquotation'])->name('addquotation');
+    Route::get('/quotationlist', [QuotationController::class, 'quotationlist'])->name('quotationlist');
+    Route::delete('/quotations/{id}', [QuotationController::class, 'delete'])->name('quotations.delete');
+    Route::get('/quotations/view/{id}', [QuotationController::class, 'view'])->name('view');
+    Route::get('/quotations/{id}/edit', [QuotationController::class, 'edit'])->name('editquotation');
+    Route::put('/quotations/{id}', [QuotationController::class, 'update'])->name('updatequotation');
+    Route::get('/quotations/{id}/copy', [QuotationController::class, 'copy'])->name('quotations.copy');
 
+    // Quotation status
+    Route::prefix('quotations')->group(function () {
+        Route::post('{id}/status', [QuotationStatusController::class, 'updateStatus'])->name('quotation.status.update');
+        Route::get('{id}/status/history', [QuotationStatusController::class, 'history'])->name('quotation.status.history');
+    });
 
-        // Quotation crud operation
-        Route::get('/quotations', function () {
-            return view('quotations');
-        });
-        route::post('/quotations',[QuotationController::class , 'addquotation'])->name('addquotation');
-        Route::get('/quotations', [QuotationController::class, 'create'])->name('quotations');
-       
-        Route::get('/quotationlist', function () {
-            return view('quotationlist');
-        });
-        Route::get('/quotationlist', [QuotationController::class, 'quotationlist'])->name('quotationlist');
-        Route::delete('/quotations/{id}', [QuotationController::class, 'delete'])->name('quotations.delete');
-        
+    // Reports & Settings
+    Route::get('/report', function () {
+        return view('report');
+    });
 
-        //view quotation 
-        Route::get('/view', function () {
-                    return view('view');
-                });
-        
-        Route::get('/quotations/view/{id}', [QuotationController::class, 'view'])->name('view');
-        // edit quotation route
-        Route::get('/editquotation', function () {
-                    return view('editquotation');
-                });
-
-        Route::get('/quotations/{id}/edit', [QuotationController::class, 'edit'])->name('editquotation');
-        Route::put('/quotations/{id}', [QuotationController::class, 'update'])->name('updatequotation');
+    Route::get('/report', [DashboardController::class, 'index'])->name('report');
 
 
-        // quotation status routes
+    Route::get('/setting', function () {
+        return view('setting');
+    })->name('setting');
 
-        
-        Route::prefix('quotations')->group(function () {
-            Route::post('{id}/status', [QuotationStatusController::class, 'updateStatus'])->name('quotation.status.update');
-            Route::get('{id}/status/history', [QuotationStatusController::class, 'history'])->name('quotation.status.history');
-        });  
-
+    
+    Route::get('/admin/dashboard', [DashboardController::class, 'index'])
+        ->middleware(['auth', 'admin'])
+        ->name('admin.dashboard');
 });
 
 require __DIR__.'/auth.php';
-
-
-
-route::get('admin/dashboard',[HomeController::class,'index'])->middleware(['auth', 'admin']);

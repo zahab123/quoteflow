@@ -93,7 +93,6 @@
                             <select name="status" class="w-full border rounded-lg p-2 mt-1" required>
                                 <option value="draft" {{ $quotation->status == 'draft' ? 'selected' : '' }}>Draft</option>
                                 <option value="sent" {{ $quotation->status == 'sent' ? 'selected' : '' }}>Sent</option>
-                                <option value="viewed" {{ $quotation->status == 'viewed' ? 'selected' : '' }}>Viewed</option>
                                 <option value="accepted" {{ $quotation->status == 'accepted' ? 'selected' : '' }}>Accepted</option>
                                 <option value="declined" {{ $quotation->status == 'declined' ? 'selected' : '' }}>Declined</option>
                             </select>
@@ -259,7 +258,6 @@ function addItem() {
     attachListenersToRow(newRow);
     index++;
 }
-
 </script>
 
 </body>
