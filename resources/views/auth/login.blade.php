@@ -7,30 +7,36 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen flex flex-col lg:flex-row bg-gray-100">
+<!-- Logo and Brand at top-left -->
+<div class="absolute top-4 left-4 flex items-center gap-2">
+    <img src="{{ asset('images/Capture.PNG') }}" alt="Logo" class="w-10 h-10 object-contain">
+    <span class="text-white font-bold text-xl">QuoteFlow</span>
+</div>
 
-    <div class="hidden lg:flex w-full lg:w-1/2 bg-gradient-to-br from-purple-600 to-blue-500 text-white flex-col justify-center p-16">
-        <h1 class="text-5xl font-extrabold mb-6 leading-snug">
-            Create, Send & <br> Track Your Proposals
-        </h1>
-        <p class="text-lg opacity-90 mb-12">
-            Professional quotations and proposals in minutes. Perfect for freelancers, agencies, and small businesses.
-        </p>
+<div class="hidden lg:flex w-full lg:w-1/2 bg-gradient-to-br from-purple-600 to-blue-500 text-white flex-col justify-center p-16">
+    <h1 class="text-5xl font-extrabold mb-6 leading-snug">
+        Create, Send & <br> Track Your Proposals
+    </h1>
+    <p class="text-lg opacity-90 mb-12">
+        Professional quotations and proposals in minutes. Perfect for freelancers, agencies, and small businesses.
+    </p>
 
-        <div class="flex gap-10 text-center mt-6">
-            <div>
-                <p class="text-3xl font-bold">1000+</p>
-                <p class="text-sm opacity-85">Active Users</p>
-            </div>
-            <div>
-                <p class="text-3xl font-bold">50K+</p>
-                <p class="text-sm opacity-85">Quotations Sent</p>
-            </div>
-            <div>
-                <p class="text-3xl font-bold">95%</p>
-                <p class="text-sm opacity-85">Success Rate</p>
-            </div>
+    <div class="flex gap-10 text-center mt-6">
+        <div>
+            <p class="text-3xl font-bold">1000+</p>
+            <p class="text-sm opacity-85">Active Users</p>
+        </div>
+        <div>
+            <p class="text-3xl font-bold">50K+</p>
+            <p class="text-sm opacity-85">Quotations Sent</p>
+        </div>
+        <div>
+            <p class="text-3xl font-bold">95%</p>
+            <p class="text-sm opacity-85">Success Rate</p>
         </div>
     </div>
+</div>
+
     <div class="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-16">
         <div class="w-full max-w-md bg-white shadow-xl rounded-2xl p-8 lg:p-12">
             

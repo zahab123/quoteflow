@@ -7,33 +7,30 @@ use App\Models\Quotations;
 
 class DashboardController extends Controller
 {
+    // -------------------------
+    // Dashboard method
+    // -------------------------
     public function index()
     {
-        // -------------------------
-        // Total quotations
-        // -------------------------
         $totalQuotations = Quotations::count();
         $acceptedQuotations = Quotations::where('status', 'accepted')->count();
         $pendingQuotations  = Quotations::where('status', 'pending')->count();
         $declinedQuotations = Quotations::where('status', 'declined')->count();
-
-        // -------------------------
-        // Total revenue
-        // -------------------------
         $totalRevenue = Quotations::sum('total');
 
-        // -------------------------
-        // Latest 5 quotations
-        // -------------------------
         $latestQuotations = Quotations::with('client')
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get();
 
-        // -------------------------
-        // Monthly quotation counts
-        // -------------------------
+        // Monthly data for charts
         $monthlyData = Quotations::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
+            ->whereYear('created_at', date('Y'))
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        $monthlyRevenueData = Quotations::selectRaw('MONTH(created_at) as month, SUM(total) as revenue')
             ->whereYear('created_at', date('Y'))
             ->groupBy('month')
             ->orderBy('month')
@@ -41,28 +38,13 @@ class DashboardController extends Controller
 
         $monthlyLabels = [];
         $monthlyCounts = [];
+        $monthlyRevenue = [];
         for ($i = 1; $i <= 12; $i++) {
             $monthlyLabels[] = date('M', mktime(0, 0, 0, $i, 1));
             $monthlyCounts[] = $monthlyData->firstWhere('month', $i)->count ?? 0;
-        }
-
-        // -------------------------
-        // Monthly revenue trend
-        // -------------------------
-        $monthlyRevenueData = Quotations::selectRaw('MONTH(created_at) as month, SUM(total) as revenue')
-            ->whereYear('created_at', date('Y'))
-            ->groupBy('month')
-            ->orderBy('month')
-            ->get();
-
-        $monthlyRevenue = [];
-        for ($i = 1; $i <= 12; $i++) {
             $monthlyRevenue[] = $monthlyRevenueData->firstWhere('month', $i)->revenue ?? 0;
         }
 
-        // -------------------------
-        // Pass data to view
-        // -------------------------
         return view('admin.dashboard', compact(
             'totalQuotations',
             'acceptedQuotations',
@@ -72,7 +54,53 @@ class DashboardController extends Controller
             'latestQuotations',
             'monthlyLabels',
             'monthlyCounts',
-            'monthlyRevenue' // for revenue trend chart
+            'monthlyRevenue'
+        ));
+    }
+
+    // -------------------------
+    // Report method (separate)
+    // -------------------------
+    public function report()
+    {
+        $totalQuotations = Quotations::count();
+        $acceptedQuotations = Quotations::where('status', 'accepted')->count();
+        $pendingQuotations  = Quotations::where('status', 'pending')->count();
+        $declinedQuotations = Quotations::where('status', 'declined')->count();
+        $totalRevenue = Quotations::where('status', 'accepted')->sum('total');
+
+        // Monthly data for charts
+        $monthlyData = Quotations::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
+            ->whereYear('created_at', date('Y'))
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        $monthlyRevenueData = Quotations::selectRaw('MONTH(created_at) as month, SUM(total) as revenue')
+            ->whereYear('created_at', date('Y'))
+            ->where('status', 'accepted')
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        $monthlyLabels = [];
+        $monthlyCounts = [];
+        $monthlyRevenue = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $monthlyLabels[] = date('M', mktime(0, 0, 0, $i, 1));
+            $monthlyCounts[] = $monthlyData->firstWhere('month', $i)->count ?? 0;
+            $monthlyRevenue[] = $monthlyRevenueData->firstWhere('month', $i)->revenue ?? 0;
+        }
+
+        return view('report', compact(
+            'totalQuotations',
+            'acceptedQuotations',
+            'pendingQuotations',
+            'declinedQuotations',
+            'totalRevenue',
+            'monthlyLabels',
+            'monthlyCounts',
+            'monthlyRevenue'
         ));
     }
 }

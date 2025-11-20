@@ -1,21 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" x-data="{ darkMode: false }">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Quotation - Professional</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
     <style>
-        /* A4 Size Styling for the printable area */
         @media print {
             .a4-page {
                 width: 210mm;
                 min-height: 297mm;
                 margin: 0;
-                border: initial;
-                border-radius: initial;
-                box-shadow: initial;
                 page-break-after: always;
             }
             .no-print { display: none !important; }
@@ -23,60 +20,60 @@
         .a4-container { max-width: 210mm; }
         .gradient-bg { background: linear-gradient(135deg, #6366F1, #EC4899); }
     </style>
+    <style>
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    .a4-page, .a4-page * {
+        visibility: visible;
+    }
+    .a4-page {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+}
+</style>
+
 </head>
-<body class="h-full bg-gray-100 flex flex-col md:flex-row">
-
-    <!-- Sidebar -->
-    <aside class="w-60 bg-white h-full shadow-lg flex flex-col justify-between">
-        <!-- Logo -->
-        <div class="px-6 py-6 flex items-center gap-2 border-b">
-            <div class="w-10 h-10 bg-gradient-to-r from-purple-600 to-pink-500 rounded-full flex items-center justify-center text-white font-bold text-lg">QF</div>
-            <span class="text-purple-600 font-bold text-xl">QuoteFlow</span>
+<body class="h-full bg-gray-100 flex">
+    <aside class="w-64 bg-white h-screen shadow-md flex flex-col justify-between">
+      <div class="px-6 py-6 flex items-center gap-2 border-b">
+            <img src="{{ asset('images/logo.PNG') }}" alt="Logo" class="w-10 h-10 object-contain">
+            <span class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-blue-500 to-pink-500">
+                QuoteFlow
+            </span>
         </div>
+        <nav class="flex-1 px-4 py-6">
+            <ul class="space-y-2">
+                <li><a href="/admin/dashboard" class="flex items-center px-4 py-3 rounded-lg transition {{ request()->is('admin/dashboard') ? 'bg-purple-600 text-white' : 'hover:bg-gray-100 text-gray-700' }}">
+                    <x-heroicon-o-home class="w-5 h-5 mr-3" /> Dashboard
+                </a></li>
 
-        <!-- Sidebar Links -->
-        <ul class="mt-4 flex-1 space-y-2">
-            <li>
-                <a href="/admin/dashboard"
-                   class="flex items-center px-6 py-3 rounded-lg transition-all duration-150 {{ request()->is('admin/dashboard') ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-md' : 'hover:bg-gray-100 text-gray-700' }}">
-                    <x-heroicon-o-home class="w-5 h-5 mr-3" />
-                    Dashboard
-                </a>
-            </li>
-            <li>
-                <a href="/clientlist"
-                   class="flex items-center px-6 py-3 rounded-lg transition-all duration-150 {{ request()->is('clientlist') ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-md' : 'hover:bg-gray-100 text-gray-700' }}">
-                   <x-heroicon-o-users class="w-5 h-5 mr-3" />
-                    Clients
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('quotationlist') }}"
-                   class="flex items-center px-6 py-3 rounded-lg transition-all duration-150 {{ request()->is('quotationlist') ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-md' : 'hover:bg-gray-100 text-gray-700' }}">
-                    <x-heroicon-o-document-text class="w-5 h-5 mr-3" />
-                    Quotations
-                </a>
-            </li>
-            <li>
-                <a href="/reports"
-                   class="flex items-center px-6 py-3 rounded-lg transition-all duration-150 {{ request()->is('reports') ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-md' : 'hover:bg-gray-100 text-gray-700' }}">
-                    <x-heroicon-o-chart-bar class="w-5 h-5 mr-3" />
-                    Reports
-                </a>
-            </li>
-            <li>
-                <a href="/settings"
-                   class="flex items-center px-6 py-3 rounded-lg transition-all duration-150 {{ request()->is('settings') ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-md' : 'hover:bg-gray-100 text-gray-700' }}">
-                    <x-heroicon-o-cog class="w-5 h-5 mr-3" />
-                    Settings
-                </a>
-            </li>
-        </ul>
+                <li><a href="/clientlist" class="flex items-center px-4 py-3 rounded-lg transition {{ request()->is('clientlist') ? 'bg-purple-600 text-white' : 'hover:bg-gray-100 text-gray-700' }}">
+                    <x-heroicon-o-users class="w-5 h-5 mr-3" /> Clients
+                </a></li>
 
-        <!-- Profile Section -->
+                <li><a href="{{ route('quotationlist') }}" class="flex items-center px-4 py-3 rounded-lg transition {{ request()->is('quotationlist') ? 'bg-purple-600 text-white' : 'hover:bg-gray-100 text-gray-700' }}">
+                    <x-heroicon-o-document-text class="w-5 h-5 mr-3" /> Quotations
+                </a></li>
+
+                <li><a href="/reports" class="flex items-center px-4 py-3 rounded-lg transition {{ request()->is('reports') ? 'bg-purple-600 text-white' : 'hover:bg-gray-100 text-gray-700' }}">
+                    <x-heroicon-o-chart-bar class="w-5 h-5 mr-3" /> Reports
+                </a></li>
+
+                <li><a href="/settings" class="flex items-center px-4 py-3 rounded-lg transition {{ request()->is('settings') ? 'bg-purple-600 text-white' : 'hover:bg-gray-100 text-gray-700' }}">
+                    <x-heroicon-o-cog class="w-5 h-5 mr-3" /> Settings
+                </a></li>
+            </ul>
+        </nav>
+
         <div class="px-6 py-6 flex items-center gap-3 border-t" x-data="{ open: false }">
             <button @click="open = !open"
-                    class="w-12 h-12 rounded-full bg-gradient-to-r from-purple-600 to-pink-500 flex items-center justify-center text-white text-lg font-bold">
+                    class="w-12 h-12 rounded-full flex items-center justify-center text-white text-lg font-bold"
+                    style="background: linear-gradient(135deg, #6366F1, #EC4899);">
                 {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
             </button>
             <div>
@@ -95,61 +92,42 @@
             </div>
         </div>
     </aside>
-
-    <!-- Header + Content -->
     <div class="flex-1 flex flex-col">
-        <nav class="bg-white border-b border-gray-200">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-end h-16 items-center space-x-6">
-
-                    <!-- Notification -->
-                    <button class="relative p-2 rounded-full hover:bg-gray-100">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 17h5l-1.405-1.405C18.21 15.21 18 14.11 18 13V9a6 6 0 10-12 0v4c0 
-                                1.11-.21 2.21-.595 3.595L4 17h5m6 0v1a3 3 
-                                0 11-6 0v-1m6 0H9" />
-                        </svg>
-                        <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+        <header class="bg-white shadow-sm border-b">
+            <div class="flex justify-end items-center h-16 px-6 gap-4">
+                <button class="p-2 rounded-full hover:bg-gray-100">
+                    <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M15 17h5l-1.405-1.405C18.21 15.21 18 14.11 18 13V9a6 6 0 10-12 0v4c0 
+                              1.11-.21 2.21-.595 3.595L4 17h5m6 0v1a3 3 
+                              0 11-6 0v-1m6 0H9" />
+                    </svg>
+                </button>
+                <button @click="darkMode = !darkMode" class="p-2 rounded-full hover:bg-gray-100">
+                    <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 3v1m0 16v1m8.485-8.485l-.707.707M4.222 
+                              4.222l-.707.707M21 12h-1M4 12H3m16.485 
+                              4.485l-.707-.707M4.222 19.778l-.707-.707M16 
+                              12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                </button>
+                <div x-data="{ open: false }" class="relative">
+                    <button @click="open = !open" class="w-10 h-10 rounded-full bg-purple-600 text-white text-lg font-bold flex items-center justify-center">
+                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                     </button>
-
-                    <!-- Dark/Light Mode -->
-                    <button class="p-2 rounded-full hover:bg-gray-100">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 3v1m0 16v1m8.485-8.485l-.707.707M4.222 4.222l-.707.707M21 12h-1M4 
-                                12H3m16.485 4.485l-.707-.707M4.222 19.778l-.707-.707M16 
-                                12a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                    </button>
-
-                    <!-- Profile -->
-                    <div x-data="{ open: false }" class="relative">
-                        <button @click="open = !open"
-                                class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-pink-500 hover:ring-2 ring-purple-400 flex items-center justify-center text-white text-lg font-bold">
-                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                        </button>
-                        <div x-show="open" @click.away="open = false"
-                             class="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-50">
-                            <x-dropdown-link :href="route('profile.edit')" class="block px-4 py-2 hover:bg-gray-100">
-                                Profile
-                            </x-dropdown-link>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <x-dropdown-link :href="route('logout')" class="block px-4 py-2 hover:bg-gray-100"
-                                                 onclick="event.preventDefault(); this.closest('form').submit();">
-                                    Log Out
-                                </x-dropdown-link>
-                            </form>
-                        </div>
+                    <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-50">
+                        <x-dropdown-link :href="route('profile.edit')" class="px-4 py-2 block hover:bg-gray-100">Profile</x-dropdown-link>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <x-dropdown-link :href="route('logout')" class="px-4 py-2 block hover:bg-gray-100" onclick="event.preventDefault(); this.closest('form').submit();">Log Out</x-dropdown-link>
+                        </form>
                     </div>
-
                 </div>
             </div>
-        </nav>
+        </header>
 
         <main class="flex-1 p-4 md:p-10 overflow-auto bg-gray-50" x-data="{ selectedDesign: 'minimal', quotation: {{ json_encode($quotation) }} }">
-            <!-- Header & Action Buttons -->
             <div class="no-print mb-6 flex justify-between items-center">
                 <div>
                     <h1 class="text-3xl font-bold text-gray-800">View Quotation</h1>
@@ -164,16 +142,15 @@
                     </a>
                     @endif
                     <button onclick="window.print()"
-                        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-md transition flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v6a2 2 0 002 2h12a2 2 0 002-2v-6a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm10 2V4a1 1 0 00-1-1H7a1 1 0 00-1 1v2h9zM4 9h12v6h-4v-1a1 1 0 00-1-1H9a1 1 0 00-1 1v1H4V9z" clip-rule="evenodd" />
-                        </svg>
+                      class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-md transition flex items-center gap-1">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fill-rule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v6a2 2 0 002 2h12a2 2 0 002-2v-6a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm10 2V4a1 1 0 00-1-1H7a1 1 0 00-1 1v2h9zM4 9h12v6h-4v-1a1 1 0 00-1-1H9a1 1 0 00-1 1v1H4V9z" clip-rule="evenodd" />
+                    </svg>
                         Print
                     </button>
-                </div>
-            </div>
 
-            <!-- Quotation Summary Design Selection -->
+                </div>
+            </div>>
             <div class="no-print mb-6 max-w-4xl mx-auto">
                 <h2 class="text-xl font-semibold mb-3 text-gray-800">Select Quotation Summary Design</h2>
                 <div class="grid grid-cols-3 gap-4">
@@ -197,8 +174,6 @@
                     </button>
                 </div>
             </div>
-
-            <!-- Client & Financial Info -->
             <div class="no-print grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 max-w-4xl mx-auto">
                 <div x-show="selectedDesign === 'minimal'" class="p-6 rounded-lg bg-white shadow-sm border">
                     <h2 class="font-bold text-lg mb-4 text-gray-700">Client Details</h2>
@@ -219,8 +194,6 @@
                     <p><span class="font-semibold">Sent At:</span> <span class="text-sm">{{ $quotation->sent_at ?? 'Not Sent' }}</span></p>
                 </div>
             </div>
-
-            <!-- Printable Quotation -->
             <div class="a4-container mx-auto bg-white rounded-xl shadow-xl p-8 lg:p-12 mb-10 a4-page">
                 <div class="flex justify-between items-start border-b-2 border-gray-200 pb-4 mb-8">
                     <div>
@@ -233,8 +206,6 @@
                         <div class="text-sm text-gray-600">123 Business Blvd, Suite 400</div>
                     </div>
                 </div>
-
-                <!-- Client Info & Dates -->
                 <div class="grid grid-cols-2 gap-8 mb-8">
                     <div>
                         <h3 class="font-semibold text-lg text-purple-600 mb-2 border-b border-purple-200 inline-block">Billed To</h3>
@@ -248,8 +219,6 @@
                         <div class="mb-2"><span class="font-semibold text-gray-700">Status:</span> <span class="font-bold text-green-600">{{ $quotation->status }}</span></div>
                     </div>
                 </div>
-
-                <!-- Items Table -->
                 <div class="mb-8 shadow-md rounded-lg overflow-hidden border border-gray-200">
                     <table class="w-full text-left">
                         <thead class="gradient-bg text-white">
@@ -278,8 +247,6 @@
                         </tbody>
                     </table>
                 </div>
-
-                <!-- Totals -->
                 <div class="flex justify-end gap-4 text-gray-700">
                     <div class="w-64">
                         <div class="flex justify-between mb-2">
@@ -306,6 +273,18 @@
                 </div>
             </div>
         </main>
+
     </div>
 </body>
 </html>
+
+<script>
+function printQuotation() {
+    const printContent = document.querySelector('.a4-page').innerHTML;
+    const originalContent = document.body.innerHTML;
+    document.body.innerHTML = printContent;
+    window.print();
+    document.body.innerHTML = originalContent;
+    window.location.reload();
+}
+</script>

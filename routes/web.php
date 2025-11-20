@@ -8,7 +8,7 @@ use App\Http\Controllers\QuotationController;
 use App\Http\Controllers\QuotationStatusController;
 use Illuminate\Support\Facades\Route;
 
-// Public routes
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -52,7 +52,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return view('report');
     });
 
-    Route::get('/report', [DashboardController::class, 'index'])->name('report');
+    Route::get('/report', [DashboardController::class, 'report'])->name('report');
 
 
     Route::get('/setting', function () {

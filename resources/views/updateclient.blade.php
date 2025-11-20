@@ -10,13 +10,14 @@
 <body class="bg-gray-100">
 
 <div class="flex min-h-screen">
-
-    <!-- Sidebar -->
     <aside class="w-60 bg-white h-full shadow-md border-r flex flex-col justify-between">
-        <div class="px-6 py-6 flex items-center gap-2 border-b">
-            <div class="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">QF</div>
-            <span class="text-purple-600 font-bold text-xl">QuoteFlow</span>
+      <div class="px-6 py-6 flex items-center gap-2 border-b">
+            <img src="{{ asset('images/logo.PNG') }}" alt="Logo" class="w-10 h-10 object-contain">
+            <span class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-blue-500 to-pink-500">
+                QuoteFlow
+            </span>
         </div>
+
 
         <ul class="mt-4 flex-1 text-gray-700 font-medium">
             <li>
@@ -93,14 +94,10 @@
             </div>
         </div>
     </aside>
-
-    <!-- Header + Content -->
     <div class="flex-1 flex flex-col">
         <nav class="bg-white border-b border-gray-200">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-end h-16 items-center space-x-6">
-
-                    <!-- Notification -->
                     <button class="relative p-2 rounded-full hover:bg-gray-100">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -110,8 +107,6 @@
                         </svg>
                         <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
                     </button>
-
-                    <!-- Dark/Light Mode (Remove toggle for light mode only view) -->
                     <button class="p-2 rounded-full hover:bg-gray-100">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -120,8 +115,6 @@
                                 12a4 4 0 11-8 0 4 4 0 018 0z" />
                         </svg>
                     </button>
-
-                    <!-- Profile -->
                     <div x-data="{ open: false }" class="relative">
                         <button @click="open = !open"
                                 class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-pink-500 hover:ring-2 ring-purple-400 flex items-center justify-center text-white text-lg font-bold">

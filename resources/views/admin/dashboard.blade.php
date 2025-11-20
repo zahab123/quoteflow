@@ -7,18 +7,24 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <style>
+    .card-shadow {
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
+    }
+    .card-shadow:hover {
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+    }
+    </style>
+
 </head>
 <body class="h-full bg-gray-100 flex">
-
-    <!-- Sidebar -->
     <aside class="w-60 bg-white h-full shadow-md border-r flex flex-col justify-between">
-        <!-- Logo -->
         <div class="px-6 py-6 flex items-center gap-2 border-b">
-            <div class="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold text-lg">QF</div>
-            <span class="text-purple-600 font-bold text-xl">QuoteFlow</span>
+            <img src="{{ asset('images/logo.PNG') }}" alt="Logo" class="w-10 h-10 object-contain">
+            <span class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-blue-500 to-pink-500">
+                QuoteFlow
+            </span>
         </div>
-
-        <!-- Navigation -->
         <ul class="mt-4 flex-1 text-gray-700 font-medium">
             <li>
                 <a href="/admin/dashboard"
@@ -71,8 +77,6 @@
                 </a>
             </li>
         </ul>
-
-        <!-- User Profile -->
         <div class="px-6 py-6 flex items-center gap-3 border-t" x-data="{ open: false }">
             <button @click="open = !open"
                     class="w-12 h-12 rounded-full flex items-center justify-center text-white text-lg font-bold"
@@ -95,20 +99,12 @@
             </div>
         </div>
     </aside>
-
-    <!-- Header + Content -->
     <div class="flex-1 flex flex-col">
-
-        <!-- Top Navigation with Search -->
         <nav class="bg-white border-b border-gray-200 shadow-sm">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16 items-center">
-
-                    <!-- Left: Dashboard + Search -->
                     <div class="flex items-center space-x-4">
                         <h1 class="text-xl font-semibold text-gray-800">Dashboard</h1>
-
-                        <!-- Search Bar -->
                         <div class="relative">
                             <input type="text" placeholder="Search..."
                                 class="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none w-64">
@@ -118,10 +114,7 @@
                             </svg>
                         </div>
                     </div>
-
-                    <!-- Right: Notification + Profile -->
                     <div class="flex items-center space-x-6">
-                        <!-- Notification -->
                         <button class="relative p-2 rounded-full hover:bg-gray-100">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -131,8 +124,6 @@
                             </svg>
                             <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
                         </button>
-
-                        <!-- Light/Dark Mode -->
                         <button class="p-2 rounded-full hover:bg-gray-100">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -141,8 +132,6 @@
                                     12a4 4 0 11-8 0 4 4 0 018 0z" />
                             </svg>
                         </button>
-
-                        <!-- Profile Dropdown -->
                         <div x-data="{ open: false }" class="relative">
                             <button @click="open = !open"
                                 class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-pink-500 hover:ring-2 ring-purple-400 flex items-center justify-center text-white text-lg font-bold">
@@ -168,30 +157,87 @@
             </div>
         </nav>
 
-        <!-- Main Content -->
         <main class="flex-1 p-6 bg-gray-100 overflow-auto">
-
-            <!-- Dashboard Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                <div class="bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-lg rounded-xl p-6 flex flex-col hover:shadow-2xl transition">
-                    <span class="uppercase tracking-wide text-sm opacity-80">Total Quotations</span>
-                    <span class="text-3xl font-bold mt-2">{{ $totalQuotations ?? 0 }}</span>
-                </div>
-                <div class="bg-gradient-to-r from-green-500 to-teal-400 text-white shadow-lg rounded-xl p-6 flex flex-col hover:shadow-2xl transition">
-                    <span class="uppercase tracking-wide text-sm opacity-80">Accepted Quotations</span>
-                    <span class="text-3xl font-bold mt-2">{{ $acceptedQuotations ?? 0 }}</span>
-                </div>
-                <div class="bg-gradient-to-r from-yellow-400 to-orange-400 text-white shadow-lg rounded-xl p-6 flex flex-col hover:shadow-2xl transition">
-                    <span class="uppercase tracking-wide text-sm opacity-80">Pending Quotations</span>
-                    <span class="text-3xl font-bold mt-2">{{ $pendingQuotations ?? 0 }}</span>
-                </div>
-                <div class="bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg rounded-xl p-6 flex flex-col hover:shadow-2xl transition">
-                    <span class="uppercase tracking-wide text-sm opacity-80">Total Revenue</span>
-                    <span class="text-3xl font-bold mt-2">${{ number_format($totalRevenue ?? 0, 2) }}</span>
-                </div>
+            <div class="mb-8">
+                  <h1 class="text-3xl font-bold text-gray-800">Dashboard</h1>
+                  <p class="text-gray-600 mt-2">Welcome back! Here's what's happening with your quotations.</p>
             </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
 
-            <!-- Charts -->
+    <!-- CARD 1: Total Quotations -->
+    <div class="bg-white p-6 rounded-xl shadow-md transition duration-300 hover:bg-gray-50">
+        <div class="flex items-start justify-between">
+            <p class="text-sm font-medium text-gray-500">Total Quotations</p>
+            <div class="w-10 h-10 flex items-center justify-center rounded-xl text-white bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-500/50">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 12 11 14 9"></polyline></svg>
+            </div>
+        </div>
+        <div class="mt-4">
+            <p class="text-4xl font-semibold text-gray-900">{{ $totalQuotations ?? 0 }}</p>
+        </div>
+        <div class="mt-4 flex items-center text-sm font-medium">
+            <svg class="w-4 h-4 text-green-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8m-6 4H4a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v2"></path></svg>
+            <span class="text-green-600">+12%</span>
+            <span class="text-gray-500 ml-1">from last month</span>
+        </div>
+    </div>
+
+    <!-- CARD 2: Accepted -->
+    <div class="bg-white p-6 rounded-xl shadow-md transition duration-300 hover:bg-gray-50">
+        <div class="flex items-start justify-between">
+            <p class="text-sm font-medium text-gray-500">Accepted</p>
+            <div class="w-10 h-10 flex items-center justify-center rounded-xl text-white bg-gradient-to-br from-green-500 to-green-600 shadow-lg shadow-green-500/50">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+        </div>
+        <div class="mt-4">
+            <p class="text-4xl font-semibold text-gray-900">{{ $acceptedQuotations ?? 0 }}</p>
+        </div>
+        <div class="mt-4 flex items-center text-sm font-medium">
+            <svg class="w-4 h-4 text-green-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8m-6 4H4a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v2"></path></svg>
+            <span class="text-green-600">+8%</span>
+            <span class="text-gray-500 ml-1">from last month</span>
+        </div>
+    </div>
+
+    <!-- CARD 3: Pending -->
+    <div class="bg-white p-6 rounded-xl shadow-md transition duration-300 hover:bg-gray-50">
+        <div class="flex items-start justify-between">
+            <p class="text-sm font-medium text-gray-500">Pending</p>
+            <div class="w-10 h-10 flex items-center justify-center rounded-xl text-white bg-gradient-to-br from-orange-500 to-orange-600 shadow-lg shadow-orange-500/50">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+        </div>
+        <div class="mt-4">
+            <p class="text-4xl font-semibold text-gray-900">{{ $pendingQuotations ?? 0 }}</p>
+        </div>
+        <div class="mt-4 flex items-center text-sm font-medium">
+            <svg class="w-4 h-4 text-red-500 mr-1 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8m-6 4H4a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v2"></path></svg>
+            <span class="text-red-600">-3%</span>
+            <span class="text-gray-500 ml-1">from last month</span>
+        </div>
+    </div>
+
+    <!-- CARD 4: Total Revenue -->
+    <div class="bg-white p-6 rounded-xl shadow-md transition duration-300 hover:bg-gray-50">
+        <div class="flex items-start justify-between">
+            <p class="text-sm font-medium text-gray-500">Total Revenue</p>
+            <div class="w-10 h-10 flex items-center justify-center rounded-xl text-white bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg shadow-purple-500/50">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+            </div>
+        </div>
+        <div class="mt-4">
+            <p class="text-4xl font-semibold text-gray-900">${{ number_format($totalRevenue ?? 0, 2) }}</p>
+        </div>
+        <div class="mt-4 flex items-center text-sm font-medium">
+            <svg class="w-4 h-4 text-green-500 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8m-6 4H4a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v2"></path></svg>
+            <span class="text-green-600">+15%</span>
+            <span class="text-gray-500 ml-1">from last month</span>
+        </div>
+    </div>
+
+</div>
+
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                 <div class="bg-white shadow-md rounded-lg p-5">
                     <h2 class="text-gray-600 font-semibold mb-3">Quotations Per Month</h2>
@@ -204,8 +250,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Latest Quotations Table -->
             <div class="bg-white shadow-md rounded-lg p-5">
                 <h2 class="text-gray-600 font-semibold mb-4">Latest Quotations</h2>
                 <div class="overflow-x-auto">
@@ -215,7 +259,6 @@
                                 <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Title</th>
                                 <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Client</th>
                                 <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Status</th>
-                                <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Amount</th>
                                 <th class="px-6 py-3 text-left font-medium text-gray-500 uppercase">Created At</th>
                             </tr>
                         </thead>
@@ -225,7 +268,6 @@
                                     <td class="px-6 py-4 whitespace-nowrap">{{ $quotation->title }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">{{ $quotation->client->name }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">{{ ucfirst($quotation->status) }}</td>
-                                    <td class="px-6 py-4 whitespace-nowrap">${{ number_format($quotation->total_amount, 2) }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap">{{ $quotation->created_at->format('d M Y') }}</td>
                                 </tr>
                             @endforeach
@@ -238,7 +280,6 @@
     </div>
 
 <script>
-    // Bar Chart
     const ctxBar = document.getElementById('barChart').getContext('2d');
     new Chart(ctxBar, {
         type: 'bar',
@@ -256,8 +297,6 @@
             plugins: { legend: { display: false } }
         }
     });
-
-    // Doughnut Chart
     const ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
     new Chart(ctxDoughnut, {
         type: 'doughnut',
