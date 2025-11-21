@@ -40,6 +40,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/quotations/{id}/edit', [QuotationController::class, 'edit'])->name('editquotation');
     Route::put('/quotations/{id}', [QuotationController::class, 'update'])->name('updatequotation');
     Route::get('/quotations/{id}/copy', [QuotationController::class, 'copy'])->name('quotations.copy');
+    //pdf routes
+    Route::get('/quotations/download/{id}', [App\Http\Controllers\QuotationController::class, 'download'])->name('quotations.download');
 
     // Quotation status
     Route::prefix('quotations')->group(function () {

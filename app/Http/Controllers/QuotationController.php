@@ -8,6 +8,9 @@ use App\Models\Quotations;
 use App\Models\QuotationItems;
 use App\Models\QuotationStatusLog;
 use Illuminate\Support\Facades\Auth;
+use Dompdf\Dompdf;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 class QuotationController extends Controller
 {
@@ -214,4 +217,16 @@ class QuotationController extends Controller
 
         return redirect()->route('quotationlist')->with('success', 'Quotation copied successfully!');
     }
+
+    // dowload pdf
+    
+public function download($id)
+{
+    $quotation = Quotations::with('items', 'client')->findOrFail($id);
+    $pdf = Pdf::loadView('view', compact('quotation'));
+    $pdf->setPaper('a4', 'portrait');
+    return $pdf->stream('quotation_'.$quotation->id.'.pdf'); 
+   
+}
+   
 }

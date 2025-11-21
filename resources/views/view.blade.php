@@ -20,27 +20,12 @@
         .a4-container { max-width: 210mm; }
         .gradient-bg { background: linear-gradient(135deg, #6366F1, #EC4899); }
     </style>
-    <style>
-@media print {
-    body * {
-        visibility: hidden;
-    }
-    .a4-page, .a4-page * {
-        visibility: visible;
-    }
-    .a4-page {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-    }
-}
-</style>
-
 </head>
 <body class="h-full bg-gray-100 flex">
+
+    <!-- Sidebar -->
     <aside class="w-64 bg-white h-screen shadow-md flex flex-col justify-between">
-      <div class="px-6 py-6 flex items-center gap-2 border-b">
+        <div class="px-6 py-6 flex items-center gap-2 border-b">
             <img src="{{ asset('images/logo.PNG') }}" alt="Logo" class="w-10 h-10 object-contain">
             <span class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-blue-500 to-pink-500">
                 QuoteFlow
@@ -51,25 +36,20 @@
                 <li><a href="/admin/dashboard" class="flex items-center px-4 py-3 rounded-lg transition {{ request()->is('admin/dashboard') ? 'bg-purple-600 text-white' : 'hover:bg-gray-100 text-gray-700' }}">
                     <x-heroicon-o-home class="w-5 h-5 mr-3" /> Dashboard
                 </a></li>
-
                 <li><a href="/clientlist" class="flex items-center px-4 py-3 rounded-lg transition {{ request()->is('clientlist') ? 'bg-purple-600 text-white' : 'hover:bg-gray-100 text-gray-700' }}">
                     <x-heroicon-o-users class="w-5 h-5 mr-3" /> Clients
                 </a></li>
-
                 <li><a href="{{ route('quotationlist') }}" class="flex items-center px-4 py-3 rounded-lg transition {{ request()->is('quotationlist') ? 'bg-purple-600 text-white' : 'hover:bg-gray-100 text-gray-700' }}">
                     <x-heroicon-o-document-text class="w-5 h-5 mr-3" /> Quotations
                 </a></li>
-
                 <li><a href="/reports" class="flex items-center px-4 py-3 rounded-lg transition {{ request()->is('reports') ? 'bg-purple-600 text-white' : 'hover:bg-gray-100 text-gray-700' }}">
                     <x-heroicon-o-chart-bar class="w-5 h-5 mr-3" /> Reports
                 </a></li>
-
                 <li><a href="/settings" class="flex items-center px-4 py-3 rounded-lg transition {{ request()->is('settings') ? 'bg-purple-600 text-white' : 'hover:bg-gray-100 text-gray-700' }}">
                     <x-heroicon-o-cog class="w-5 h-5 mr-3" /> Settings
                 </a></li>
             </ul>
         </nav>
-
         <div class="px-6 py-6 flex items-center gap-3 border-t" x-data="{ open: false }">
             <button @click="open = !open"
                     class="w-12 h-12 rounded-full flex items-center justify-center text-white text-lg font-bold"
@@ -92,6 +72,8 @@
             </div>
         </div>
     </aside>
+
+    <!-- Main Content -->
     <div class="flex-1 flex flex-col">
         <header class="bg-white shadow-sm border-b">
             <div class="flex justify-end items-center h-16 px-6 gap-4">
@@ -112,45 +94,56 @@
                               12a4 4 0 11-8 0 4 4 0 018 0z" />
                     </svg>
                 </button>
-                <div x-data="{ open: false }" class="relative">
-                    <button @click="open = !open" class="w-10 h-10 rounded-full bg-purple-600 text-white text-lg font-bold flex items-center justify-center">
-                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                    </button>
-                    <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-50">
-                        <x-dropdown-link :href="route('profile.edit')" class="px-4 py-2 block hover:bg-gray-100">Profile</x-dropdown-link>
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <x-dropdown-link :href="route('logout')" class="px-4 py-2 block hover:bg-gray-100" onclick="event.preventDefault(); this.closest('form').submit();">Log Out</x-dropdown-link>
-                        </form>
-                    </div>
-                </div>
             </div>
         </header>
 
         <main class="flex-1 p-4 md:p-10 overflow-auto bg-gray-50" x-data="{ selectedDesign: 'minimal', quotation: {{ json_encode($quotation) }} }">
+            
+            <!-- Top Buttons -->
             <div class="no-print mb-6 flex justify-between items-center">
                 <div>
                     <h1 class="text-3xl font-bold text-gray-800">View Quotation</h1>
                     <p class="text-sm text-gray-500">Detailed view of quotation #{{ $quotation->id }}</p>
                 </div>
+
                 <div class="flex gap-2">
-                    <a href="{{ route('quotationlist') }}" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 shadow-md transition">Back to List</a>
-                    @if($quotation->pdf_path)
-                    <a href="{{ asset('storage/'.$quotation->pdf_path) }}" target="_blank"
-                       class="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white rounded-lg hover:opacity-90 shadow-md transition">
-                        Download PDF
+                    <!-- Back -->
+                    <a href="{{ route('quotationlist') }}" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 shadow-md transition">
+                        Back to List
                     </a>
-                    @endif
-                    <button onclick="window.print()"
-                      class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-md transition flex items-center gap-1">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v6a2 2 0 002 2h12a2 2 0 002-2v-6a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm10 2V4a1 1 0 00-1-1H7a1 1 0 00-1 1v2h9zM4 9h12v6h-4v-1a1 1 0 00-1-1H9a1 1 0 00-1 1v1H4V9z" clip-rule="evenodd" />
-                    </svg>
+
+                    <!-- Download PDF -->
+                   <a href="{{ route('quotations.download', $quotation->id) }}" target="_blank"
+   class="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white rounded-lg hover:opacity-90 shadow-md transition">
+   Download PDF
+</a>
+
+
+                    <!-- Send Email -->
+                    <form action="" method="GET">
+                        <button type="submit"
+                                class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 shadow-md transition flex items-center gap-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M2.94 6.94a1.5 1.5 0 012.12 0L10 11.88l4.94-4.94a1.5 1.5 0 112.12 2.12l-6 6a1.5 1.5 0 01-2.12 0l-6-6a1.5 1.5 0 010-2.12z" />
+                            </svg>
+                            Send Email
+                        </button>
+                    </form>
+
+                    <!-- Print -->
+                    <button @click="printQuotation()"
+                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-md transition flex items-center gap-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                  d="M5 4v3H4a2 2 0 00-2 2v6a2 2 0 002 2h12a2 2 0 002-2v-6a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm10 2V4a1 1 0 00-1-1H7a1 1 0 00-1 1v2h9zM4 9h12v6h-4v-1a1 1 0 00-1-1H9a1 1 0 00-1 1v1H4V9z"
+                                  clip-rule="evenodd" />
+                        </svg>
                         Print
                     </button>
-
                 </div>
-            </div>>
+            </div>
+
+            <!-- Template Selector -->
             <div class="no-print mb-6 max-w-4xl mx-auto">
                 <h2 class="text-xl font-semibold mb-3 text-gray-800">Select Quotation Summary Design</h2>
                 <div class="grid grid-cols-3 gap-4">
@@ -174,27 +167,10 @@
                     </button>
                 </div>
             </div>
-            <div class="no-print grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 max-w-4xl mx-auto">
-                <div x-show="selectedDesign === 'minimal'" class="p-6 rounded-lg bg-white shadow-sm border">
-                    <h2 class="font-bold text-lg mb-4 text-gray-700">Client Details</h2>
-                    <p><span class="font-semibold text-gray-600">Client:</span> {{ $quotation->client->name ?? 'N/A' }}</p>
-                    <p><span class="font-semibold text-gray-600">Date:</span> {{ $quotation->created_at->format('Y-m-d') }}</p>
-                    <p><span class="font-semibold text-gray-600">Status:</span> <span class="text-green-600 font-bold">{{ $quotation->status }}</span></p>
-                </div>
-                <div x-show="selectedDesign === 'bordered'" class="p-6 border border-2 border-purple-500 rounded-lg bg-white shadow-sm">
-                    <h2 class="font-bold text-lg mb-4 text-purple-600">Financial Summary</h2>
-                    <p><span class="font-semibold">Total Amount:</span> <span class="text-xl font-bold text-purple-700">${{ number_format($quotation->total, 2) }}</span></p>
-                    <p><span class="font-semibold">Tax:</span> ${{ number_format($quotation->tax, 2) }}</p>
-                    <p><span class="font-semibold">Discount:</span> ${{ number_format($quotation->discount, 2) }}</p>
-                </div>
-                <div x-show="selectedDesign === 'elegant'" class="p-6 rounded-xl bg-white shadow-2xl">
-                    <h2 class="font-bold text-lg mb-4 text-pink-600">Key Metrics</h2>
-                    <p><span class="font-semibold">Items:</span> {{ $quotation->items->count() ?? 0 }}</p>
-                    <p><span class="font-semibold">Viewed At:</span> <span class="text-sm">{{ $quotation->viewed_at ?? 'Not Viewed' }}</span></p>
-                    <p><span class="font-semibold">Sent At:</span> <span class="text-sm">{{ $quotation->sent_at ?? 'Not Sent' }}</span></p>
-                </div>
-            </div>
+
+            <!-- Quotation Summary (A4) -->
             <div class="a4-container mx-auto bg-white rounded-xl shadow-xl p-8 lg:p-12 mb-10 a4-page">
+                <!-- Header -->
                 <div class="flex justify-between items-start border-b-2 border-gray-200 pb-4 mb-8">
                     <div>
                         <div class="text-3xl font-extrabold text-gray-800">QUOTATION</div>
@@ -206,6 +182,8 @@
                         <div class="text-sm text-gray-600">123 Business Blvd, Suite 400</div>
                     </div>
                 </div>
+
+                <!-- Client + Quotation Info -->
                 <div class="grid grid-cols-2 gap-8 mb-8">
                     <div>
                         <h3 class="font-semibold text-lg text-purple-600 mb-2 border-b border-purple-200 inline-block">Billed To</h3>
@@ -219,6 +197,8 @@
                         <div class="mb-2"><span class="font-semibold text-gray-700">Status:</span> <span class="font-bold text-green-600">{{ $quotation->status }}</span></div>
                     </div>
                 </div>
+
+                <!-- Items Table -->
                 <div class="mb-8 shadow-md rounded-lg overflow-hidden border border-gray-200">
                     <table class="w-full text-left">
                         <thead class="gradient-bg text-white">
@@ -247,6 +227,8 @@
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Totals -->
                 <div class="flex justify-end gap-4 text-gray-700">
                     <div class="w-64">
                         <div class="flex justify-between mb-2">
@@ -272,19 +254,20 @@
                     Thank you for doing business with us!
                 </div>
             </div>
+
         </main>
 
     </div>
+
+    <script>
+    function printQuotation() {
+        const printContent = document.querySelector('.a4-page').innerHTML;
+        const originalContent = document.body.innerHTML;
+        document.body.innerHTML = printContent;
+        window.print();
+        document.body.innerHTML = originalContent;
+        window.location.reload();
+    }
+    </script>
 </body>
 </html>
-
-<script>
-function printQuotation() {
-    const printContent = document.querySelector('.a4-page').innerHTML;
-    const originalContent = document.body.innerHTML;
-    document.body.innerHTML = printContent;
-    window.print();
-    document.body.innerHTML = originalContent;
-    window.location.reload();
-}
-</script>
