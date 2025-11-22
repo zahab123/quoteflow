@@ -230,16 +230,11 @@
 
     <div x-data="{ copied: false }" 
         class="w-full bg-white p-6 rounded-xl shadow-lg border border-gray-100 flex flex-col justify-between">
-
-        <!-- Header Section -->
         <div class="mb-4">
             <div class="flex justify-between items-start mb-1">
-                <!-- Dynamic Title -->
                 <h2 class="text-xl font-semibold text-gray-800 leading-tight pr-4">
                     {{ $quotation->title ?? 'Quotation #' . $quotation->id }}
                 </h2>
-
-                <!-- Status Badge -->
                 @php
                     $statusClasses = [
                         'Accepted' => 'bg-green-100 text-green-700',
@@ -256,17 +251,11 @@
                     {{ $quotation->status }}
                 </span>
             </div>
-
-            <!-- Client Info -->
             <p class="text-sm text-gray-500">
                 {{ $quotation->client->name ?? 'N/A' }} • {{ $quotation->company ?? '' }}
             </p>
         </div>
-
-        <!-- Separator -->
         <div class="border-t border-gray-200 my-4"></div>
-
-        <!-- Details Section -->
         <div class="space-y-2 mb-6">
             <div class="flex justify-between text-sm">
                 <span class="text-gray-500">Date:</span>
@@ -280,17 +269,11 @@
 
             <div class="flex justify-between text-base pt-1">
                 <span class="text-gray-700 font-semibold">Total:</span>
-                <span class="text-purple-600 font-bold">${{ $quotation->total }}</span>
+                <span class="text-purple-600 font-bold">RS{{ $quotation->total }}</span>
             </div>
         </div>
-
-        <!-- Separator -->
         <div class="border-t border-gray-200 my-4"></div>
-
-        <!-- Actions -->
         <div class="flex items-center gap-3">
-
-            <!-- View -->
             <a href="{{ route('view', $quotation->id) }}"
                class="flex-1 flex items-center justify-center space-x-2 px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 transition">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
@@ -302,8 +285,6 @@
                 </svg>
                 <span class="font-medium">View</span>
             </a>
-
-            <!-- Edit -->
             <a href="{{ route('editquotation', $quotation->id) }}"
                class="flex-1 flex items-center justify-center space-x-2 px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 transition">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
@@ -315,24 +296,18 @@
                 </svg>
                 <span class="font-medium">Edit</span>
             </a>
-
-            <!-- Right Side Buttons -->
             <div class="flex gap-2">
-
-                <!-- Copy Button -->
                 <a href="{{ route('quotations.copy', $quotation->id) }}"
-   class="p-2 bg-white text-green-500 border border-green-300 rounded-lg hover:bg-green-50 shadow-sm transition flex items-center justify-center">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-         viewBox="0 0 24 24" fill="none"
-         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-         class="text-green-600">
-        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-        <rect x="3" y="3" width="13" height="13" rx="2" ry="2"></rect>
-    </svg>
-    <span class="ml-1 font-medium">Copy</span>
-</a>
-
-                <!-- Delete -->
+                 class="p-2 bg-white text-green-500 border border-green-300 rounded-lg hover:bg-green-50 shadow-sm transition flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                    viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="text-green-600">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <rect x="3" y="3" width="13" height="13" rx="2" ry="2"></rect>
+                </svg>
+            <span class="ml-1 font-medium">Copy</span>
+        </a>
                 <form action="{{ route('quotations.delete', $quotation->id) }}" method="POST"
                       onsubmit="return confirm('Are you sure?');">
                     @csrf
@@ -352,16 +327,14 @@
                         </svg>
                     </button>
                 </form>
-
             </div>
         </div>
-
     </div>
 
-    @empty
-        <p class="text-gray-500 col-span-3 text-center py-10">No quotations found.</p>
-    @endforelse
-</div>
+          @empty
+             <p class="text-gray-500 col-span-3 text-center py-10">No quotations found.</p>
+          @endforelse
+        </div>
 
         <div class="mt-6">
             {{ $quotations->withQueryString()->links() }}

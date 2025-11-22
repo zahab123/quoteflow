@@ -42,7 +42,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/quotations/{id}/copy', [QuotationController::class, 'copy'])->name('quotations.copy');
     //pdf routes
     Route::get('/quotations/download/{id}', [App\Http\Controllers\QuotationController::class, 'download'])->name('quotations.download');
-
+    // send pdf to email
+    Route::get('/quotations/send-email/{id}', [QuotationController::class, 'sendEmail'])->name('quotations.sendEmail');
     // Quotation status
     Route::prefix('quotations')->group(function () {
         Route::post('{id}/status', [QuotationStatusController::class, 'updateStatus'])->name('quotation.status.update');

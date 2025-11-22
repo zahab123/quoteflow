@@ -104,8 +104,7 @@
                     </div>
                 </div>
             </div>
-
-</aside>
+        </aside>
 
 
         <div class="flex-1 flex flex-col overflow-y-auto">
@@ -173,8 +172,6 @@
 
     <main class="flex-1 p-6 bg-gray-100 overflow-auto">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-
-    <!-- CARD 1: Total Quotations -->
     <div class="bg-white p-6 rounded-xl shadow-md transition duration-300 hover:bg-gray-50">
         <div class="flex items-start justify-between">
             <p class="text-sm font-medium text-gray-500">Total Quotations</p>
@@ -204,8 +201,6 @@
             <span class="text-gray-500 ml-1">from last month</span>
         </div>
     </div>
-
-    <!-- CARD 2: Accepted -->
     <div class="bg-white p-6 rounded-xl shadow-md transition duration-300 hover:bg-gray-50">
         <div class="flex items-start justify-between">
             <p class="text-sm font-medium text-gray-500">Accepted</p>
@@ -231,8 +226,6 @@
             <span class="text-gray-500 ml-1">from last month</span>
         </div>
     </div>
-
-    <!-- CARD 3: Pending -->
     <div class="bg-white p-6 rounded-xl shadow-md transition duration-300 hover:bg-gray-50">
         <div class="flex items-start justify-between">
             <p class="text-sm font-medium text-gray-500">Pending</p>
@@ -259,8 +252,6 @@
             <span class="text-gray-500 ml-1">from last month</span>
         </div>
     </div>
-
-    <!-- CARD 4: Total Revenue -->
     <div class="bg-white p-6 rounded-xl shadow-md transition duration-300 hover:bg-gray-50">
         <div class="flex items-start justify-between">
             <p class="text-sm font-medium text-gray-500">Total Revenue</p>
@@ -290,7 +281,6 @@
 
 </div>
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <!-- Bar Chart -->
         <div class="bg-white p-4 rounded shadow h-80 flex flex-col">
           <h2 class="text-gray-800 font-semibold mb-2">Quotations Per Month</h2>
           <canvas id="barChart" class="flex-1"></canvas>

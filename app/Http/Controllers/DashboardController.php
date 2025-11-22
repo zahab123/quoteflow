@@ -7,34 +7,21 @@ use App\Models\Quotations;
 
 class DashboardController extends Controller
 {
-    // -------------------------
-    // Dashboard method
-    // -------------------------
+
     public function index()
     {
-        // -------------------------
-        // Stats for cards
-        // -------------------------
+               
         $totalQuotations    = Quotations::count();
         $acceptedQuotations = Quotations::where('status', 'accepted')->count();
         $declinedQuotations = Quotations::where('status', 'declined')->count();
-        
-        // Pending = sent but neither accepted nor declined
-        $pendingQuotations  = Quotations::where('status', 'sent')->count();
-
+        $pendingQuotations  = Quotations::whereIn('status', ['sent', 'draft'])->count();
         $totalRevenue       = Quotations::where('status', 'accepted')->sum('total');
-
-        // -------------------------
-        // Latest Quotations
-        // -------------------------
         $latestQuotations = Quotations::with('client')
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get();
 
-        // -------------------------
-        // Monthly data for charts
-        // -------------------------
+
         $monthlyData = Quotations::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
             ->whereYear('created_at', date('Y'))
             ->groupBy('month')
@@ -71,24 +58,23 @@ class DashboardController extends Controller
         ));
     }
 
-    // -------------------------
-    // Report method
-    // -------------------------
     public function report()
     {
+                     
         $totalQuotations    = Quotations::count();
         $acceptedQuotations = Quotations::where('status', 'accepted')->count();
         $declinedQuotations = Quotations::where('status', 'declined')->count();
-        $pendingQuotations  = Quotations::where('status', 'sent')->count();
+        $pendingQuotations  = Quotations::whereIn('status', ['sent', 'draft'])->count();
         $totalRevenue       = Quotations::where('status', 'accepted')->sum('total');
 
-        // Monthly data for charts
+
         $monthlyData = Quotations::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
             ->whereYear('created_at', date('Y'))
             ->groupBy('month')
             ->orderBy('month')
             ->get();
 
+            
         $monthlyRevenueData = Quotations::selectRaw('MONTH(created_at) as month, SUM(total) as revenue')
             ->whereYear('created_at', date('Y'))
             ->where('status', 'accepted')

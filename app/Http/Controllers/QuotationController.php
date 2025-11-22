@@ -1,11 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use App\Models\Clients;
 use App\Models\Quotations;
 use App\Models\QuotationItems;
+use App\Mail\QuotationMail;
 use App\Models\QuotationStatusLog;
 use Illuminate\Support\Facades\Auth;
 use Dompdf\Dompdf;
@@ -21,7 +22,6 @@ class QuotationController extends Controller
         return view('quotations', compact('clients'));
     }
 
-    // Add quotation function
     public function addquotation(Request $request)
     {
         $request->validate([
@@ -54,7 +54,6 @@ class QuotationController extends Controller
             'notes' => $request->notes ?? null
         ]);
 
-        // Save line items
         foreach ($request->items as $item) {
             $itemTotal = ($item['qty'] * $item['unit_price']) + ($item['tax'] ?? 0) - ($item['discount'] ?? 0);
 
@@ -69,7 +68,6 @@ class QuotationController extends Controller
             ]);
         }
 
-        // Log initial status
         QuotationStatusLog::create([
             'quotation_id' => $quotation->id,
             'status' => $request->status,
@@ -96,10 +94,7 @@ class QuotationController extends Controller
         $taxTotal = 0;
         $discountTotal = 0;
 
-        // Delete old items
         $quotation->items()->delete();
-
-        // Save new items and calculate totals
         foreach ($request->items as $item) {
             $itemTotal = ($item['qty'] * $item['unit_price']) + ($item['tax'] ?? 0) - ($item['discount'] ?? 0);
 
@@ -118,7 +113,6 @@ class QuotationController extends Controller
             $discountTotal += $item['discount'] ?? 0;
         }
 
-        // Update quotation
         $quotation->update([
             'client_id' => $request->client_id,
             'title' => $request->title,
@@ -129,7 +123,6 @@ class QuotationController extends Controller
             'notes' => $request->notes ?? null
         ]);
 
-        // Log status update
         QuotationStatusLog::create([
             'quotation_id' => $quotation->id,
             'status' => $request->status,
@@ -144,8 +137,6 @@ class QuotationController extends Controller
     public function quotationlist(Request $request)
     {
         $query = Quotations::with('items', 'client');
-
-        // Search by quotation title or client name
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
@@ -155,8 +146,6 @@ class QuotationController extends Controller
                   });
             });
         }
-
-        // Filter by status
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
@@ -184,7 +173,6 @@ class QuotationController extends Controller
 
         $quotation->items()->delete();
         $quotation->delete();
-
         return redirect()->back()->with('success', 'Quotation deleted successfully.');
     }
 
@@ -205,12 +193,9 @@ class QuotationController extends Controller
     public function copy($id)
     {
         $original = Quotations::with('items')->findOrFail($id);
-
-        $copy = $original->replicate(); // clone the quotation
-        $copy->status = 'Draft';        // mark copy as draft
+        $copy = $original->replicate(); 
+        $copy->status = 'Draft';       
         $copy->save();
-
-        // copy items
         foreach ($original->items as $item) {
             $copy->items()->create($item->toArray());
         }
@@ -219,14 +204,24 @@ class QuotationController extends Controller
     }
 
     // dowload pdf
+    public function download($id)
+    {
+        $quotation = Quotations::with('items', 'client')->findOrFail($id);
+        $pdf = Pdf::loadView('quotations.pdf', compact('quotation'))
+                ->setPaper('a4', 'portrait');
+        return $pdf->download('quotation_'.$quotation->id.'.pdf');
+    }
+
+
+    // send mail
+   public function sendEmail($id)
+    {
+        $quotation = Quotation::findOrFail($id);
+        $pdf = Pdf::loadView('quotations.pdf', ['quotation' => $quotation]);
+        $pdfPath = storage_path("app/quotations/quotation_{$quotation->id}.pdf");
+        $pdf->save($pdfPath);
+        Mail::to($quotation->client_email)->send(new QuotationMail($quotation, null, true));
+        return back()->with('success', 'Email sent successfully!');
+    }
     
-public function download($id)
-{
-    $quotation = Quotations::with('items', 'client')->findOrFail($id);
-    $pdf = Pdf::loadView('view', compact('quotation'));
-    $pdf->setPaper('a4', 'portrait');
-    return $pdf->stream('quotation_'.$quotation->id.'.pdf'); 
-   
-}
-   
 }

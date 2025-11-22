@@ -23,17 +23,13 @@
         </div>
 <aside class="fixed inset-y-0 left-0 z-50 w-60 bg-white shadow-md border-r flex flex-col justify-between">
 
-    <!-- Top section: Logo + Navigation -->
     <div>
-        <!-- Logo -->
         <div class="px-6 py-6 flex items-center gap-2 border-b">
             <img src="{{ asset('images/logo.PNG') }}" alt="Logo" class="w-10 h-10 object-contain">
             <span class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-blue-500 to-pink-500">
                 QuoteFlow
             </span>
         </div>
-
-        <!-- Navigation links -->
         <ul class="mt-4 text-gray-700 font-medium">
             <li>
                 <a href="/admin/dashboard"
@@ -72,8 +68,6 @@
             </li>
         </ul>
     </div>
-
-    <!-- Bottom section: Profile -->
      <div class="px-6 py-6 flex items-center gap-3 border-t" x-data="{ open: false }">
                 <div class="relative">
                     <button @click="open = !open"
@@ -98,9 +92,9 @@
                     </div>
                 </div>
             </div>
-</aside>
-<div class="flex-1 flex flex-col overflow-y-auto md:ml-60">
-
+        </aside>
+        
+    <div class="flex-1 flex flex-col overflow-y-auto md:ml-60">
         <div class="flex-1 flex flex-col overflow-y-auto">
             <nav class="bg-white border-b border-gray-200 shadow-sm">
                 <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">

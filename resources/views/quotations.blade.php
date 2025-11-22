@@ -208,10 +208,7 @@
                             <label class="text-sm text-gray-600 font-medium">Quotation Date *</label>
                             <input type="date" name="quotation_date" value="{{ date('Y-m-d') }}" class="w-full border rounded-lg p-2 mt-1" required>
                         </div>
-                        <div>
-                            <label class="text-sm text-gray-600 font-medium">Valid Until *</label>
-                            <input type="date" name="valid_until" value="{{ date('Y-m-d', strtotime('+30 days')) }}" class="w-full border rounded-lg p-2 mt-1" required>
-                        </div>
+                        
                     </div>
                 </div>
                 <div class="bg-white p-6 rounded-xl shadow mb-6">
@@ -264,7 +261,7 @@ function calculateTotal(row) {
     const tax = parseFloat(row.querySelector('.tax').value) || 0;
     const discount = parseFloat(row.querySelector('.discount').value) || 0;
     const total = (qty * price) + tax - discount;
-    row.querySelector('.total').value = '$' + total.toFixed(2);
+    row.querySelector('.total').value = 'RS' + total.toFixed(2);
     updateSummary();
 }
 
@@ -280,10 +277,10 @@ function updateSummary() {
         totalDiscount += discount;
     });
     const grandTotal = subtotal + totalTax - totalDiscount;
-    document.getElementById('subtotal').innerText = '$' + subtotal.toFixed(2);
-    document.getElementById('total-tax').innerText = '$' + totalTax.toFixed(2);
-    document.getElementById('total-discount').innerText = '$' + totalDiscount.toFixed(2);
-    document.getElementById('grand-total').innerText = '$' + grandTotal.toFixed(2);
+    document.getElementById('subtotal').innerText = 'RS' + subtotal.toFixed(2);
+    document.getElementById('total-tax').innerText = 'RS' + totalTax.toFixed(2);
+    document.getElementById('total-discount').innerText = 'RS' + totalDiscount.toFixed(2);
+    document.getElementById('grand-total').innerText = 'RS' + grandTotal.toFixed(2);
 }
 
 function attachListeners() {

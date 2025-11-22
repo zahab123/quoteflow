@@ -155,20 +155,19 @@
                                 </svg>
                                 <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
                             </button>
-<button id="themeToggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 hidden sm:block">
-    <!-- Light Mode Icon (Sun) -->
-    <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M12 3v1m0 16v1m8.485-8.485l-.707.707M4.222 4.222l-.707.707M21 12h-1M4 
-                 12H3m16.485 4.485l-.707-.707M4.222 19.778l-.707-.707M16 
-                 12a4 4 0 11-8 0 4 4 0 018 0z" />
-    </svg>
+                        <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 hidden sm:block">
+                        
+                            <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 3v1m0 16v1m8.485-8.485l-.707.707M4.222 4.222l-.707.707M21 12h-1M4 
+                                        12H3m16.485 4.485l-.707-.707M4.222 19.778l-.707-.707M16 
+                                        12a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
 
-    <!-- Dark Mode Icon (Moon) -->
-    <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-400 hidden dark:block" fill="currentColor" viewBox="0 0 24 24">
-        <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z"/>
-    </svg>
-</button>
+                            <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-400 hidden dark:block" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z"/>
+                            </svg>
+                        </button>
 
                             <div x-data="{ open: false }" class="relative **hidden sm:block**">
                                 <button @click="open = !open"
@@ -199,123 +198,115 @@
                   <h1 class="text-3xl font-bold text-gray-800">Dashboard</h1>
                   <p class="text-gray-600 mt-2">Welcome back! Here's what's happening with your quotations.</p>
             </div>
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                <div class="bg-white p-6 rounded-xl shadow-md transition duration-300 hover:bg-gray-50">
+                    <div class="flex items-start justify-between">
+                        <p class="text-sm font-medium text-gray-500">Total Quotations</p>
+                        <div class="w-10 h-10 flex items-center justify-center rounded-xl text-white bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-500/50">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <polyline points="10 9 12 11 14 9"></polyline>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <p class="text-4xl font-semibold text-gray-900">{{ $totalQuotations ?? 0 }}</p>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm font-medium">
+                        @php
+                            $prevTotal = \App\Models\Quotations::whereMonth('created_at', now()->subMonth()->month)->count();
+                            $totalPercent = $prevTotal ? round((($totalQuotations - $prevTotal)/$prevTotal)*100) : 0;
+                            $totalColor = $totalPercent >= 0 ? 'text-green-500' : 'text-red-500';
+                        @endphp
+                        <svg class="w-4 h-4 {{ $totalColor }} mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8m-6 4H4a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v2"></path>
+                        </svg>
+                        <span class="{{ $totalColor }}">{{ $totalPercent }}%</span>
+                        <span class="text-gray-500 ml-1">from last month</span>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md transition duration-300 hover:bg-gray-50">
+                    <div class="flex items-start justify-between">
+                        <p class="text-sm font-medium text-gray-500">Accepted</p>
+                        <div class="w-10 h-10 flex items-center justify-center rounded-xl text-white bg-gradient-to-br from-green-500 to-green-600 shadow-lg shadow-green-500/50">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <p class="text-4xl font-semibold text-gray-900">{{ $acceptedQuotations ?? 0 }}</p>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm font-medium">
+                        @php
+                            $prevAccepted = \App\Models\Quotations::where('status','accepted')->whereMonth('created_at', now()->subMonth()->month)->count();
+                            $acceptedPercent = $prevAccepted ? round((($acceptedQuotations - $prevAccepted)/$prevAccepted)*100) : 0;
+                            $acceptedColor = $acceptedPercent >= 0 ? 'text-green-500' : 'text-red-500';
+                        @endphp
+                        <svg class="w-4 h-4 {{ $acceptedColor }} mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8m-6 4H4a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v2"></path>
+                        </svg>
+                        <span class="{{ $acceptedColor }}">{{ $acceptedPercent }}%</span>
+                        <span class="text-gray-500 ml-1">from last month</span>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md transition duration-300 hover:bg-gray-50">
+                    <div class="flex items-start justify-between">
+                        <p class="text-sm font-medium text-gray-500">Pending</p>
+                        <div class="w-10 h-10 flex items-center justify-center rounded-xl text-white bg-gradient-to-br from-orange-500 to-orange-600 shadow-lg shadow-orange-500/50">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <p class="text-4xl font-semibold text-gray-900">{{ $pendingQuotations ?? 0 }}</p>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm font-medium">
+                        @php
+                            $prevPending = \App\Models\Quotations::where('status','sent')->whereMonth('created_at', now()->subMonth()->month)->count();
+                            $pendingPercent = $prevPending ? round((($pendingQuotations - $prevPending)/$prevPending)*100) : 0;
+                            $pendingColor = $pendingPercent >= 0 ? 'text-green-500' : 'text-red-500';
+                        @endphp
+                        <svg class="w-4 h-4 {{ $pendingColor }} mr-1 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8m-6 4H4a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v2"></path>
+                        </svg>
+                        <span class="{{ $pendingColor }}">{{ $pendingPercent }}%</span>
+                        <span class="text-gray-500 ml-1">from last month</span>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-md transition duration-300 hover:bg-gray-50">
+                    <div class="flex items-start justify-between">
+                        <p class="text-sm font-medium text-gray-500">Total Revenue</p>
+                        <div class="w-10 h-10 flex items-center justify-center rounded-xl text-white bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg shadow-purple-500/50">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="1" x2="12" y2="23"></line>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <p class="text-4xl font-semibold text-gray-900">${{ number_format($totalRevenue ?? 0, 2) }}</p>
+                    </div>
+                    <div class="mt-4 flex items-center text-sm font-medium">
+                        @php
+                            $prevRevenue = \App\Models\Quotations::where('status','accepted')->whereMonth('created_at', now()->subMonth()->month)->sum('total');
+                            $revenuePercent = $prevRevenue ? round((($totalRevenue - $prevRevenue)/$prevRevenue)*100) : 0;
+                            $revenueColor = $revenuePercent >= 0 ? 'text-green-500' : 'text-red-500';
+                        @endphp
+                        <svg class="w-4 h-4 {{ $revenueColor }} mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8m-6 4H4a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v2"></path>
+                        </svg>
+                        <span class="{{ $revenueColor }}">{{ $revenuePercent }}%</span>
+                        <span class="text-gray-500 ml-1">from last month</span>
+                    </div>
+                </div>
 
-    <!-- CARD 1: Total Quotations -->
-    <div class="bg-white p-6 rounded-xl shadow-md transition duration-300 hover:bg-gray-50">
-        <div class="flex items-start justify-between">
-            <p class="text-sm font-medium text-gray-500">Total Quotations</p>
-            <div class="w-10 h-10 flex items-center justify-center rounded-xl text-white bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-500/50">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                    <line x1="16" y1="13" x2="8" y2="13"></line>
-                    <line x1="16" y1="17" x2="8" y2="17"></line>
-                    <polyline points="10 9 12 11 14 9"></polyline>
-                </svg>
             </div>
-        </div>
-        <div class="mt-4">
-            <p class="text-4xl font-semibold text-gray-900">{{ $totalQuotations ?? 0 }}</p>
-        </div>
-        <div class="mt-4 flex items-center text-sm font-medium">
-            @php
-                $prevTotal = \App\Models\Quotations::whereMonth('created_at', now()->subMonth()->month)->count();
-                $totalPercent = $prevTotal ? round((($totalQuotations - $prevTotal)/$prevTotal)*100) : 0;
-                $totalColor = $totalPercent >= 0 ? 'text-green-500' : 'text-red-500';
-            @endphp
-            <svg class="w-4 h-4 {{ $totalColor }} mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8m-6 4H4a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v2"></path>
-            </svg>
-            <span class="{{ $totalColor }}">{{ $totalPercent }}%</span>
-            <span class="text-gray-500 ml-1">from last month</span>
-        </div>
-    </div>
-
-    <!-- CARD 2: Accepted -->
-    <div class="bg-white p-6 rounded-xl shadow-md transition duration-300 hover:bg-gray-50">
-        <div class="flex items-start justify-between">
-            <p class="text-sm font-medium text-gray-500">Accepted</p>
-            <div class="w-10 h-10 flex items-center justify-center rounded-xl text-white bg-gradient-to-br from-green-500 to-green-600 shadow-lg shadow-green-500/50">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-            </div>
-        </div>
-        <div class="mt-4">
-            <p class="text-4xl font-semibold text-gray-900">{{ $acceptedQuotations ?? 0 }}</p>
-        </div>
-        <div class="mt-4 flex items-center text-sm font-medium">
-            @php
-                $prevAccepted = \App\Models\Quotations::where('status','accepted')->whereMonth('created_at', now()->subMonth()->month)->count();
-                $acceptedPercent = $prevAccepted ? round((($acceptedQuotations - $prevAccepted)/$prevAccepted)*100) : 0;
-                $acceptedColor = $acceptedPercent >= 0 ? 'text-green-500' : 'text-red-500';
-            @endphp
-            <svg class="w-4 h-4 {{ $acceptedColor }} mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8m-6 4H4a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v2"></path>
-            </svg>
-            <span class="{{ $acceptedColor }}">{{ $acceptedPercent }}%</span>
-            <span class="text-gray-500 ml-1">from last month</span>
-        </div>
-    </div>
-
-    <!-- CARD 3: Pending -->
-    <div class="bg-white p-6 rounded-xl shadow-md transition duration-300 hover:bg-gray-50">
-        <div class="flex items-start justify-between">
-            <p class="text-sm font-medium text-gray-500">Pending</p>
-            <div class="w-10 h-10 flex items-center justify-center rounded-xl text-white bg-gradient-to-br from-orange-500 to-orange-600 shadow-lg shadow-orange-500/50">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
-            </div>
-        </div>
-        <div class="mt-4">
-            <p class="text-4xl font-semibold text-gray-900">{{ $pendingQuotations ?? 0 }}</p>
-        </div>
-        <div class="mt-4 flex items-center text-sm font-medium">
-            @php
-                $prevPending = \App\Models\Quotations::where('status','sent')->whereMonth('created_at', now()->subMonth()->month)->count();
-                $pendingPercent = $prevPending ? round((($pendingQuotations - $prevPending)/$prevPending)*100) : 0;
-                $pendingColor = $pendingPercent >= 0 ? 'text-green-500' : 'text-red-500';
-            @endphp
-            <svg class="w-4 h-4 {{ $pendingColor }} mr-1 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8m-6 4H4a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v2"></path>
-            </svg>
-            <span class="{{ $pendingColor }}">{{ $pendingPercent }}%</span>
-            <span class="text-gray-500 ml-1">from last month</span>
-        </div>
-    </div>
-
-    <!-- CARD 4: Total Revenue -->
-    <div class="bg-white p-6 rounded-xl shadow-md transition duration-300 hover:bg-gray-50">
-        <div class="flex items-start justify-between">
-            <p class="text-sm font-medium text-gray-500">Total Revenue</p>
-            <div class="w-10 h-10 flex items-center justify-center rounded-xl text-white bg-gradient-to-br from-purple-500 to-purple-600 shadow-lg shadow-purple-500/50">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="12" y1="1" x2="12" y2="23"></line>
-                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                </svg>
-            </div>
-        </div>
-        <div class="mt-4">
-            <p class="text-4xl font-semibold text-gray-900">${{ number_format($totalRevenue ?? 0, 2) }}</p>
-        </div>
-        <div class="mt-4 flex items-center text-sm font-medium">
-            @php
-                $prevRevenue = \App\Models\Quotations::where('status','accepted')->whereMonth('created_at', now()->subMonth()->month)->sum('total');
-                $revenuePercent = $prevRevenue ? round((($totalRevenue - $prevRevenue)/$prevRevenue)*100) : 0;
-                $revenueColor = $revenuePercent >= 0 ? 'text-green-500' : 'text-red-500';
-            @endphp
-            <svg class="w-4 h-4 {{ $revenueColor }} mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8m-6 4H4a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v2"></path>
-            </svg>
-            <span class="{{ $revenueColor }}">{{ $revenuePercent }}%</span>
-            <span class="text-gray-500 ml-1">from last month</span>
-        </div>
-    </div>
-
-</div>
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                 <div class="bg-white shadow-md rounded-lg p-5">
                     <h2 class="text-gray-600 font-semibold mb-3">Quotations Per Month</h2>
