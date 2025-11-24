@@ -192,6 +192,16 @@
                     {{ session('success') }}
                 </div>
             @endif
+            @if ($errors->any())
+                <div class="mb-4 p-3 rounded-lg bg-red-100 text-red-700 border border-red-300">
+                    <ul class="list-disc ml-4">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
 
             <div class="bg-white p-6 md:p-8 rounded-xl shadow">
                 <form action="{{ route('addclient') }}" method="POST">

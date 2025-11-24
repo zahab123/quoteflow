@@ -285,10 +285,12 @@
           <h2 class="text-gray-800 font-semibold mb-2">Quotations Per Month</h2>
           <canvas id="barChart" class="flex-1"></canvas>
         </div>
-        <div class="bg-white p-4 rounded shadow h-60 flex flex-col items-center justify-center">
-          <h2 class="text-gray-800 font-semibold mb-2">Quotation Status</h2>
-          <canvas id="doughnutChart" class="w-48 h-48"></canvas>
-        </div>
+         <div class="bg-white shadow-md rounded-lg p-5 flex flex-col items-center">
+                    <h2 class="text-gray-600 font-semibold mb-3">Quotation Status</h2>
+                    <div class="w-48 h-48">
+                        <canvas id="doughnutChart" class="w-full h-full"></canvas>
+                    </div>
+                </div>
         <div class="bg-white p-4 rounded shadow h-80 flex flex-col lg:col-span-2">
           <h2 class="text-gray-800 font-semibold mb-2">Revenue Trend</h2>
           <canvas id="revenueChart" class="flex-1"></canvas>

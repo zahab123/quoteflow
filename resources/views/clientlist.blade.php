@@ -191,6 +191,16 @@
                     <input type="text" x-model="search" placeholder="Search clients..." 
                            class="w-full md:w-1/3 px-4 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring focus:border-purple-300">
                 </div>
+                @if(session('success'))
+                <div 
+                    x-data="{ show: true }" 
+                    x-show="show" 
+                    x-init="setTimeout(() => show = false, 2000)" 
+                    class="mb-4 p-3 bg-green-500 text-white rounded">
+                    {{ session('success') }}
+                </div>
+            @endif
+
 
                 <div class="bg-white rounded-xl shadow **overflow-x-auto**">
                     <table class="w-full text-sm text-left border-collapse">
@@ -221,9 +231,12 @@
                                     <a :href="`/updateclient/${client.id}`" class="text-blue-500 hover:text-blue-700">
                                         ✏️
                                     </a>
-                                    <a :href="`/deleteclient/${client.id}`" class="text-red-500 hover:text-red-700">
-                                        🗑️
+                                   <a href="#" 
+                                        @click.prevent="confirmDelete(client.id)" 
+                                        class="text-red-500 hover:text-red-700">
+                                            🗑️
                                     </a>
+
                                 </td>
                             </tr>
                         </template>
@@ -250,6 +263,15 @@
                 }
             }
         }
+
+        
+        function confirmDelete(id) {
+            if (confirm("Are you sure you want to delete this client?")) {
+                window.location.href = `/deleteclient/${id}`;
+            }
+        }
+
+
     </script>
 </body>
 </html>

@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="min-h-screen flex flex-col lg:flex-row bg-gray-100">
-<!-- Logo and Brand at top-left -->
+
 <div class="absolute top-4 left-4 flex items-center gap-2">
     <img src="{{ asset('images/Capture.PNG') }}" alt="Logo" class="w-10 h-10 object-contain">
     <span class="text-white font-bold text-xl">QuoteFlow</span>

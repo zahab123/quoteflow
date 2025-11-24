@@ -185,32 +185,24 @@
                 </div>
                 <a href="{{ route('quotationlist') }}" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">Back to Quotations</a>
             </div>
+            @if(session('success'))
+                <div x-data="{ show: true }" x-show="show" 
+                    x-init="setTimeout(() => show = false, 3000)"
+                    class="mb-4 p-3 bg-green-500 text-white rounded">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div x-data="{ show: true }" x-show="show" 
+                    x-init="setTimeout(() => show = false, 3000)"
+                    class="mb-4 p-3 bg-red-500 text-white rounded">
+                    {{ session('error') }}
+                </div>
+            @endif
 
             @if(isset($quotation))
-            <div class="bg-white p-6 rounded-xl shadow mb-6">
-                <h2 class="font-semibold text-gray-600 mb-4">Quotation Status</h2>
-                <form action="{{ route('quotation.status.update', $quotation->id) }}" method="POST">
-                    @csrf
-                    <div class="grid grid-cols-2 gap-5 items-end">
-                        <div>
-                            <label class="text-sm text-gray-600 font-medium">Status *</label>
-                            <select name="status" class="w-full border rounded-lg p-2 mt-1" required>
-                                <option value="draft" {{ $quotation->status == 'draft' ? 'selected' : '' }}>Draft</option>
-                                <option value="sent" {{ $quotation->status == 'sent' ? 'selected' : '' }}>Sent</option>
-                                <option value="accepted" {{ $quotation->status == 'accepted' ? 'selected' : '' }}>Accepted</option>
-                                <option value="declined" {{ $quotation->status == 'declined' ? 'selected' : '' }}>Declined</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-sm text-gray-600 font-medium">Remarks (Optional)</label>
-                            <input type="text" name="remarks" class="w-full border rounded-lg p-2 mt-1" placeholder="Add remarks..." value="">
-                        </div>
-                        <div>
-                            <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded mt-2">Update Status</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+            
             <form action="{{ route('updatequotation', $quotation->id) }}" method="POST">
                 @csrf
                 @method('PUT')
@@ -237,18 +229,89 @@
                 <div class="bg-white p-6 rounded-xl shadow mb-6">
                     <h2 class="font-semibold text-gray-600 mb-4">Line Items</h2>
                     <div id="items-container">
-                        @foreach($quotation->items as $index => $item)
-                        <div class="grid grid-cols-6 gap-3 mb-2 item-row">
-                            <input name="items[{{ $index }}][description]" value="{{ $item->description }}" placeholder="Description" class="border p-2 rounded" required>
-                            <input name="items[{{ $index }}][qty]" type="number" value="{{ $item->qty }}" class="border p-2 rounded qty" min="1" required>
-                            <input name="items[{{ $index }}][unit_price]" type="number" step="0.01" value="{{ $item->unit_price }}" class="border p-2 rounded unit_price" required>
-                            <input name="items[{{ $index }}][tax]" type="number" step="0.01" value="{{ $item->tax }}" class="border p-2 rounded tax" placeholder="Tax">
-                            <input name="items[{{ $index }}][discount]" type="number" step="0.01" value="{{ $item->discount }}" class="border p-2 rounded discount" placeholder="Discount">
-                            <input type="text" value="$0.00" readonly class="border p-2 rounded bg-gray-100 text-gray-500 total">
-                        </div>
-                        @endforeach
+                <div id="items-container">
+    @foreach($quotation->items as $index => $item)
+                <div class="grid grid-cols-7 gap-3 mb-2 item-row items-end">
+                    <!-- Description -->
+                    <div class="flex flex-col">
+                        <label class="text-xs text-gray-500">Description</label>
+                        <input name="items[{{ $index }}][description]" 
+                            value="{{ $item->description }}" 
+                            placeholder="Description" 
+                            class="border p-2 rounded" required>
                     </div>
-                    <button type="button" onclick="addItem()" class="mt-2 px-4 py-1 bg-black text-white rounded">+ Add Item</button>
+
+                    <!-- Quantity -->
+                    <div class="flex flex-col">
+                        <label class="text-xs text-gray-500">Quantity</label>
+                        <input name="items[{{ $index }}][qty]" 
+                            type="number" 
+                            value="{{ $item->qty }}" 
+                            class="border p-2 rounded qty" 
+                            min="1" 
+                            required>
+                    </div>
+
+                    <!-- Unit Price -->
+                    <div class="flex flex-col">
+                        <label class="text-xs text-gray-500">Unit Price</label>
+                        <input name="items[{{ $index }}][unit_price]" 
+                            type="number" 
+                            step="0.01" 
+                            value="{{ $item->unit_price }}" 
+                            class="border p-2 rounded unit_price" 
+                            required>
+                    </div>
+
+                    <!-- Tax -->
+                    <div class="flex flex-col">
+                        <label class="text-xs text-gray-500">Tax</label>
+                        <input name="items[{{ $index }}][tax]" 
+                            type="number" 
+                            step="0.01" 
+                            value="{{ $item->tax }}" 
+                            class="border p-2 rounded tax" 
+                            placeholder="Tax">
+                    </div>
+
+                    <!-- Discount -->
+                    <div class="flex flex-col">
+                        <label class="text-xs text-gray-500">Discount</label>
+                        <input name="items[{{ $index }}][discount]" 
+                            type="number" 
+                            step="0.01" 
+                            value="{{ $item->discount }}" 
+                            class="border p-2 rounded discount" 
+                            placeholder="Discount">
+                    </div>
+
+                    <!-- Total -->
+                    <div class="flex flex-col">
+                        <label class="text-xs text-gray-500">Total</label>
+                        <input type="text" 
+                            value="RS{{ number_format($item->total, 2) }}" 
+                            readonly 
+                            class="border p-2 rounded bg-gray-100 text-gray-500 total">
+                    </div>
+
+                    <!-- Delete -->
+                    <div class="flex flex-col">
+                        <label class="text-xs text-gray-500">Remove</label>
+                        <button type="button" onclick="removeItem(this)" class="p-2 bg-red-500 text-white rounded hover:bg-red-600 flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                                <path d="M10 11v6"></path>
+                                <path d="M14 11v6"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
+            </div>
+                <button type="button" onclick="addItem()" class="mt-2 px-4 py-1 bg-black text-white rounded">+ Add Item</button>
                 </div>
                 <div class="bg-white p-6 rounded-xl shadow mb-6">
                     <h2 class="font-semibold text-gray-600 mb-4">Summary</h2>
@@ -290,24 +353,29 @@
     </div>
 
 <script>
-    let index = {{ isset($quotation) ? $quotation->items->count() : 0 }};
-    function calculateTotal(row) {
-        const qty = parseFloat(row.querySelector('.qty').value) || 0;
-        const price = parseFloat(row.querySelector('.unit_price').value) || 0;
-        const tax = parseFloat(row.querySelector('.tax').value) || 0;
-        const discount = parseFloat(row.querySelector('.discount').value) || 0;
-        const total = (qty * price) + tax - discount;
-        row.querySelector('.total').value = '$' + total.toFixed(2);
-        updateSummary();
-    }
+let index = {{ isset($quotation) ? $quotation->items->count() : 0 }};
 
-    function updateSummary() {
+// Calculate total for a single row
+function calculateTotal(row) {
+    const qty = parseFloat(row.querySelector('.qty').value) || 0;
+    const price = parseFloat(row.querySelector('.unit_price').value) || 0;
+    const tax = parseFloat(row.querySelector('.tax').value) || 0;
+    const discount = parseFloat(row.querySelector('.discount').value) || 0;
+    const total = (qty * price) + tax - discount;
+    row.querySelector('.total').value = '$' + total.toFixed(2);
+    updateSummary();
+}
+
+// Update summary totals
+function updateSummary() {
     let subtotal = 0, totalTax = 0, totalDiscount = 0;
+
     document.querySelectorAll('.item-row').forEach(row => {
         const qty = parseFloat(row.querySelector('.qty').value) || 0;
         const price = parseFloat(row.querySelector('.unit_price').value) || 0;
         const tax = parseFloat(row.querySelector('.tax').value) || 0;
         const discount = parseFloat(row.querySelector('.discount').value) || 0;
+
         subtotal += qty * price;
         totalTax += tax;
         totalDiscount += discount;
@@ -318,33 +386,54 @@
     document.getElementById('total-tax').innerText = '$' + totalTax.toFixed(2);
     document.getElementById('total-discount').innerText = '$' + totalDiscount.toFixed(2);
     document.getElementById('grand-total').innerText = '$' + grandTotal.toFixed(2);
-    }
+}
 
-    function attachListenersToRow(row) {
-        ['qty', 'unit_price', 'tax', 'discount'].forEach(cls => {
-            row.querySelector(`.${cls}`).addEventListener('input', () => calculateTotal(row));
+// Attach input listeners to a row
+function attachListenersToRow(row) {
+    ['qty', 'unit_price', 'tax', 'discount'].forEach(cls => {
+        row.querySelector(`.${cls}`).addEventListener('input', () => calculateTotal(row));
+    });
+
+    const deleteBtn = row.querySelector('.delete-btn');
+    if (deleteBtn) {
+        deleteBtn.addEventListener('click', () => {
+            row.remove();
+            updateSummary();
         });
-        calculateTotal(row);
     }
 
-    document.querySelectorAll('.item-row').forEach(row => attachListenersToRow(row));
+    calculateTotal(row); // initial calculation
+}
 
-    function addItem() {
-        const container = document.getElementById('items-container');
-        const html = `
-        <div class="grid grid-cols-6 gap-3 mb-2 item-row">
-            <input name="items[${index}][description]" placeholder="Description" class="border p-2 rounded" required>
-            <input name="items[${index}][qty]" type="number" value="1" class="border p-2 rounded qty" min="1" required>
-            <input name="items[${index}][unit_price]" type="number" step="0.01" value="0" class="border p-2 rounded unit_price" required>
-            <input name="items[${index}][tax]" type="number" step="0.01" value="0" class="border p-2 rounded tax" placeholder="Tax">
-            <input name="items[${index}][discount]" type="number" step="0.01" value="0" class="border p-2 rounded discount" placeholder="Discount">
-            <input type="text" value="$0.00" readonly class="border p-2 rounded bg-gray-100 text-gray-500 total">
-        </div>`;
-        container.insertAdjacentHTML('beforeend', html);
-        const newRow = container.lastElementChild;
-        attachListenersToRow(newRow);
-        index++;
-    }
+// Initialize existing rows
+document.querySelectorAll('.item-row').forEach(row => attachListenersToRow(row));
+updateSummary(); // ensure totals are correct on page load
+
+// Add a new item row
+function addItem() {
+    const container = document.getElementById('items-container');
+    const html = `
+    <div class="grid grid-cols-7 gap-3 mb-2 item-row">
+        <input name="items[${index}][description]" placeholder="Description" class="border p-2 rounded" required>
+        <input name="items[${index}][qty]" type="number" value="1" class="border p-2 rounded qty" min="1" required>
+        <input name="items[${index}][unit_price]" type="number" step="0.01" value="0" class="border p-2 rounded unit_price" required>
+        <input name="items[${index}][tax]" type="number" step="0.01" value="0" class="border p-2 rounded tax" placeholder="Tax">
+        <input name="items[${index}][discount]" type="number" step="0.01" value="0" class="border p-2 rounded discount" placeholder="Discount">
+        <input type="text" value="RS0.00" readonly class="border p-2 rounded bg-gray-100 text-gray-500 total">
+        <button type="button" class="delete-btn p-2 bg-red-500 text-white rounded hover:bg-red-600 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                <path d="M10 11v6"></path>
+                <path d="M14 11v6"></path>
+            </svg>
+        </button>
+    </div>`;
+    
+    container.insertAdjacentHTML('beforeend', html);
+    attachListenersToRow(container.lastElementChild);
+    index++;
+}
 </script>
 
 </body>

@@ -211,20 +211,65 @@
                         
                     </div>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow mb-6">
-                    <h2 class="font-semibold text-gray-600 mb-4">Line Items</h2>
-                    <div id="items-container">
-                        <div class="grid grid-cols-6 gap-3 mb-2 item-row">
-                            <input name="items[0][description]" placeholder="Description" class="border p-2 rounded" required>
-                            <input name="items[0][qty]" placeholder="Quantity" type="number" value="1" class="border p-2 rounded qty" min="1" required>
-                            <input name="items[0][unit_price]" placeholder="Unit Price" type="number" step="0.01" value="0" class="border p-2 rounded unit_price" required>
-                            <input name="items[0][tax]" type="number" step="0.01" value="0" class="border p-2 rounded tax" placeholder="Tax">
-                            <input name="items[0][discount]" type="number" step="0.01" value="0" class="border p-2 rounded discount" placeholder="Discount">
-                            <input type="text" value="$0.00" readonly class="border p-2 rounded bg-gray-100 text-gray-500 total">
-                        </div>
+             <div class="bg-white p-6 rounded-xl shadow mb-6">
+            <h2 class="font-semibold text-gray-600 mb-4">Line Items</h2>
+            <div id="items-container">
+                <div class="grid grid-cols-7 gap-3 mb-2 item-row items-end">
+                    <!-- Description -->
+                    <div class="flex flex-col">
+                        <label class="text-xs text-gray-500">Description</label>
+                        <input name="items[0][description]" placeholder="Description" class="border p-2 rounded" required>
                     </div>
-                    <button type="button" onclick="addItem()" class="mt-2 px-4 py-1 bg-black text-white rounded">+ Add Item</button>
+
+                    <!-- Quantity -->
+                    <div class="flex flex-col">
+                        <label class="text-xs text-gray-500">Quantity</label>
+                        <input name="items[0][qty]" placeholder="Quantity" type="number" value="1" class="border p-2 rounded qty" min="1" required>
+                    </div>
+
+                    <!-- Unit Price -->
+                    <div class="flex flex-col">
+                        <label class="text-xs text-gray-500">Unit Price</label>
+                        <input name="items[0][unit_price]" placeholder="Unit Price" type="number" step="0.01" value="0" class="border p-2 rounded unit_price" required>
+                    </div>
+
+                    <!-- Tax -->
+                    <div class="flex flex-col">
+                        <label class="text-xs text-gray-500">Tax</label>
+                        <input name="items[0][tax]" type="number" step="0.01" value="0" class="border p-2 rounded tax" placeholder="Tax">
+                    </div>
+
+                    <!-- Discount -->
+                    <div class="flex flex-col">
+                        <label class="text-xs text-gray-500">Discount</label>
+                        <input name="items[0][discount]" type="number" step="0.01" value="0" class="border p-2 rounded discount" placeholder="Discount">
+                    </div>
+
+                    <!-- Total -->
+                    <div class="flex flex-col">
+                        <label class="text-xs text-gray-500">Total</label>
+                        <input type="text" value="RS0.00" readonly class="border p-2 rounded bg-gray-100 text-gray-500 total">
+                    </div>
+
+                    <!-- Delete -->
+                    <div class="flex flex-col">
+                        <label class="text-xs text-gray-500">Remove</label>
+                        <button type="button" onclick="removeItem(this)" class="p-2 bg-red-500 text-white rounded hover:bg-red-600 flex items-center justify-center">
+                            <!-- Heroicons Trash Icon -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                                <path d="M10 11v6"></path>
+                                <path d="M14 11v6"></path>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
+            </div>
+
+            <button type="button" onclick="addItem()" class="mt-2 px-4 py-1 bg-black text-white rounded hover:bg-gray-800">+ Add Item</button>
+
+
                 <div class="bg-white p-6 rounded-xl shadow mb-6">
                     <h2 class="font-semibold text-gray-600 mb-4">Summary</h2>
                     <div class="text-right space-y-1 text-gray-700">
@@ -253,7 +298,7 @@
     </div>
 
 <script>
-let index = 1;
+let index = 1; // Start from 1 if first item is 0
 
 function calculateTotal(row) {
     const qty = parseFloat(row.querySelector('.qty').value) || 0;
@@ -283,32 +328,51 @@ function updateSummary() {
     document.getElementById('grand-total').innerText = 'RS' + grandTotal.toFixed(2);
 }
 
-function attachListeners() {
-    document.querySelectorAll('.item-row').forEach(row => {
-        ['qty', 'unit_price', 'tax', 'discount'].forEach(cls => {
-            row.querySelector(`.${cls}`).addEventListener('input', () => calculateTotal(row));
-        });
-        calculateTotal(row);
+function attachListenersToRow(row) {
+    ['qty', 'unit_price', 'tax', 'discount'].forEach(cls => {
+        row.querySelector(`.${cls}`).addEventListener('input', () => calculateTotal(row));
     });
+    const deleteBtn = row.querySelector('.delete-btn');
+    if(deleteBtn){
+        deleteBtn.addEventListener('click', () => {
+            row.remove();
+            updateSummary();
+        });
+    }
+    calculateTotal(row);
+}
+
+function attachListeners() {
+    document.querySelectorAll('.item-row').forEach(row => attachListenersToRow(row));
 }
 
 function addItem() {
     const container = document.getElementById('items-container');
     const html = `
-    <div class="grid grid-cols-6 gap-3 mb-2 item-row">
+    <div class="grid grid-cols-7 gap-3 mb-2 item-row">
         <input name="items[${index}][description]" placeholder="Description" class="border p-2 rounded" required>
         <input name="items[${index}][qty]" placeholder="Quantity" type="number" value="1" class="border p-2 rounded qty" min="1" required>
         <input name="items[${index}][unit_price]" placeholder="Unit Price" type="number" step="0.01" value="0" class="border p-2 rounded unit_price" required>
         <input name="items[${index}][tax]" type="number" step="0.01" value="0" class="border p-2 rounded tax" placeholder="Tax">
         <input name="items[${index}][discount]" type="number" step="0.01" value="0" class="border p-2 rounded discount" placeholder="Discount">
-        <input type="text" value="$0.00" readonly class="border p-2 rounded bg-gray-100 text-gray-500 total">
+        <input type="text" value="RS0.00" readonly class="border p-2 rounded bg-gray-100 text-gray-500 total">
+        <button type="button" class="delete-btn p-2 bg-red-500 text-white rounded hover:bg-red-600 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                                <path d="M10 11v6"></path>
+                                <path d="M14 11v6"></path>
+                            </svg>
+        </button>
     </div>`;
     container.insertAdjacentHTML('beforeend', html);
+    attachListenersToRow(container.lastElementChild);
     index++;
-    attachListeners();
 }
 
+// Initialize listeners on page load
 attachListeners();
+
 </script>
 
 </body>

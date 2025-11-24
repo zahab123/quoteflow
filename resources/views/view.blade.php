@@ -246,13 +246,36 @@
             </div>
             <div class="a4-container mx-auto bg-white rounded-xl shadow-xl p-8 lg:p-12 mb-10 a4-page">
                 <div class="flex justify-between items-start border-b-2 border-gray-200 pb-4 mb-8">
-                <div class="text-left">
-                    <div class="w-16 h-16 rounded-full overflow-hidden shadow-lg flex items-center justify-center bg-white mb-2">
-                        <img src="{{ asset('images/logo.PNG') }}" alt="Logo" class="w-full h-full object-contain p-1">
-                    </div>
-                    <div class="text-lg font-bold text-purple-600">QuoteFlow Solutions</div>
-                    <div class="text-sm text-gray-600">123 Business Blvd, Suite 400</div>
-                </div>
+    
+    <div class="text-left">
+
+        <div class="w-16 h-16 rounded-full overflow-hidden shadow-lg flex items-center justify-center bg-white mb-2">
+            @if(!empty($company->logo))
+                <img src="{{ asset('storage/' . $company->logo) }}" alt="Logo" class="w-full h-full object-contain p-1">
+            @else
+                <img src="{{ asset('images/logo.PNG') }}" alt="Default Logo" class="w-full h-full object-contain p-1">
+            @endif
+        </div>
+
+        <div class="text-lg font-bold text-purple-600">
+            {{ $company->company_name ?? 'Your Company Name' }}
+        </div>
+
+       
+        <div class="text-sm text-gray-600">
+            {{ $company->phone ?? 'Company Phone' }}
+        </div>
+         <div class="text-sm text-gray-600">
+            {{ $company->website ?? 'Company Website' }}
+        </div>
+         <div class="text-sm text-gray-600">
+            {{ $company->address ?? 'Company Address' }}
+        </div>
+
+    </div>
+
+
+
                 <div class="text-right">
                     <div class="text-3xl font-extrabold text-gray-800 mb-1">QUOTATION</div>
                     <div class="text-sm text-purple-600 font-semibold">#{{ $quotation->id }}</div>
@@ -324,6 +347,28 @@
                     Thank you for doing business with us!
                 </div>
             </div>
+            <div class="flex justify-center gap-4 mt-8">
+    <!-- Accept Button -->
+    <form action="{{ route('quotation.status.update', $quotation->id) }}" method="POST">
+        @csrf
+        <input type="hidden" name="status" value="accepted">
+        <input type="hidden" name="remarks" value="Accepted by client">
+        <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+            Accept
+        </button>
+    </form>
+
+    <!-- Decline Button -->
+    <form action="{{ route('quotation.status.update', $quotation->id) }}" method="POST">
+        @csrf
+        <input type="hidden" name="status" value="declined">
+        <input type="hidden" name="remarks" value="Declined by client">
+        <button type="submit" class="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+            Decline
+        </button>
+    </form>
+</div>
+
 
         </main>
 

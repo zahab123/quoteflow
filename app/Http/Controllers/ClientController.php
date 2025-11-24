@@ -8,19 +8,33 @@ use App\Models\Clients;
 class ClientController extends Controller
 {
     public function addclient(Request $request)
-    {
-        $clients = new Clients();
-        $clients->user_id = auth()->id();
-        $clients->name = $request->name;
-        $clients->company = $request->company;
-        $clients->email = $request->email;
-        $clients->phone = $request->phone;
-        $clients->address = $request->address;
-        $clients->notes = $request->notes;
+{
+    // Validation
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:clients,email',  // Email must be unique
+        'company' => 'nullable|string|max:255',
+        'phone' => 'nullable|string|max:50',
+        'address' => 'nullable|string',
+        'notes' => 'nullable|string',
+    ]);
 
-        $clients->save();
-        return redirect()->back();
-    }
+    // Save client
+    $clients = new Clients();
+    $clients->user_id = auth()->id();
+    $clients->name = $request->name;
+    $clients->company = $request->company;
+    $clients->email = $request->email;
+    $clients->phone = $request->phone;
+    $clients->address = $request->address;
+    $clients->notes = $request->notes;
+
+    $clients->save();
+
+    // Success message
+    return redirect()->back()->with('success', 'Client added successfully!');
+}
+
 
     public function clientlist()
     {
@@ -37,8 +51,6 @@ class ClientController extends Controller
     public function postupdateclient(Request $request, $id)
     {
         $clients = Clients::findOrFail($id);
-
-        // FIXED — replaced $request->id with $request->name
         $clients->name = $request->name;
         $clients->company = $request->company;
         $clients->email = $request->email;
@@ -55,6 +67,6 @@ class ClientController extends Controller
     {
         $clients = Clients::findOrFail($id);
         $clients->delete();
-        return redirect()->back();
+        return redirect()->back()->with('success', 'Client deleted successfully!');
     }
 }
