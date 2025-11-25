@@ -49,6 +49,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/quotationlist', [QuotationController::class, 'quotationlist'])->name('quotationlist');
     Route::delete('/quotations/{id}', [QuotationController::class, 'delete'])->name('quotations.delete');
     Route::get('/quotations/view/{id}', [QuotationController::class, 'view'])->name('view');
+    Route::get('/quotations/view/{id}', [CompanyController::class, 'showQuotation'])->name('view');
     Route::get('/quotations/{id}/edit', [QuotationController::class, 'edit'])->name('editquotation');
     Route::put('/quotations/{id}', [QuotationController::class, 'update'])->name('updatequotation');
     Route::get('/quotations/{id}/copy', [QuotationController::class, 'copy'])->name('quotations.copy');
@@ -67,10 +68,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/report', function () {
         return view('report');
     });
-
     Route::get('/report', [DashboardController::class, 'report'])->name('report');
-
-
     Route::get('/setting', function () {
         return view('setting');
     })->name('setting');
@@ -80,10 +78,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware(['auth', 'admin'])
         ->name('admin.dashboard');
 
-
+    // Company crud operations
     Route::get('/settings/company', [CompanyController::class, 'index'])->name('company.settings');
     Route::post('/settings/company', [CompanyController::class, 'store'])->name('company.settings.store');
-    Route::get('/settings/company', [CompanyController::class, 'show'])->name('company.show');
+    Route::get('/settings/company', [CompanyController::class, 'edit'])->name('company.settings.edit');
+    Route::post('/settings/company', [CompanyController::class, 'update'])->name('company.settings.store');
+    Route::get('/setting', [CompanyController::class, 'settings'])->name('setting');
 
 });
 

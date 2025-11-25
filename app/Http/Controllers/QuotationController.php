@@ -10,6 +10,7 @@ use App\Mail\QuotationMail;
 use App\Models\QuotationStatusLog;
 use Illuminate\Support\Facades\Auth;
 use Dompdf\Dompdf;
+use App\Models\Company; 
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB; 
 
@@ -79,7 +80,6 @@ class QuotationController extends Controller
         return redirect()->route('quotationlist')->with('success', 'Quotation added successfully!');
     }
 
- 
 public function update(Request $request, $id)
 {
     // Validate main quotation data
@@ -95,52 +95,67 @@ public function update(Request $request, $id)
         'items.*.discount' => 'nullable|numeric|min:0',
     ]);
 
-    DB::transaction(function () use ($request, $id)
-     {
+    DB::transaction(function () use ($request, $id) {
         $quotation = Quotations::with('items')->findOrFail($id);
         $quotation->client_id = $request->client_id;
         $quotation->title = $request->title;
+      
         $quotation->save();
 
         $existingItemIds = $quotation->items->pluck('id')->toArray();
         $submittedItemIds = [];
 
         foreach ($request->items as $index => $itemData) {
-            $total = ($itemData['qty'] * $itemData['unit_price']) + ($itemData['tax'] ?? 0) - ($itemData['discount'] ?? 0);
+            $total = ($itemData['qty'] * $itemData['unit_price']) + floatval($itemData['tax'] ?? 0) - floatval($itemData['discount'] ?? 0);
 
             if (isset($itemData['id'])) {
-                
                 $item = QuotationItems::find($itemData['id']);
                 if ($item) {
                     $item->update([
                         'description' => $itemData['description'],
-                        'qty' => $itemData['qty'],
-                        'unit_price' => $itemData['unit_price'],
-                        'tax' => $itemData['tax'] ?? 0,
-                        'discount' => $itemData['discount'] ?? 0,
+                        'qty' => intval($itemData['qty']),
+                        'unit_price' => floatval($itemData['unit_price']),
+                        'tax' => floatval($itemData['tax'] ?? 0),
+                        'discount' => floatval($itemData['discount'] ?? 0),
                         'total' => $total,
                     ]);
                     $submittedItemIds[] = $item->id;
                 }
             } else {
-            
                 $newItem = new QuotationItems([
                     'description' => $itemData['description'],
-                    'qty' => $itemData['qty'],
-                    'unit_price' => $itemData['unit_price'],
-                    'tax' => $itemData['tax'] ?? 0,
-                    'discount' => $itemData['discount'] ?? 0,
+                    'qty' => intval($itemData['qty']),
+                    'unit_price' => floatval($itemData['unit_price']),
+                    'tax' => floatval($itemData['tax'] ?? 0),
+                    'discount' => floatval($itemData['discount'] ?? 0),
                     'total' => $total,
                 ]);
                 $quotation->items()->save($newItem);
             }
         }
 
-   
+        // Delete removed items
         $itemsToDelete = array_diff($existingItemIds, $submittedItemIds);
         if (!empty($itemsToDelete)) {
             QuotationItems::whereIn('id', $itemsToDelete)->delete();
         }
+
+        // Recalculate quotation totals
+        $quotationItems = $quotation->items()->get();
+        $subtotal = $quotationItems->sum(function ($item) {
+            return $item->qty * $item->unit_price;
+        });
+        $totalTax = $quotationItems->sum('tax');
+        $totalDiscount = $quotationItems->sum('discount');
+        $grandTotal = $subtotal + $totalTax - $totalDiscount;
+
+        // Update quotation totals
+        $quotation->update([
+            'subtotal' => $subtotal,
+            'tax' => $totalTax,
+            'discount' => $totalDiscount,
+            'total' => $grandTotal,
+        ]);
     });
 
     return redirect()->route('quotationlist')->with('success', 'Quotation updated successfully.');
@@ -167,14 +182,12 @@ public function update(Request $request, $id)
         return view('quotationlist', compact('quotations'));
     }
 
-    // View a specific quotation
     public function view($id)
     {
         $quotation = Quotations::with('client', 'items')->findOrFail($id);
         return view('view', compact('quotation'));
     }
 
-    // Delete a specific quotation
     public function delete($id)
     {
         $quotation = Quotations::find($id);
@@ -188,7 +201,6 @@ public function update(Request $request, $id)
         return redirect()->back()->with('success', 'Quotation deleted successfully.');
     }
 
-    // Edit a quotation
     public function edit($id)
     {
         $quotation = Quotations::with('items')->find($id);
@@ -201,7 +213,6 @@ public function update(Request $request, $id)
         return view('editquotation', compact('quotation', 'clients'));
     }
 
-    // Copy a quotation
     public function copy($id)
     {
         $original = Quotations::with('items')->findOrFail($id);
@@ -215,25 +226,29 @@ public function update(Request $request, $id)
         return redirect()->route('quotationlist')->with('success', 'Quotation copied successfully!');
     }
 
-    // dowload pdf
-    public function download($id)
-    {
-        $quotation = Quotations::with('items', 'client')->findOrFail($id);
-        $pdf = Pdf::loadView('quotations.pdf', compact('quotation'))
-                ->setPaper('a4', 'portrait');
-        return $pdf->download('quotation_'.$quotation->id.'.pdf');
-    }
+  
+public function download($id)
+{
+    $quotation = Quotations::with('items', 'client')->findOrFail($id);
 
+    $company = Company::first(); 
 
-    // send mail
-   public function sendEmail($id)
+    $pdf = Pdf::loadView('quotations.pdf', compact('quotation', 'company'))
+              ->setPaper('a4', 'portrait');
+
+    return $pdf->download('quotation_'.$quotation->id.'.pdf');
+}
+public function sendEmail($id)
     {
-        $quotation = Quotation::findOrFail($id);
-        $pdf = Pdf::loadView('quotations.pdf', ['quotation' => $quotation]);
-        $pdfPath = storage_path("app/quotations/quotation_{$quotation->id}.pdf");
-        $pdf->save($pdfPath);
-        Mail::to($quotation->client_email)->send(new QuotationMail($quotation, null, true));
+        $quotation = Quotations::findOrFail($id);
+
+        if (!$quotation->client || !$quotation->client->email) {
+            return back()->with('error', 'Client email not found.');
+        }
+
+        Mail::to($quotation->client->email)
+            ->send(new QuotationMail($quotation, null, true)); // attach = true
+
         return back()->with('success', 'Email sent successfully!');
     }
- 
 }

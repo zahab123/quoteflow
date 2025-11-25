@@ -226,78 +226,65 @@
                         </div>
                     </div>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow mb-6">
-                    <h2 class="font-semibold text-gray-600 mb-4">Line Items</h2>
-                    <div id="items-container">
-                <div id="items-container">
-    @foreach($quotation->items as $index => $item)
-                <div class="grid grid-cols-7 gap-3 mb-2 item-row items-end">
-                    <!-- Description -->
-                    <div class="flex flex-col">
-                        <label class="text-xs text-gray-500">Description</label>
-                        <input name="items[{{ $index }}][description]" 
-                            value="{{ $item->description }}" 
-                            placeholder="Description" 
-                            class="border p-2 rounded" required>
-                    </div>
-
-                    <!-- Quantity -->
-                    <div class="flex flex-col">
-                        <label class="text-xs text-gray-500">Quantity</label>
-                        <input name="items[{{ $index }}][qty]" 
-                            type="number" 
-                            value="{{ $item->qty }}" 
-                            class="border p-2 rounded qty" 
-                            min="1" 
-                            required>
-                    </div>
-
-                    <!-- Unit Price -->
-                    <div class="flex flex-col">
-                        <label class="text-xs text-gray-500">Unit Price</label>
-                        <input name="items[{{ $index }}][unit_price]" 
-                            type="number" 
-                            step="0.01" 
-                            value="{{ $item->unit_price }}" 
-                            class="border p-2 rounded unit_price" 
-                            required>
-                    </div>
-
-                    <!-- Tax -->
-                    <div class="flex flex-col">
-                        <label class="text-xs text-gray-500">Tax</label>
-                        <input name="items[{{ $index }}][tax]" 
-                            type="number" 
-                            step="0.01" 
-                            value="{{ $item->tax }}" 
-                            class="border p-2 rounded tax" 
-                            placeholder="Tax">
-                    </div>
-
-                    <!-- Discount -->
-                    <div class="flex flex-col">
-                        <label class="text-xs text-gray-500">Discount</label>
-                        <input name="items[{{ $index }}][discount]" 
-                            type="number" 
-                            step="0.01" 
-                            value="{{ $item->discount }}" 
-                            class="border p-2 rounded discount" 
-                            placeholder="Discount">
-                    </div>
-
-                    <!-- Total -->
-                    <div class="flex flex-col">
-                        <label class="text-xs text-gray-500">Total</label>
-                        <input type="text" 
-                            value="RS{{ number_format($item->total, 2) }}" 
-                            readonly 
-                            class="border p-2 rounded bg-gray-100 text-gray-500 total">
-                    </div>
-
-                    <!-- Delete -->
+               <div class="bg-white p-6 rounded-xl shadow mb-6">
+    <h2 class="font-semibold text-gray-600 mb-4">Line Items</h2>
+    <div id="items-container">
+        @foreach($quotation->items as $index => $item)
+        <div class="grid grid-cols-7 gap-3 mb-2 item-row items-end">
+            <div class="flex flex-col">
+                <label class="text-xs text-gray-500">Description</label>
+                <input name="items[{{ $index }}][description]" 
+                    value="{{ $item->description }}" 
+                    placeholder="Description" 
+                    class="border p-2 rounded" required>
+            </div>
+            <div class="flex flex-col">
+                <label class="text-xs text-gray-500">Quantity</label>
+                <input name="items[{{ $index }}][qty]" 
+                    type="number" 
+                    value="{{ $item->qty }}" 
+                    class="border p-2 rounded qty" 
+                    min="1" 
+                    required>
+            </div>
+            <div class="flex flex-col">
+                <label class="text-xs text-gray-500">Unit Price</label>
+                <input name="items[{{ $index }}][unit_price]" 
+                    type="number" 
+                    step="0.01" 
+                    value="{{ $item->unit_price }}" 
+                    class="border p-2 rounded unit_price" 
+                    required>
+            </div>
+            <div class="flex flex-col">
+                <label class="text-xs text-gray-500">Tax</label>
+                <input name="items[{{ $index }}][tax]" 
+                    type="number" 
+                    step="0.01" 
+                    value="{{ $item->tax }}" 
+                    class="border p-2 rounded tax" 
+                    placeholder="Tax">
+            </div>
+            <div class="flex flex-col">
+                <label class="text-xs text-gray-500">Discount</label>
+                <input name="items[{{ $index }}][discount]" 
+                    type="number" 
+                    step="0.01" 
+                    value="{{ $item->discount }}" 
+                    class="border p-2 rounded discount" 
+                    placeholder="Discount">
+            </div>
+            <div class="flex flex-col">
+                <label class="text-xs text-gray-500">Total</label>
+                <input type="text" 
+                    value="RS{{ number_format($item->total, 2) }}" 
+                    readonly 
+                    class="border p-2 rounded bg-gray-100 text-gray-500 total">
+            </div>
                     <div class="flex flex-col">
                         <label class="text-xs text-gray-500">Remove</label>
-                        <button type="button" onclick="removeItem(this)" class="p-2 bg-red-500 text-white rounded hover:bg-red-600 flex items-center justify-center">
+                        <button type="button" onclick="removeItem(this)" 
+                                class="p-2 bg-red-500 text-white rounded hover:bg-red-600 flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="3 6 5 6 21 6"></polyline>
                                 <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
@@ -307,10 +294,10 @@
                         </button>
                     </div>
                 </div>
-            @endforeach
-        </div>
-
+                @endforeach
             </div>
+
+     
                 <button type="button" onclick="addItem()" class="mt-2 px-4 py-1 bg-black text-white rounded">+ Add Item</button>
                 </div>
                 <div class="bg-white p-6 rounded-xl shadow mb-6">
@@ -355,7 +342,6 @@
 <script>
 let index = {{ isset($quotation) ? $quotation->items->count() : 0 }};
 
-// Calculate total for a single row
 function calculateTotal(row) {
     const qty = parseFloat(row.querySelector('.qty').value) || 0;
     const price = parseFloat(row.querySelector('.unit_price').value) || 0;
@@ -366,7 +352,6 @@ function calculateTotal(row) {
     updateSummary();
 }
 
-// Update summary totals
 function updateSummary() {
     let subtotal = 0, totalTax = 0, totalDiscount = 0;
 
@@ -388,7 +373,6 @@ function updateSummary() {
     document.getElementById('grand-total').innerText = '$' + grandTotal.toFixed(2);
 }
 
-// Attach input listeners to a row
 function attachListenersToRow(row) {
     ['qty', 'unit_price', 'tax', 'discount'].forEach(cls => {
         row.querySelector(`.${cls}`).addEventListener('input', () => calculateTotal(row));
@@ -433,7 +417,19 @@ function addItem() {
     container.insertAdjacentHTML('beforeend', html);
     attachListenersToRow(container.lastElementChild);
     index++;
+
+
 }
+function removeItem(button) {
+    // Find the row that contains this button
+    const row = button.closest('.item-row'); 
+    if (row) {
+        row.remove();       // remove this row only
+        updateSummary();    // update totals
+    }
+}
+
+
 </script>
 
 </body>

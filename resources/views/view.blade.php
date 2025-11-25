@@ -1,132 +1,127 @@
 <!DOCTYPE html>
-<html lang="en" x-data="{ darkMode: false }">
+<html lang="en" x-data="{ darkMode: false, sidebarOpen: false }">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Quotation - Professional</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-
     <style>
         @media print {
-            .a4-page {
-                width: 210mm;
-                min-height: 297mm;
-                margin: 0;
-                page-break-after: always;
-            }
+            .a4-page { width: 210mm; min-height: 297mm; margin: 0; page-break-after: always; }
             .no-print { display: none !important; }
         }
         .a4-container { max-width: 210mm; }
         .gradient-bg { background: linear-gradient(135deg, #6366F1, #EC4899); }
     </style>
 </head>
-<body class="h-full bg-gray-100 flex flex-col" x-data="clientsData()">
-    <div x-data="{ sidebarOpen: false }" class="h-full flex"> 
-        <div x-show="sidebarOpen" @click="sidebarOpen = false"
-             class="fixed inset-0 bg-gray-600 bg-opacity-75 z-40 md:hidden"
-             x-transition:enter="transition-opacity ease-linear duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="transition-opacity ease-linear duration-300"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0">
+<body class="h-screen flex">
+
+    <!-- Sidebar overlay for mobile -->
+    <div x-show="sidebarOpen" @click="sidebarOpen = false"
+         class="fixed inset-0 bg-gray-600 bg-opacity-75 z-40 md:hidden"
+         x-transition:enter="transition-opacity ease-linear duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition-opacity ease-linear duration-300"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"></div>
+
+    <!-- Sidebar -->
+    <aside class="fixed inset-y-0 left-0 z-50 w-60 bg-white h-screen shadow-md border-r flex flex-col
+                  transform md:translate-x-0 md:static md:flex-shrink-0"
+           :class="{ 'translate-x-0 ease-out': sidebarOpen, '-translate-x-full ease-in': !sidebarOpen }"
+           x-transition:enter="transition ease-out duration-300"
+           x-transition:leave="transition ease-in duration-300">
+
+        <!-- Logo -->
+        <div class="px-6 py-6 flex items-center gap-2 border-b">
+            <button @click="sidebarOpen = false" class="md:hidden mr-3 text-gray-500 hover:text-gray-800">
+                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+            <img src="{{ asset('images/logo.PNG') }}" alt="Logo" class="w-10 h-10 object-contain">
+            <span class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-blue-500 to-pink-500">
+                QuoteFlow
+            </span>
         </div>
 
-        <aside class="fixed inset-y-0 left-0 z-50 transform w-60 bg-white h-full shadow-md border-r flex flex-col justify-between
-                      md:static md:translate-x-0 md:flex-shrink-0
-                      "
-               :class="{ 'translate-x-0 ease-out': sidebarOpen, '-translate-x-full ease-in': !sidebarOpen }"
-               x-transition:enter="transition ease-out duration-300"
-               x-transition:leave="transition ease-in duration-300">
-            <div class="px-6 py-6 flex items-center gap-2 border-b">
-                <button @click="sidebarOpen = false" class="md:hidden mr-3 text-gray-500 hover:text-gray-800">
-                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+        <!-- Menu -->
+        <ul class="mt-4 flex-1 overflow-y-auto text-gray-700 font-medium">
+            <li>
+                <a href="/admin/dashboard"
+                   class="flex items-center px-6 py-3 transition rounded-lg
+                          {{ request()->is('admin/dashboard') 
+                              ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow' 
+                              : 'hover:bg-gray-100 text-gray-700' }}">
+                    <x-heroicon-o-home class="w-5 h-5 mr-3" /> Dashboard
+                </a>
+            </li>
+            <li>
+                <a href="/clientlist"
+                   class="flex items-center px-6 py-3 transition rounded-lg
+                          {{ request()->is('clientlist') 
+                              ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow' 
+                              : 'hover:bg-gray-100 text-gray-700' }}">
+                    <x-heroicon-o-users class="w-5 h-5 mr-3" /> Clients
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('quotationlist') }}"
+                   class="flex items-center px-6 py-3 transition rounded-lg
+                          {{ request()->is('quotationlist') 
+                              ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow' 
+                              : 'hover:bg-gray-100 text-gray-700' }}">
+                    <x-heroicon-o-document-text class="w-5 h-5 mr-3" /> Quotations
+                </a>
+            </li>
+            <li>
+                <a href="/report"
+                   class="flex items-center px-6 py-3 transition rounded-lg
+                          {{ request()->is('reports') 
+                              ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow' 
+                              : 'hover:bg-gray-100 text-gray-700' }}">
+                    <x-heroicon-o-chart-bar class="w-5 h-5 mr-3" /> Reports
+                </a>
+            </li>
+            <li>
+                <a href="/setting"
+                   class="flex items-center px-6 py-3 transition rounded-lg
+                          {{ request()->is('settings') 
+                              ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow' 
+                              : 'hover:bg-gray-100 text-gray-700' }}">
+                    <x-heroicon-o-cog class="w-5 h-5 mr-3" /> Settings
+                </a>
+            </li>
+        </ul>
+
+        
+        <div class="px-6 py-6 border-t mt-auto" x-data="{ open: false }">
+            <div class="relative flex items-center gap-3">
+                <button @click="open = !open"
+                        class="w-12 h-12 rounded-full flex items-center justify-center text-white text-lg font-bold"
+                        style="background: linear-gradient(135deg, #6366F1, #EC4899);">
+                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                 </button>
-                <img src="{{ asset('images/logo.PNG') }}" alt="Logo" class="w-10 h-10 object-contain">
-                <span class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-blue-500 to-pink-500">
-                    QuoteFlow
-                </span>
-            </div>
-            <ul class="mt-4 flex-1 text-gray-700 font-medium">
-                <li>
-                    <a href="/admin/dashboard"
-                       class="flex items-center px-6 py-3 transition rounded-lg
-                              {{ request()->is('admin/dashboard') 
-                                  ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow' 
-                                  : 'hover:bg-gray-100 text-gray-700' }}">
-                        <x-heroicon-o-home class="w-5 h-5 mr-3" />
-                        Dashboard
-                    </a>
-                </li>
-                <li>
-                    <a href="/clientlist"
-                       class="flex items-center px-6 py-3 transition rounded-lg
-                              {{ request()->is('clientlist') 
-                                  ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow' 
-                                  : 'hover:bg-gray-100 text-gray-700' }}">
-                        <x-heroicon-o-users class="w-5 h-5 mr-3" />
-                        Clients
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('quotationlist') }}"
-                       class="flex items-center px-6 py-3 transition rounded-lg
-                              {{ request()->is('quotationlist') 
-                                  ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow' 
-                                  : 'hover:bg-gray-100 text-gray-700' }}">
-                        <x-heroicon-o-document-text class="w-5 h-5 mr-3" />
-                        Quotations
-                    </a>
-                </li>
-                <li>
-                    <a href="/report"
-                       class="flex items-center px-6 py-3 transition rounded-lg
-                              {{ request()->is('reports') 
-                                  ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow' 
-                                  : 'hover:bg-gray-100 text-gray-700' }}">
-                        <x-heroicon-o-chart-bar class="w-5 h-5 mr-3" />
-                        Reports
-                    </a>
-                </li>
-                <li>
-                    <a href="/setting"
-                       class="flex items-center px-6 py-3 transition rounded-lg
-                              {{ request()->is('settings') 
-                                  ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow' 
-                                  : 'hover:bg-gray-100 text-gray-700' }}">
-                        <x-heroicon-o-cog class="w-5 h-5 mr-3" />
-                        Settings
-                    </a>
-                </li>
-            </ul>
-            <div class="px-6 py-6 flex items-center gap-3 border-t" x-data="{ open: false }">
-                <div class="relative">
-                    <button @click="open = !open"
-                            class="w-12 h-12 rounded-full flex items-center justify-center text-white text-lg font-bold"
-                            style="background: linear-gradient(135deg, #6366F1, #EC4899);">
-                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                    </button>
-                    <div>
-                        <div class="font-medium text-gray-800">{{ Auth::user()->name }}</div>
-                        <div class="text-sm text-gray-500">{{ Auth::user()->email }}</div>
-                    </div>
-                    <div x-show="open" @click.away="open = false"
-                         class="absolute bottom-full mb-2 left-0 w-48 bg-white border rounded shadow-lg z-50">
-                        <x-dropdown-link :href="route('profile.edit')" class="block px-4 py-2 hover:bg-gray-100">Profile</x-dropdown-link>
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <x-dropdown-link :href="route('logout')" class="block px-4 py-2 hover:bg-gray-100"
-                                             onclick="event.preventDefault(); this.closest('form').submit();">
-                                Log Out
-                            </x-dropdown-link>
-                        </form>
-                    </div>
+                <div>
+                    <div class="font-medium text-gray-800">{{ Auth::user()->name }}</div>
+                    <div class="text-sm text-gray-500">{{ Auth::user()->email }}</div>
+                </div>
+                <div x-show="open" @click.away="open = false"
+                     class="absolute bottom-full mb-2 left-0 w-48 bg-white border rounded shadow-lg z-50">
+                    <x-dropdown-link :href="route('profile.edit')" class="block px-4 py-2 hover:bg-gray-100">Profile</x-dropdown-link>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <x-dropdown-link :href="route('logout')" class="block px-4 py-2 hover:bg-gray-100"
+                                         onclick="event.preventDefault(); this.closest('form').submit();">
+                            Log Out
+                        </x-dropdown-link>
+                    </form>
                 </div>
             </div>
-        </aside>
+        </div>
+    </aside>
 
         <div class="flex-1 flex flex-col overflow-y-auto">
             <nav class="bg-white border-b border-gray-200 shadow-sm">
@@ -138,7 +133,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                                 </svg>
                             </button>
-                            <h1 class="text-xl font-semibold text-gray-800 **hidden sm:block**">Review Quotation</h1>
+                            <h1 class="text-xl font-semibold text-gray-800 **hidden sm:block**">View Quotation</h1>
                             <div class="relative **w-full**">
                                 <input type="text" placeholder="Search..."
                                        class="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none **w-40 sm:w-64**">
@@ -196,6 +191,18 @@
                     <h1 class="text-3xl font-bold text-gray-800">View Quotation</h1>
                     <p class="text-sm text-gray-500">Detailed view of quotation #{{ $quotation->id }}</p>
                 </div>
+                        @if(session('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                {{ session('error') }}
+            </div>
+        @endif
+
                 <div class="flex gap-2">
                     <a href="{{ route('quotationlist') }}" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 shadow-md transition">
                         Back to List
@@ -204,20 +211,12 @@
                         class="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white rounded-lg hover:opacity-90 shadow-md transition">
                         Download PDF
                     </a>
-                   <form action="{{ route('quotations.sendEmail', $quotation->id) }}" method="GET">
-                        <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 shadow-md transition flex items-center gap-1">
-                        Send Email
-                        </button>
+                  <form action="{{ route('quotations.sendEmail', $quotation->id) }}" method="GET">
+                    <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 shadow-md transition flex items-center gap-1">
+                     Send Email
+                     </button>
                     </form>
-                    <button @click="printQuotation()"
-                            class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-md transition flex items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd"
-                                  d="M5 4v3H4a2 2 0 00-2 2v6a2 2 0 002 2h12a2 2 0 002-2v-6a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm10 2V4a1 1 0 00-1-1H7a1 1 0 00-1 1v2h9zM4 9h12v6h-4v-1a1 1 0 00-1-1H9a1 1 0 00-1 1v1H4V9z"
-                                  clip-rule="evenodd" />
-                        </svg>
-                        Print
-                    </button>
+
                 </div>
             </div>
 
@@ -263,13 +262,13 @@
 
        
         <div class="text-sm text-gray-600">
-            {{ $company->phone ?? 'Company Phone' }}
+           Phone no: {{ $company->phone ?? 'Company Phone' }}
         </div>
          <div class="text-sm text-gray-600">
-            {{ $company->website ?? 'Company Website' }}
+           Email: {{ $company->email ?? 'Company Website' }}
         </div>
          <div class="text-sm text-gray-600">
-            {{ $company->address ?? 'Company Address' }}
+          Address: {{ $company->address ?? 'Company Address' }}
         </div>
 
     </div>
@@ -284,9 +283,9 @@
                 <div class="grid grid-cols-2 gap-8 mb-8">
                     <div>
                         <h3 class="font-semibold text-lg text-purple-600 mb-2 border-b border-purple-200 inline-block">Billed To</h3>
-                        <p class="font-bold text-gray-800 text-xl">{{ $quotation->client->name ?? 'N/A' }}</p>
-                        <p class="text-gray-600">{{ $quotation->client->email ?? 'N/A' }}</p>
-                        <p class="text-gray-600">{{ $quotation->client->address ?? 'N/A' }}</p>
+                        <p class="font-bold text-gray-800 text-xl">Name: {{ $quotation->client->name ?? 'N/A' }}</p>
+                        <p class="text-gray-600">Email: {{ $quotation->client->email ?? 'N/A' }}</p>
+                        <p class="text-gray-600">Address: {{ $quotation->client->address ?? 'N/A' }}</p>
                     </div>
                     <div class="text-right">
                         <div class="mb-2"><span class="font-semibold text-gray-700">Quotation Date:</span> <span class="font-medium">{{ $quotation->created_at->format('Y-m-d') }}</span></div>
@@ -348,7 +347,7 @@
                 </div>
             </div>
             <div class="flex justify-center gap-4 mt-8">
-    <!-- Accept Button -->
+    
     <form action="{{ route('quotation.status.update', $quotation->id) }}" method="POST">
         @csrf
         <input type="hidden" name="status" value="accepted">
@@ -358,21 +357,17 @@
         </button>
     </form>
 
-    <!-- Decline Button -->
     <form action="{{ route('quotation.status.update', $quotation->id) }}" method="POST">
         @csrf
-        <input type="hidden" name="status" value="declined">
-        <input type="hidden" name="remarks" value="Declined by client">
-        <button type="submit" class="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700">
-            Decline
-        </button>
-    </form>
-</div>
-
-
-        </main>
-
+             <input type="hidden" name="status" value="declined">
+             <input type="hidden" name="remarks" value="Declined by client">
+             <button type="submit" class="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+             Decline
+            </button>
+        </form>
     </div>
+ </main>
+</div>
 
     <script>
     function printQuotation() {

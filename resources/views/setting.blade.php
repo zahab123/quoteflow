@@ -158,63 +158,69 @@
                 </div>
             </nav> 
 
-    <main class="flex-1 p-6 overflow-auto space-y-6">
+     <main class="flex-1 p-6 overflow-auto space-y-6">
       <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
         <h2 class="text-lg font-semibold mb-4">Company Information</h2>
-        <form action="{{ route('company.settings.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
-    @csrf
 
-    <div>
-        <label class="block mb-1">Company Name</label>
-        <input name="company_name" type="text" 
-               value="{{ $company->company_name ?? '' }}"
-               class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 px-4 py-2">
-    </div>
-
-    <div>
-        <label class="block mb-1">Email</label>
-        <input name="email" type="email"
-               value="{{ $company->email ?? '' }}"
-               class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 px-4 py-2">
-    </div>
-
-    <div>
-        <label class="block mb-1">Phone</label>
-        <input name="phone" type="text"
-               value="{{ $company->phone ?? '' }}"
-               class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 px-4 py-2">
-    </div>
-
-    <div>
-        <label class="block mb-1">Website</label>
-        <input name="website" type="text"
-               value="{{ $company->website ?? '' }}"
-               class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 px-4 py-2">
-    </div>
-
-    <div>
-        <label class="block mb-1">Address</label>
-        <textarea name="address"
-                  class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 px-4 py-2">{{ $company->address ?? '' }}</textarea>
-    </div>
-
-    <div>
-        <label class="block mb-1">Company Logo</label>
-
-        <input name="logo" type="file"
-               class="text-sm file:py-2 file:px-4 file:bg-purple-600 file:text-white file:rounded-lg">
-
-        @if(!empty($company->logo))
-            <img src="{{ asset('storage/' . $company->logo) }}" class="w-20 h-20 mt-3 rounded-lg object-cover">
+        @if(session('success'))
+          <div class="mb-4 p-2 bg-green-500 text-white rounded">
+              {{ session('success') }}
+          </div>
         @endif
-    </div>
 
-    <button class="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg">
-        Save Changes
-    </button>
-</form>
+        <form action="{{ route('company.settings.store') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+          @csrf
 
+          <div>
+              <label class="block mb-1">Company Name</label>
+              <input name="company_name" type="text" 
+                     value="{{ $company->company_name ?? '' }}"
+                     class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 px-4 py-2">
+          </div>
+
+          <div>
+              <label class="block mb-1">Email</label>
+              <input name="email" type="email"
+                     value="{{ $company->email ?? '' }}"
+                     class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 px-4 py-2">
+          </div>
+
+          <div>
+              <label class="block mb-1">Phone</label>
+              <input name="phone" type="text"
+                     value="{{ $company->phone ?? '' }}"
+                     class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 px-4 py-2">
+          </div>
+
+          <div>
+              <label class="block mb-1">Website</label>
+              <input name="website" type="text"
+                     value="{{ $company->website ?? '' }}"
+                     class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 px-4 py-2">
+          </div>
+
+          <div>
+              <label class="block mb-1">Address</label>
+              <textarea name="address"
+                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 px-4 py-2">{{ $company->address ?? '' }}</textarea>
+          </div>
+
+          <div>
+              <label class="block mb-1">Company Logo</label>
+              <input name="logo" type="file"
+                     class="text-sm file:py-2 file:px-4 file:bg-purple-600 file:text-white file:rounded-lg">
+
+              @if(!empty($company->logo))
+                  <img src="{{ asset('storage/' . $company->logo) }}" class="w-20 h-20 mt-3 rounded-lg object-cover">
+              @endif
+          </div>
+
+          <button class="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg">
+              Save Changes
+          </button>
+        </form>
       </div>
+
       <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
         <h2 class="text-lg font-semibold mb-4">Theme Settings</h2>
         <div class="flex items-center justify-between">
@@ -226,7 +232,6 @@
       </div>
 
     </main>
-
   </div>
 </div>
 </body>

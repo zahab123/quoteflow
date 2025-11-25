@@ -3,6 +3,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Company;
 use Illuminate\Http\Request;
+use App\Models\Quotations;
+use Illuminate\Support\Facades\Storage;
+
 
 class CompanyController extends Controller
 {
@@ -25,13 +28,12 @@ class CompanyController extends Controller
 
         $company = Company::first() ?? new Company();
 
-        // Logo Upload
+       
         if ($request->hasFile('logo')) {
             $logoPath = $request->file('logo')->store('company_logo', 'public');
             $company->logo = $logoPath;
         }
 
-        // Save all info
         $company->company_name = $request->company_name;
         $company->email = $request->email;
         $company->phone = $request->phone;
@@ -44,10 +46,56 @@ class CompanyController extends Controller
     }
     
 
-    public function show()
+ public function showQuotation($id)
     {
-    $company = Company::first(); 
-    return view('view', compact('company'));
+        $company = Company::first(); 
+        $quotation = Quotations::with('items', 'client')->findOrFail($id);
+        return view('view', compact('company', 'quotation'));
+    }
+
+    public function edit()
+    {
+        $company = Company::first();
+        return view('setting', compact('company'));
+    }
+
+    public function update(Request $request)
+    {
+        $request->validate([
+            'company_name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:50',
+            'website' => 'nullable|string|max:255',
+            'address' => 'nullable|string',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        $company = Company::first() ?? new Company();
+
+        $company->company_name = $request->company_name;
+        $company->email = $request->email;
+        $company->phone = $request->phone;
+        $company->website = $request->website;
+        $company->address = $request->address;
+
+        if ($request->hasFile('logo')) {
+            // Delete old logo if exists
+            if ($company->logo && Storage::exists($company->logo)) {
+                Storage::delete($company->logo);
+            }
+            $company->logo = $request->file('logo')->store('company_logos', 'public');
+        }
+
+        $company->save();
+
+        return redirect()->route('company.settings.edit')->with('success', 'Company details saved successfully!');
+    }
+        
+    public function settings()
+    {
+        $company = Company::first();
+
+        return view('setting', compact('company')); 
     }
 
 }
