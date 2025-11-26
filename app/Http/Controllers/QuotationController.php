@@ -13,6 +13,7 @@ use Dompdf\Dompdf;
 use App\Models\Company; 
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB; 
+use App\Services\OpenAIService;
 
 
 class QuotationController extends Controller

@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'openai' => [
+    'key' => env('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'),
+        ],
+
 ];

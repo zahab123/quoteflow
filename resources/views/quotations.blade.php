@@ -216,10 +216,16 @@
             <div id="items-container">
                 <div class="grid grid-cols-7 gap-3 mb-2 item-row items-end">
                     <!-- Description -->
-                    <div class="flex flex-col">
-                        <label class="text-xs text-gray-500">Description</label>
-                        <input name="items[0][description]" placeholder="Description" class="border p-2 rounded" required>
-                    </div>
+        <div class="flex flex-col">
+    <label class="text-xs text-gray-500">Description</label>
+    <div class="flex gap-2">
+        <input name="items[0][description]" placeholder="Description" class="border p-2 rounded flex-1" required>
+        <button type="button" onclick="generateItemDescriptionAI(this)" class="bg-blue-600 text-white px-2 rounded hover:bg-blue-700">
+            AI
+        </button>
+    </div>
+</div>
+
 
                     <!-- Quantity -->
                     <div class="flex flex-col">
@@ -280,10 +286,23 @@
                         <p class="text-xl font-bold">Grand Total: <b id="grand-total">$0.00</b></p>
                     </div>
                 </div>
-                <div class="bg-white p-6 rounded-xl shadow mb-6">
-                    <label class="text-sm font-medium text-gray-600">Notes (Optional)</label>
-                    <textarea name="notes" class="w-full border rounded-lg p-3 mt-2" placeholder="Add any additional notes..."></textarea>
-                </div>
+               <div class="bg-white p-6 rounded-xl shadow mb-6">
+    <label class="text-sm font-medium text-gray-600">Notes (Optional)</label>
+
+    <div class="flex items-center gap-2 mt-2">
+        <textarea id="notes_field" name="notes" class="w-full border rounded-lg p-3" placeholder="Add any additional notes..."></textarea>
+
+        <!-- AI Button -->
+        <button 
+            type="button"
+            onclick="generateNotesAI()"
+            class="bg-blue-600 text-white text-sm px-3 py-2 rounded-lg hover:bg-blue-700"
+        >
+            AI
+        </button>
+    </div>
+</div>
+
                 <div class="flex gap-3">
                     <button type="submit" name="status" value="sent" class="px-5 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition">
                         Save & Send
@@ -298,7 +317,7 @@
     </div>
 
 <script>
-let index = 1; // Start from 1 if first item is 0
+let index = 1; 
 
 function calculateTotal(row) {
     const qty = parseFloat(row.querySelector('.qty').value) || 0;
@@ -372,6 +391,29 @@ function addItem() {
 
 // Initialize listeners on page load
 attachListeners();
+function generateItemDescriptionAI(button) {
+    const row = button.closest('.item-row');
+    const title = document.querySelector('input[name="title"]').value || "Quotation";
+
+    fetch('/ai/generate-quotation', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({ title: title })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.description) {
+            row.querySelector('input[name*="[description]"]').value = data.description;
+        }
+    })
+    .catch(err => console.error(err));
+}
+
+
 
 </script>
 

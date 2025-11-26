@@ -7,6 +7,7 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\QuotationController;
 use App\Http\Controllers\QuotationStatusController;
+use App\Http\Controllers\AIController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -84,6 +85,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/settings/company', [CompanyController::class, 'edit'])->name('company.settings.edit');
     Route::post('/settings/company', [CompanyController::class, 'update'])->name('company.settings.store');
     Route::get('/setting', [CompanyController::class, 'settings'])->name('setting');
+
+    // api route of AI
+  Route::post('/ai/generate-quotation', [AIController::class, 'generateQuotation']);
 
 });
 
