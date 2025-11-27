@@ -86,9 +86,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/settings/company', [CompanyController::class, 'update'])->name('company.settings.store');
     Route::get('/setting', [CompanyController::class, 'settings'])->name('setting');
 
-    // api route of AI
-  Route::post('/ai/generate-quotation', [AIController::class, 'generateQuotation']);
+   
+ // api route of AI
+Route::post('/ai/generate-quotation', [AIController::class, 'generateQuotation']);
 
 });
+
 
 require __DIR__.'/auth.php';

@@ -7,14 +7,39 @@ use App\Services\OpenAIService;
 
 class AIController extends Controller
 {
-    public function generateQuotation(Request $request, OpenAIService $openAI)
+    protected $openAIService;
+
+    public function __construct(OpenAIService $openAIService)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-        ]);
+        $this->openAIService = $openAIService;
+    }
 
-        $description = $openAI->generateQuotation($request->title);
+    public function generateQuotation(Request $request)
+    {
+        $title = $request->input('title');
 
-        return response()->json(['description' => $description]);
+        if (!$title || empty(trim($title))) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Title is required'
+            ], 400);
+        }
+
+        try {
+            $description = $this->openAIService->generateQuotation(trim($title));
+
+            return response()->json([
+                'success' => true,
+                'description' => $description
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error("AI Controller Error: " . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'error' => 'Failed to generate AI description: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

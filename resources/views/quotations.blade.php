@@ -6,6 +6,7 @@
     <title>Create Quotation - QuoteFlow</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body class="h-full bg-gray-100 flex flex-col" x-data="clientsData()">
     <div x-data="{ sidebarOpen: false }" class="h-full flex"> 
@@ -201,9 +202,21 @@
                             </select>
                         </div>
                         <div>
-                            <label class="text-sm text-gray-600 font-medium">Quotation Title *</label>
-                            <input type="text" name="title" placeholder="e.g. Website Development Project" class="w-full border rounded-lg p-2 mt-1" required>
-                        </div>
+   <div>
+    <label class="text-sm text-gray-600 font-medium">Quotation Title *</label>
+    <!-- Added ID and data-ai attribute for AI integration -->
+    <input 
+        type="text" 
+        id="quotation_title"
+        name="title" 
+        placeholder="e.g. Website Development Project" 
+        class="w-full border rounded-lg p-2 mt-1" 
+        required
+        data-ai="title"
+    >
+</div>
+
+
                         <div>
                             <label class="text-sm text-gray-600 font-medium">Quotation Date *</label>
                             <input type="date" name="quotation_date" value="{{ date('Y-m-d') }}" class="w-full border rounded-lg p-2 mt-1" required>
@@ -392,27 +405,41 @@ function addItem() {
 // Initialize listeners on page load
 attachListeners();
 function generateItemDescriptionAI(button) {
-    const row = button.closest('.item-row');
-    const title = document.querySelector('input[name="title"]').value || "Quotation";
+    const row = button.closest('.item-row'); 
+    const titleInput = document.getElementById('quotation_title');
+    const title = titleInput ? titleInput.value.trim() : '';
 
-    fetch('/ai/generate-quotation', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-        },
-        body: JSON.stringify({ title: title })
-    })
+    if (!title) {
+        alert('Please enter Quotation Title first.');
+        return;
+    }
+
+   fetch('/ai/generate-quotation', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+    },
+    body: JSON.stringify({ title: title })
+})
+
     .then(res => res.json())
     .then(data => {
         if (data.description) {
-            row.querySelector('input[name*="[description]"]').value = data.description;
+            const descInput = row.querySelector('input[name*="[description]"]');
+            if (descInput) {
+                descInput.value = data.description;
+            }
+        } else {
+            alert('AI did not return a description.');
         }
     })
-    .catch(err => console.error(err));
+    .catch(err => {
+        console.error('AI generation error:', err);
+        alert('Failed to generate AI description.');
+    });
 }
-
 
 
 </script>
