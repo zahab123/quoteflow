@@ -13,8 +13,6 @@ use Dompdf\Dompdf;
 use App\Models\Company; 
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB; 
-use App\Services\OpenAIService;
-
 
 class QuotationController extends Controller
 {
@@ -25,62 +23,62 @@ class QuotationController extends Controller
         return view('quotations', compact('clients'));
     }
 
-    public function addquotation(Request $request)
-    {
-        $request->validate([
-            'client_id' => 'required|exists:clients,id',
-            'title' => 'required|string|max:255',
-            'items' => 'required|array',
-            'status' => 'required|in:sent,draft'
-        ]);
+   public function addquotation(Request $request)
+{
+    $request->validate([
+        'client_id' => 'required|exists:clients,id',
+        'title' => 'required|string|max:255',
+        'items' => 'required|array',
+        'status' => 'required|in:sent,draft'
+    ]);
 
-        $total = 0;
-        $taxTotal = 0;
-        $discountTotal = 0;
+ 
 
-        foreach ($request->items as $item) {
-            $itemTotal = ($item['qty'] * $item['unit_price']) - ($item['discount'] ?? 0) + ($item['tax'] ?? 0);
-            $total += $itemTotal;
-            $taxTotal += ($item['tax'] ?? 0);
-            $discountTotal += ($item['discount'] ?? 0);
-        }
+    $total = 0;
+    $taxTotal = 0;
+    $discountTotal = 0;
 
-        // Create quotation
-        $quotation = Quotations::create([
-            'user_id' => Auth::id(),
-            'client_id' => $request->client_id,
-            'title' => $request->title,
-            'total' => $total,
-            'tax' => $taxTotal,
-            'discount' => $discountTotal,
-            'status' => $request->status,
-            'notes' => $request->notes ?? null
-        ]);
-
-        foreach ($request->items as $item) {
-            $itemTotal = ($item['qty'] * $item['unit_price']) + ($item['tax'] ?? 0) - ($item['discount'] ?? 0);
-
-            QuotationItems::create([
-                'quotation_id' => $quotation->id,
-                'description' => $item['description'],
-                'qty' => $item['qty'],
-                'unit_price' => $item['unit_price'],
-                'tax' => $item['tax'] ?? 0,
-                'discount' => $item['discount'] ?? 0,
-                'total' => $itemTotal
-            ]);
-        }
-
-        QuotationStatusLog::create([
-            'quotation_id' => $quotation->id,
-            'status' => $request->status,
-            'changed_at' => now(),
-            'remarks' => null
-        ]);
-
-        return redirect()->route('quotationlist')->with('success', 'Quotation added successfully!');
+    foreach ($request->items as $item) {
+        $itemTotal = ($item['qty'] * $item['unit_price']) - ($item['discount'] ?? 0) + ($item['tax'] ?? 0);
+        $total += $itemTotal;
+        $taxTotal += ($item['tax'] ?? 0);
+        $discountTotal += ($item['discount'] ?? 0);
     }
 
+    $quotation = Quotations::create([
+        'user_id' => Auth::id(),
+        'client_id' => $request->client_id,
+        'title' => $request->title,
+        'total' => $total,
+        'tax' => $taxTotal,
+        'discount' => $discountTotal,
+        'status' => $request->status,
+        'notes' => $request->notes ?? null
+    ]);
+
+    foreach ($request->items as $item) {
+        $itemTotal = ($item['qty'] * $item['unit_price']) + ($item['tax'] ?? 0) - ($item['discount'] ?? 0);
+
+        QuotationItems::create([
+            'quotation_id' => $quotation->id,
+            'description' => $item['description'] ?? $aiDescription, // ← AI description
+            'qty' => $item['qty'],
+            'unit_price' => $item['unit_price'],
+            'tax' => $item['tax'] ?? 0,
+            'discount' => $item['discount'] ?? 0,
+            'total' => $itemTotal
+        ]);
+    }
+
+    QuotationStatusLog::create([
+        'quotation_id' => $quotation->id,
+        'status' => $request->status,
+        'changed_at' => now(),
+        'remarks' => null
+    ]);
+
+    return redirect()->route('quotationlist')->with('success', 'Quotation added successfully!');
+}
 public function update(Request $request, $id)
 {
     // Validate main quotation data
@@ -160,7 +158,7 @@ public function update(Request $request, $id)
     });
 
     return redirect()->route('quotationlist')->with('success', 'Quotation updated successfully.');
-}
+    }
     // List all quotations with search & filter
     public function quotationlist(Request $request)
     {
@@ -228,18 +226,18 @@ public function update(Request $request, $id)
     }
 
   
-public function download($id)
-{
-    $quotation = Quotations::with('items', 'client')->findOrFail($id);
+    public function download($id)
+    {
+        $quotation = Quotations::with('items', 'client')->findOrFail($id);
 
-    $company = Company::first(); 
+        $company = Company::first(); 
 
-    $pdf = Pdf::loadView('quotations.pdf', compact('quotation', 'company'))
-              ->setPaper('a4', 'portrait');
+        $pdf = Pdf::loadView('quotations.pdf', compact('quotation', 'company'))
+                ->setPaper('a4', 'portrait');
 
-    return $pdf->download('quotation_'.$quotation->id.'.pdf');
-}
-public function sendEmail($id)
+        return $pdf->download('quotation_'.$quotation->id.'.pdf');
+    }
+    public function sendEmail($id)
     {
         $quotation = Quotations::findOrFail($id);
 
@@ -252,4 +250,26 @@ public function sendEmail($id)
 
         return back()->with('success', 'Email sent successfully!');
     }
+
+    public function generateDescription(Request $request)
+    {
+        $title = $request->input('title'); // Get the title from request
+        $apiKey = env('GEMINI_API_KEY');
+
+        $response = Http::withHeaders([
+            'Authorization' => "Bearer $apiKey",
+            'Content-Type' => 'application/json',
+        ])->post('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0:generateText', [
+            "prompt" => "Write a professional quotation description for: $title",
+            "temperature" => 0.7,
+            "maxOutputTokens" => 200
+        ]);
+
+        if ($response->successful()) {
+            $description = $response['candidates'][0]['content'] ?? '';
+            return response()->json(['description' => $description]);
+        } else {
+            return response()->json(['error' => $response->body()], 500);
+        }
+}
 }

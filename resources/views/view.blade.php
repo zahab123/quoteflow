@@ -255,13 +255,16 @@
 
        
         <div class="text-sm text-gray-600">
-           Phone no: {{ $company->phone ?? 'Company Phone' }}
+           Phone no: {{ $company->phone ?? '' }}
         </div>
          <div class="text-sm text-gray-600">
-           Email: {{ $company->email ?? 'Company Website' }}
+           Email: {{ $company->email ?? '' }}
+        </div>
+        <div class="text-sm text-gray-600">
+           Website: {{ $company->website ?? '' }}
         </div>
          <div class="text-sm text-gray-600">
-          Address: {{ $company->address ?? 'Company Address' }}
+          Address: {{ $company->address ?? '' }}
         </div>
 
     </div>
