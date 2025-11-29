@@ -59,9 +59,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/quotations/{id}/edit', [QuotationController::class, 'edit'])->name('editquotation');
     Route::put('/quotations/{id}', [QuotationController::class, 'update'])->name('updatequotation');
     Route::get('/quotations/{id}/copy', [QuotationController::class, 'copy'])->name('quotations.copy');
-  
-Route::post('/quotations/generate-description', [QuotationController::class, 'generateDescription'])
-    ->name('quotations.generateDescription');
+    // web.php
+    Route::post('/quotations/generate-description', [QuotationController::class, 'generateDescription'])->name('quotations.generateDescription');
+
     // PDF routes
     Route::get('/quotations/download/{id}', [App\Http\Controllers\QuotationController::class, 'download'])->name('quotations.download');
     // send PDF to email
@@ -108,3 +108,10 @@ Route::post('/quotations/generate-description', [QuotationController::class, 'ge
 
 
 require __DIR__.'/auth.php';
+
+
+
+
+
+
+

@@ -13,6 +13,10 @@ use Dompdf\Dompdf;
 use App\Models\Company; 
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB; 
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+
+
 
 class QuotationController extends Controller
 {
@@ -20,6 +24,7 @@ class QuotationController extends Controller
     public function create()
     {
         $clients = Clients::all();
+     
         return view('quotations', compact('clients'));
     }
 
@@ -251,25 +256,51 @@ public function update(Request $request, $id)
         return back()->with('success', 'Email sent successfully!');
     }
 
-    public function generateDescription(Request $request)
-    {
-        $title = $request->input('title'); // Get the title from request
-        $apiKey = env('GEMINI_API_KEY');
 
+public function generateDescription(Request $request)
+{
+    $request->validate([
+        'title' => 'required|string|max:255',
+    ]);
+
+    $title = $request->input('title');
+    $apiKey = env('GEMINI_API_KEY');
+
+    if (!$apiKey) {
+        return response()->json(['error' => 'GEMINI_API_KEY not set'], 500);
+    }
+
+    $apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' . $apiKey;
+
+    $payload = [
+        'contents' => [
+            ['parts' => [['text' => "Write a clear and engaging description for a quotation Use only plain words without any bullets commas or symbols Write it in a single paragraph Keep it concise and write accord the discription column size is 255 varchar \"$title\"."]]]
+        ],
+        'generationConfig' => [
+            'temperature' => 0.8,
+            'maxOutputTokens' => 2048
+        ]
+    ];
+
+    try {
         $response = Http::withHeaders([
-            'Authorization' => "Bearer $apiKey",
             'Content-Type' => 'application/json',
-        ])->post('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0:generateText', [
-            "prompt" => "Write a professional quotation description for: $title",
-            "temperature" => 0.7,
-            "maxOutputTokens" => 200
-        ]);
+        ])->post($apiUrl, $payload)->json();
 
-        if ($response->successful()) {
-            $description = $response['candidates'][0]['content'] ?? '';
-            return response()->json(['description' => $description]);
-        } else {
-            return response()->json(['error' => $response->body()], 500);
+        $generated = $response['candidates'][0]['content']['parts'][0]['text'] ?? null;
+
+        if (!$generated) {
+            Log::error('Gemini returned empty response', ['response' => $response]);
+            return response()->json(['error' => 'AI did not return a description'], 500);
         }
+
+        return response()->json(['description' => trim($generated)]);
+    } catch (\Exception $e) {
+        Log::error('Gemini API failed: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
+        return response()->json(['error' => 'Server error: '.$e->getMessage()], 500);
+    }
 }
+
+
+
 }

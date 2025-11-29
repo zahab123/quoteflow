@@ -6,7 +6,7 @@
     <title>Create Quotation - QuoteFlow</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+   <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body class="h-full bg-gray-100 flex flex-col">
     <div x-data="{ sidebarOpen: false }" class="h-full flex">
@@ -125,215 +125,373 @@
             </div>
         </aside>
 
-        <!-- Main Content -->
-       <div class="flex-1 flex flex-col overflow-x-hidden overflow-y-auto">
-        <nav class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-30">
-            <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16 items-center">
-                    <div class="flex items-center space-x-4 w-full sm:w-auto">
-                        <button @click="sidebarOpen = true" class="text-gray-500 hover:text-gray-800 md:hidden p-2 rounded-full hover:bg-gray-100 transition">
-                            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                            </svg>
-                        </button>
-                        <h1 class="text-xl font-semibold text-gray-800 hidden sm:block">Dashboard</h1>
-                    </div>
-                </div>
-            </div>
-        </nav>
-
-        <main class="flex-1 p-6 sm:p-10 overflow-auto">
-            <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-800">New Quotation</h1>
-                    <p class="text-sm text-gray-500">Create and manage your quotations</p>
-                </div>
-                <a href="{{ route('quotationlist') }}" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">Back to Quotations</a>
-            </div>
-
-            <form action="{{ route('addquotation') }}" method="POST">
-                @csrf
-                <!-- Basic Information -->
-                <div class="bg-white p-6 rounded-xl shadow mb-6">
-                    <h2 class="font-semibold text-gray-600 mb-4">Basic Information</h2>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                        <div>
-                            <label class="text-sm text-gray-600 font-medium">Client *</label>
-                            <select name="client_id" class="w-full border rounded-lg p-2 mt-1" required>
-                                <option value="">Select Client</option>
-                                @foreach($clients as $client)
-                                    <option value="{{ $client->id }}">{{ $client->name }}</option>
-                                @endforeach
-                            </select>
+        <div class="flex-1 flex flex-col overflow-x-hidden overflow-y-auto">
+            <nav class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-30">
+                <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex justify-between h-16 items-center">
+                        <div class="flex items-center space-x-4 w-full sm:w-auto">
+                            <button @click="sidebarOpen = true" class="text-gray-500 hover:text-gray-800 md:hidden p-2 rounded-full hover:bg-gray-100 transition">
+                                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                                </svg>
+                            </button>
+                            <h1 class="text-xl font-semibold text-gray-800 hidden sm:block">Add Quotation</h1>
+                            
+                            <div class="relative flex-1 max-w-sm">
+                                <input type="text" placeholder="Search..."
+                                       class="pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none w-full text-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 3a7.5 7.5 0 006.15 13.65z" />
+                                </svg>
+                            </div>
                         </div>
-                        <div>
-                            <label class="text-sm text-gray-600 font-medium">Quotation Title *</label>
-                            <input type="text" name="title" placeholder="e.g. Website Development Project" class="w-full border rounded-lg p-2 mt-1" required>
-                        </div>
-                        <div>
-                            <label class="text-sm text-gray-600 font-medium">Quotation Date *</label>
-                            <input type="date" name="quotation_date" value="{{ date('Y-m-d') }}" class="w-full border rounded-lg p-2 mt-1" required>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Line Items -->
-                <div class="bg-white p-6 rounded-xl shadow mb-6">
-                    <h2 class="font-semibold text-gray-600 mb-4">Line Items</h2>
-                    <div id="items-container">
-                        <div class="grid grid-cols-7 gap-3 mb-2 item-row items-end">
-                            <div class="flex flex-col relative">
-                                <label class="text-xs text-gray-500">Description</label>
-                                <input name="items[0][description]" placeholder="Description" class="border p-2 rounded description" required>
-                                <button type="button" onclick="generateDescription(this)" class="absolute top-0 right-0 mt-1 mr-1 px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600">AI</button>
-                            </div>
-                            <div class="flex flex-col">
-                                <label class="text-xs text-gray-500">Quantity</label>
-                                <input name="items[0][qty]" type="number" value="1" class="border p-2 rounded qty" min="1" required>
-                            </div>
-                            <div class="flex flex-col">
-                                <label class="text-xs text-gray-500">Unit Price</label>
-                                <input name="items[0][unit_price]" type="number" step="0.01" value="0" class="border p-2 rounded unit_price" required>
-                            </div>
-                            <div class="flex flex-col">
-                                <label class="text-xs text-gray-500">Tax</label>
-                                <input name="items[0][tax]" type="number" step="0.01" value="0" class="border p-2 rounded tax">
-                            </div>
-                            <div class="flex flex-col">
-                                <label class="text-xs text-gray-500">Discount</label>
-                                <input name="items[0][discount]" type="number" step="0.01" value="0" class="border p-2 rounded discount">
-                            </div>
-                            <div class="flex flex-col">
-                                <label class="text-xs text-gray-500">Total</label>
-                                <input type="text" value="RS0.00" readonly class="border p-2 rounded bg-gray-100 text-gray-500 total">
-                            </div>
-                            <div class="flex flex-col">
-                                <label class="text-xs text-gray-500">Remove</label>
-                                <button type="button" onclick="removeItem(this)" class="p-2 bg-red-500 text-white rounded hover:bg-red-600 flex items-center justify-center">
-                                    ✕
+                        <div class="flex items-center space-x-3 sm:space-x-4">
+                            <button class="relative p-2 rounded-full hover:bg-gray-100 transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405C18.21 15.21 18 14.11 18 13V9a6 6 0 10-12 0v4c0 1.11-.21 2.21-.595 3.595L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                                </svg>
+                                <span class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+                            </button>
+                            
+                            <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-100 transition hidden sm:block">
+                                <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.485-8.485l-.707.707M4.222 4.222l-.707.707M21 12h-1M4 12H3m16.485 4.485l-.707-.707M4.222 19.778l-.707-.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                                </svg>
+                                <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500 hidden dark:block" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z"/>
+                                </svg>
+                            </button>
+
+                            <div x-data="{ open: false }" class="relative hidden sm:block">
+                                <button @click="open = !open"
+                                        class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-pink-500 hover:ring-2 ring-purple-400 flex items-center justify-center text-white text-lg font-bold transition duration-150">
+                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                                 </button>
+                                <div x-show="open" @click.away="open = false"
+                                     class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-50 origin-top-right"
+                                     x-transition:enter="transition ease-out duration-100"
+                                     x-transition:enter-start="transform opacity-0 scale-95"
+                                     x-transition:enter-end="transform opacity-100 scale-100"
+                                     x-transition:leave="transition ease-in duration-75"
+                                     x-transition:leave-start="transform opacity-100 scale-100"
+                                     x-transition:leave-end="transform opacity-0 scale-95">
+                                    <div class="px-4 py-2 text-sm text-gray-700 border-b border-gray-100">
+                                        {{ Auth::user()->email }}
+                                    </div>
+                                    <x-dropdown-link :href="route('profile.edit')" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                        Profile
+                                    </x-dropdown-link>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <x-dropdown-link :href="route('logout')" class="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                                                         onclick="event.preventDefault(); this.closest('form').submit();">
+                                            Log Out
+                                        </x-dropdown-link>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </nav>
+
+
+            <main class="flex-1 p-10 overflow-auto">
+                <div class="mb-6 flex justify-between items-center">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">New Quotation</h1>
+                        <p class="text-sm text-gray-500">Create and manage your quotations</p>
+                    </div>
+                    <a href="{{ route('quotationlist') }}" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">Back to Quotations</a>
+                </div>
+
+                <form action="{{ route('addquotation') }}" method="POST">
+                    @csrf
+                    <!-- Basic Information -->
+                    <div class="bg-white p-6 rounded-xl shadow mb-6">
+                        <h2 class="font-semibold text-gray-600 mb-4">Basic Information</h2>
+                        <div class="grid grid-cols-3 gap-5">
+                            <div>
+                                <label class="text-sm text-gray-600 font-medium">Client *</label>
+                                <select name="client_id" class="w-full border rounded-lg p-2 mt-1" required>
+                                    <option value="">Select Client</option>
+                                    @foreach($clients as $client)
+                                        <option value="{{ $client->id }}">{{ $client->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-600 font-medium">Quotation Title *</label>
+                                <input type="text" name="title" placeholder="e.g. Website Development Project" class="w-full border rounded-lg p-2 mt-1" required>
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-600 font-medium">Quotation Date *</label>
+                                <input type="date" name="quotation_date" value="{{ date('Y-m-d') }}" class="w-full border rounded-lg p-2 mt-1" required>
                             </div>
                         </div>
                     </div>
-                    <button type="button" onclick="addItem()" class="mt-2 px-4 py-1 bg-black text-white rounded hover:bg-gray-800">+ Add Item</button>
-                </div>
 
-                <!-- Notes -->
-                <div class="bg-white p-6 rounded-xl shadow mb-6">
-                    <label class="text-sm font-medium text-gray-600">Notes (Optional)</label>
-                    <textarea id="notes_field" name="notes" class="w-full border rounded-lg p-3 mt-2" placeholder="Add any additional notes..."></textarea>
-                </div>
-
-                <!-- Buttons -->
-                <div class="flex flex-wrap gap-3">
-                    <button type="submit" name="status" value="sent" class="px-5 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition">Save & Send</button>
-                    <button type="submit" name="status" value="draft" class="px-5 py-2 rounded-lg bg-gray-500 text-white hover:bg-gray-600 transition">Save as Draft</button>
-                </div>
-            </form>
-        </main>
+                    <!-- Line Items -->
+                    <div class="bg-white p-6 rounded-xl shadow mb-6">
+    <h2 class="font-semibold text-gray-600 mb-4">Line Items</h2>
+    <div id="items-container">
+        <div class="mb-4 item-row">
+            <!-- Description on top -->
+          <div class="flex flex-col relative mb-4 p-4 border border-gray-300 rounded-lg shadow-md transition duration-300 hover:shadow-lg">
+    <label class="text-sm font-semibold text-gray-700 mb-1" for="item-description">Description</label>
+    <div class="relative">
+        <input 
+            name="items[0][description]" 
+            id="item-description"
+            placeholder="Enter item description..." 
+            class="w-full border-2 border-gray-300 p-3 pr-16 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 description" 
+            required
+        >
+        <button 
+            type="button" 
+            onclick="generateDescription(this)" 
+            class="absolute top-1/2 right-2 transform -translate-y-1/2 px-3 py-1 bg-indigo-600 text-white font-medium rounded-md text-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150"
+            aria-label="Generate description using AI"
+        >
+            AI
+        </button>
     </div>
 </div>
-
-<script>
-    let index = 1;
-
-    function removeItem(button){
-        button.closest('.item-row').remove();
-        updateSummary();
-    }
-
-    function addItem(){
-        const container = document.getElementById('items-container');
-        const html = `
-            <div class="grid grid-cols-7 gap-3 mb-2 item-row items-end">
-                <div class="flex flex-col relative">
-                    <input name="items[${index}][description]" placeholder="Description" class="border p-2 rounded description" required>
-                    <button type="button" onclick="generateDescription(this)" class="absolute top-0 right-0 mt-1 mr-1 px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600">AI</button>
+            <!-- Other fields stacked below -->
+            <div class="grid grid-cols-6 gap-3">
+                <div class="flex flex-col">
+                    <label class="text-xs text-gray-500">Quantity</label>
+                    <input name="items[0][qty]" type="number" value="1" class="border p-2 rounded qty" min="1" required>
                 </div>
                 <div class="flex flex-col">
-                    <input name="items[${index}][qty]" type="number" value="1" class="border p-2 rounded qty" min="1" required>
+                    <label class="text-xs text-gray-500">Unit Price</label>
+                    <input name="items[0][unit_price]" type="number" step="0.01" value="0" class="border p-2 rounded unit_price" required>
                 </div>
                 <div class="flex flex-col">
-                    <input name="items[${index}][unit_price]" type="number" step="0.01" value="0" class="border p-2 rounded unit_price" required>
+                    <label class="text-xs text-gray-500">Tax</label>
+                    <input name="items[0][tax]" type="number" step="0.01" value="0" class="border p-2 rounded tax">
                 </div>
                 <div class="flex flex-col">
-                    <input name="items[${index}][tax]" type="number" step="0.01" value="0" class="border p-2 rounded tax">
+                    <label class="text-xs text-gray-500">Discount</label>
+                    <input name="items[0][discount]" type="number" step="0.01" value="0" class="border p-2 rounded discount">
                 </div>
                 <div class="flex flex-col">
-                    <input name="items[${index}][discount]" type="number" step="0.01" value="0" class="border p-2 rounded discount">
-                </div>
-                <div class="flex flex-col">
+                    <label class="text-xs text-gray-500">Total</label>
                     <input type="text" value="RS0.00" readonly class="border p-2 rounded bg-gray-100 text-gray-500 total">
                 </div>
                 <div class="flex flex-col">
-                    <button type="button" onclick="removeItem(this)" class="p-2 bg-red-500 text-white rounded hover:bg-red-600 flex items-center justify-center">✕</button>
+                    <label class="text-xs text-gray-500">Remove</label>
+                    <button type="button" onclick="removeItem(this)" class="p-2 bg-red-500 text-white rounded hover:bg-red-600 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                            <path d="M10 11v6"></path>
+                            <path d="M14 11v6"></path>
+                        </svg>
+                    </button>
                 </div>
-            </div>`;
-        container.insertAdjacentHTML('beforeend', html);
-        index++;
-    }
+            </div>
+        </div>
+    </div>
+    <button type="button" onclick="addItem()" class="mt-2 px-4 py-1 bg-black text-white rounded hover:bg-gray-800">+ Add Item</button>
+</div>
 
-    function updateSummary() {
-        let subtotal = 0, totalTax = 0, totalDiscount = 0;
-        document.querySelectorAll('.item-row').forEach(row => {
+                    <!-- Summary -->
+                    <div class="bg-white p-6 rounded-xl shadow mb-6">
+                        <h2 class="font-semibold text-gray-600 mb-4">Summary</h2>
+                        <div class="text-right space-y-1 text-gray-700">
+                            <p>Subtotal: <b id="subtotal">RS0.00</b></p>
+                            <p>Total Tax: <b id="total-tax">RS0.00</b></p>
+                            <p>Total Discount: <b id="total-discount">RS0.00</b></p>
+                            <hr>
+                            <p class="text-xl font-bold">Grand Total: <b id="grand-total">RS0.00</b></p>
+                        </div>
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="bg-white p-6 rounded-xl shadow mb-6">
+                        <label class="text-sm font-medium text-gray-600">Notes (Optional)</label>
+                        <textarea id="notes_field" name="notes" class="w-full border rounded-lg p-3 mt-2" placeholder="Add any additional notes..."></textarea>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="flex gap-3">
+                        <button type="submit" name="status" value="sent" class="px-5 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition">Save & Send</button>
+                        <button type="submit" name="status" value="draft" class="px-5 py-2 rounded-lg bg-gray-500 text-white hover:bg-gray-600 transition">Save as Draft</button>
+                    </div>
+                </form>
+            </main>
+        </div>
+    </div>
+
+
+
+
+
+    <script>
+        let index = 1;
+
+        function calculateTotal(row) {
             const qty = parseFloat(row.querySelector('.qty').value) || 0;
             const price = parseFloat(row.querySelector('.unit_price').value) || 0;
             const tax = parseFloat(row.querySelector('.tax').value) || 0;
             const discount = parseFloat(row.querySelector('.discount').value) || 0;
-            subtotal += qty * price;
-            totalTax += tax;
-            totalDiscount += discount;
-            row.querySelector('.total').value = 'RS' + ((qty*price)+tax-discount).toFixed(2);
-        });
-        const grandTotal = subtotal + totalTax - totalDiscount;
-        document.getElementById('subtotal').innerText = 'RS' + subtotal.toFixed(2);
-        document.getElementById('total-tax').innerText = 'RS' + totalTax.toFixed(2);
-        document.getElementById('total-discount').innerText = 'RS' + totalDiscount.toFixed(2);
-        document.getElementById('grand-total').innerText = 'RS' + grandTotal.toFixed(2);
-    }
-
-    document.querySelectorAll('.qty, .unit_price, .tax, .discount').forEach(el => {
-        el.addEventListener('input', updateSummary);
-    });
-
-    // ---------------- AI DESCRIPTION ----------------
-    function generateDescription(button){
-        const row = button.closest('.item-row');
-        const title = document.querySelector('input[name="title"]').value;
-
-        if(!title){
-            alert('Please enter quotation title first!');
-            return;
+            const total = (qty * price) + tax - discount;
+            row.querySelector('.total').value = 'RS' + total.toFixed(2);
+            updateSummary();
         }
 
-        button.disabled = true;
-        button.innerText = 'Generating...';
+        function updateSummary() {
+            let subtotal = 0, totalTax = 0, totalDiscount = 0;
+            document.querySelectorAll('.item-row').forEach(row => {
+                const qty = parseFloat(row.querySelector('.qty').value) || 0;
+                const price = parseFloat(row.querySelector('.unit_price').value) || 0;
+                const tax = parseFloat(row.querySelector('.tax').value) || 0;
+                const discount = parseFloat(row.querySelector('.discount').value) || 0;
+                subtotal += qty * price;
+                totalTax += tax;
+                totalDiscount += discount;
+            });
+            const grandTotal = subtotal + totalTax - totalDiscount;
+            document.getElementById('subtotal').innerText = 'RS' + subtotal.toFixed(2);
+            document.getElementById('total-tax').innerText = 'RS' + totalTax.toFixed(2);
+            document.getElementById('total-discount').innerText = 'RS' + totalDiscount.toFixed(2);
+            document.getElementById('grand-total').innerText = 'RS' + grandTotal.toFixed(2);
+        }
 
-        fetch("{{ route('quotations.generateDescription') }}", {
+        function attachListenersToRow(row) {
+            ['qty', 'unit_price', 'tax', 'discount'].forEach(cls => {
+                row.querySelector(`.${cls}`).addEventListener('input', () => calculateTotal(row));
+            });
+            const deleteBtn = row.querySelector('.delete-btn');
+            if(deleteBtn){
+                deleteBtn.addEventListener('click', () => {
+                    row.remove();
+                    updateSummary();
+                });
+            }
+            calculateTotal(row);
+        }
+
+        function attachListeners() {
+            document.querySelectorAll('.item-row').forEach(row => attachListenersToRow(row));
+        }
+
+       
+function addItem() {
+    const container = document.getElementById('items-container');
+
+    const html = `
+    <div class="mb-4 item-row">
+        <!-- Description on top -->
+        <div class="flex flex-col relative mb-4 p-4 border border-gray-300 rounded-lg shadow-md transition duration-300 hover:shadow-lg">
+    <label class="text-sm font-semibold text-gray-700 mb-1" for="item-description-${index}">Description</label>
+    <div class="relative">
+        <input 
+            name="items[${index}][description]" 
+            id="item-description-${index}"
+            placeholder="Enter item description..." 
+            class="w-full border-2 border-gray-300 p-3 pr-16 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 description" 
+            required
+        >
+        <button 
+            type="button" 
+            onclick="generateDescription(this)" 
+            class="absolute top-1/2 right-2 transform -translate-y-1/2 px-3 py-1 bg-indigo-600 text-white font-medium rounded-md text-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150"
+            aria-label="Generate description using AI"
+        >
+            AI
+        </button>
+    </div>
+</div>
+
+
+        <!-- Other fields stacked below -->
+        <div class="grid grid-cols-6 gap-3">
+            <div class="flex flex-col">
+                <label class="text-xs text-gray-500">Quantity</label>
+                <input name="items[${index}][qty]" type="number" value="1" class="border p-2 rounded qty" min="1" required>
+            </div>
+            <div class="flex flex-col">
+                <label class="text-xs text-gray-500">Unit Price</label>
+                <input name="items[${index}][unit_price]" type="number" step="0.01" value="0" class="border p-2 rounded unit_price" required>
+            </div>
+            <div class="flex flex-col">
+                <label class="text-xs text-gray-500">Tax</label>
+                <input name="items[${index}][tax]" type="number" step="0.01" value="0" class="border p-2 rounded tax">
+            </div>
+            <div class="flex flex-col">
+                <label class="text-xs text-gray-500">Discount</label>
+                <input name="items[${index}][discount]" type="number" step="0.01" value="0" class="border p-2 rounded discount">
+            </div>
+            <div class="flex flex-col">
+                <label class="text-xs text-gray-500">Total</label>
+                <input type="text" value="RS0.00" readonly class="border p-2 rounded bg-gray-100 text-gray-500 total">
+            </div>
+            <div class="flex flex-col">
+                <label class="text-xs text-gray-500">Remove</label>
+                <button type="button" onclick="removeItem(this)" class="p-2 bg-red-500 text-white rounded hover:bg-red-600 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                        <path d="M10 11v6"></path>
+                        <path d="M14 11v6"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    `;
+
+    container.insertAdjacentHTML('beforeend', html);
+    attachListenersToRow(container.lastElementChild); // keep your existing event listeners
+    index++;
+}
+function removeItem(button) {
+    const itemRow = button.closest('.item-row'); // find the parent row
+    if (itemRow) {
+        itemRow.remove(); // remove it from DOM
+    }
+}
+
+        attachListeners();
+ async function generateDescription(button) {
+    const row = button.closest('.item-row'); 
+    const titleInput = document.querySelector('input[name="title"]');
+    const descriptionInput = row.querySelector('.description');
+
+    if (!titleInput.value) {
+        alert("Please enter a quotation title first.");
+        return;
+    }
+
+    try {
+        const response = await fetch("{{ route('quotations.generateDescription') }}", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
             },
-            body: JSON.stringify({ title })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if(data.description){
-                row.querySelector('.description').value = data.description;
-            } else {
-                alert('AI failed to generate description');
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            alert('AI request failed');
-        })
-        .finally(() => {
-            button.disabled = false;
-            button.innerText = 'AI';
+            body: JSON.stringify({ title: titleInput.value })
         });
+
+        const data = await response.json();
+
+        if (data.description) {
+            descriptionInput.value = data.description;
+        } else {
+            console.error(data.error);
+            alert("AI failed to generate a description. Check console for details.");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("An error occurred while calling AI.");
     }
-</script>
+}
+
+    </script>
 </body>
 </html>
