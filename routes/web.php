@@ -12,21 +12,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PaymentController;
 
 
-Route::get('/', function () {
-    return view('welcome');
-});
+    Route::get('/', function () {
+        return view('welcome');
+    });
 
-// Since the /dashboard route is redefined later in the middleware group, 
-// this definition can generally be removed or modified to point to the desired non-auth landing.
-// I've kept it commented out as the second definition handles authenticated access.
-/*
-Route::get('/dashboard', function () {
-    return view('dashboard');
-});
-*/
-
-// Authenticated routes
-Route::middleware(['auth', 'verified'])->group(function () {
+    // Authenticated routes
+    Route::middleware(['auth', 'verified'])->group(function () {
 
     // Normal User Dashboard
     Route::get('/dashboard', function () {
@@ -82,27 +73,29 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return view('setting');
     })->name('setting');
 
-    // Admin Dashboard (Note: This middleware group should be defined separately in a real app)
+   
     Route::get('/admin/dashboard', [DashboardController::class, 'index'])
         ->middleware(['auth', 'admin'])
         ->name('admin.dashboard');
 
     // Company crud operations
-    // Note: The /settings/company route is defined three times and should be reviewed, but I keep them as is.
     Route::get('/settings/company', [CompanyController::class, 'index'])->name('company.settings');
     Route::post('/settings/company', [CompanyController::class, 'store'])->name('company.settings.store');
     Route::get('/settings/company', [CompanyController::class, 'edit'])->name('company.settings.edit');
     Route::post('/settings/company', [CompanyController::class, 'update'])->name('company.settings.store');
     Route::get('/setting', [CompanyController::class, 'settings'])->name('setting');
-
-  
-   
-
-
    
     // payment method
     Route::get('form', [PaymentController::class, 'showPaymentForm']);
     Route::post('/payment/stripe', [PaymentController::class, 'processStripePayment'])->name('payment.stripe');
+    
+    // EasyPaisa
+    Route::post('/payment/easypaisa', [PaymentController::class, 'payWithEasyPaisa'])->name('payment.easypaisa');
+    Route::any('/payment/easypaisa/callback', [PaymentController::class, 'easyPaisaCallback'])->name('payment.easypaisa.callback');
+
+    // JazzCash
+    Route::post('/payment/jazzcash', [PaymentController::class, 'payWithJazzCash'])->name('payment.jazzcash');
+    Route::any('/payment/jazzcash/callback', [PaymentController::class, 'jazzCashCallback'])->name('payment.jazzcash.callback');
 
 });
 

@@ -6,12 +6,12 @@ use Illuminate\Http\Request;
 use App\Models\Quotations;
 use Illuminate\Support\Facades\Storage;
 
-
 class CompanyController extends Controller
 {
     public function index()
     {
-        $company = Company::first();
+        $userId = auth()->id();
+        $company = Company::where('user_id', $userId)->first();
         return view('settings.company', compact('company'));
     }
 
@@ -26,9 +26,10 @@ class CompanyController extends Controller
             'logo' => 'nullable|image|mimes:jpg,jpeg,png,svg|max:2048',
         ]);
 
-        $company = Company::first() ?? new Company();
+        $userId = auth()->id();
+        $company = Company::where('user_id', $userId)->first() ?? new Company();
+        $company->user_id = $userId; // Associate with current user
 
-       
         if ($request->hasFile('logo')) {
             $logoPath = $request->file('logo')->store('company_logo', 'public');
             $company->logo = $logoPath;
@@ -44,18 +45,22 @@ class CompanyController extends Controller
 
         return back()->with('success', 'Company details saved successfully!');
     }
-    
 
- public function showQuotation($id)
+    public function showQuotation($id)
     {
-        $company = Company::first(); 
-        $quotation = Quotations::with('items', 'client')->findOrFail($id);
+        $userId = auth()->id();
+        $company = Company::where('user_id', $userId)->first();
+        $quotation = Quotations::with('items', 'client')
+            ->where('user_id', $userId)
+            ->findOrFail($id);
+
         return view('view', compact('company', 'quotation'));
     }
 
     public function edit()
     {
-        $company = Company::first();
+        $userId = auth()->id();
+        $company = Company::where('user_id', $userId)->first();
         return view('setting', compact('company'));
     }
 
@@ -70,7 +75,9 @@ class CompanyController extends Controller
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        $company = Company::first() ?? new Company();
+        $userId = auth()->id();
+        $company = Company::where('user_id', $userId)->first() ?? new Company();
+        $company->user_id = $userId;
 
         $company->company_name = $request->company_name;
         $company->email = $request->email;
@@ -79,7 +86,6 @@ class CompanyController extends Controller
         $company->address = $request->address;
 
         if ($request->hasFile('logo')) {
-            // Delete old logo if exists
             if ($company->logo && Storage::exists($company->logo)) {
                 Storage::delete($company->logo);
             }
@@ -90,12 +96,12 @@ class CompanyController extends Controller
 
         return redirect()->route('company.settings.edit')->with('success', 'Company details saved successfully!');
     }
-        
+
     public function settings()
     {
-        $company = Company::first();
+        $userId = auth()->id();
+        $company = Company::where('user_id', $userId)->first();
 
-        return view('setting', compact('company')); 
+        return view('setting', compact('company'));
     }
-
 }

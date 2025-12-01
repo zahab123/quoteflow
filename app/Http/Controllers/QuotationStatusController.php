@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;   // <-- REQUIRED!
+namespace App\Http\Controllers;
 
 use App\Models\Quotations;
 use App\Models\QuotationStatusLog;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class QuotationStatusController extends Controller
 {
-    // Change the status of a quotation
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
@@ -17,13 +16,11 @@ class QuotationStatusController extends Controller
             'remarks' => 'nullable|string'
         ]);
 
-        $quotation = Quotations::findOrFail($id);
+        $quotation = Quotations::where('user_id', Auth::id())->findOrFail($id);
 
-        // Update the quotation's current status
         $quotation->status = $request->status;
         $quotation->save();
 
-        // Log the status change
         QuotationStatusLog::create([
             'quotation_id' => $quotation->id,
             'status' => $request->status,
@@ -34,10 +31,12 @@ class QuotationStatusController extends Controller
         return redirect()->back()->with('success', 'Quotation status updated successfully!');
     }
 
-    // View status history of a quotation
     public function history($id)
     {
-        $quotation = Quotations::with('statusLogs')->findOrFail($id);
+        $quotation = Quotations::with('statusLogs')
+            ->where('user_id', Auth::id())
+            ->findOrFail($id);
+
         return view('quotation_status_history', compact('quotation'));
     }
 }

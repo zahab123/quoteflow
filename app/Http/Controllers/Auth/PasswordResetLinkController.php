@@ -7,46 +7,36 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\View\View;
-use illuminate\Validation\ValidationException;
 
 class PasswordResetLinkController extends Controller
 {
-    /**
-     * Display the password reset link request view.
-     */
     public function create(): View
     {
         return view('auth.forgot-password');
     }
 
-    /**
-     * Handle an incoming password reset link request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
+    
     public function store(Request $request): RedirectResponse
     {
-
-        $login_by = filter_var($request->input('login_by'), FILTER_VALIDATE_EMAIL)? 'email' : 'username';
-        $request->merge([$login_by => $request->input('login_by')]);
-
         $request->validate([
-            'email' => 'required_without:username|email|exists:users,email',
-            'username' => 'required_without:email|string|exists:users,username'
-
+            'login_by' => 'required|email|exists:users,email',
+        ], [
+            'login_by.required' => 'Please enter your email.',
+            'login_by.email' => 'Please enter a valid email address.',
+            'login_by.exists' => 'This email does not exist in our system.',
         ]);
 
-        // We will send the password reset link to this user. Once we have attempted
-        // to send the link, we will examine the response then see the message we
-        // need to show to the user. Finally, we'll send out a proper response.
         $status = Password::sendResetLink(
-            $request->only($login_by)
+            ['email' => $request->input('login_by')]
         );
 
-        return $status == Password::RESET_LINK_SENT
-                    ? back()->with('status', __($status))
-                    : back()->withInput($request->only($login_by))
-                        ->withErrors([$login_by => __($status)]);
+        if ($status === Password::RESET_LINK_SENT) {
+            return back()->with('status', 'Password reset link has been sent to your email address.');
+        } else {
+            
+            return back()->withErrors([
+                'login_by' => 'Unable to send reset link. Please try again later.'
+            ]);
+        }
     }
 }
-

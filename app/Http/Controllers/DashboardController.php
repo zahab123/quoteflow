@@ -7,28 +7,39 @@ use App\Models\Quotations;
 
 class DashboardController extends Controller
 {
-
     public function index()
     {
-               
-        $totalQuotations    = Quotations::count();
-        $acceptedQuotations = Quotations::where('status', 'accepted')->count();
-        $declinedQuotations = Quotations::where('status', 'declined')->count();
-        $pendingQuotations  = Quotations::whereIn('status', ['sent', 'draft'])->count();
-        $totalRevenue       = Quotations::where('status', 'accepted')->sum('total');
+        $userId = auth()->id(); 
+
+        // Counts
+        $totalQuotations    = Quotations::where('user_id', $userId)->count();
+        $acceptedQuotations = Quotations::where('user_id', $userId)->where('status', 'accepted')->count();
+        $declinedQuotations = Quotations::where('user_id', $userId)->where('status', 'declined')->count();
+        $pendingQuotations  = Quotations::where('user_id', $userId)->whereIn('status', ['sent', 'draft'])->count();
+
+        // Total revenue from accepted quotations only
+        $totalRevenue = Quotations::where('user_id', $userId)
+            ->where('status', 'accepted')
+            ->sum('total');
+
+        // Latest 5 quotations
         $latestQuotations = Quotations::with('client')
+            ->where('user_id', $userId)
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get();
 
-
+        // Monthly counts
         $monthlyData = Quotations::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
+            ->where('user_id', $userId)
             ->whereYear('created_at', date('Y'))
             ->groupBy('month')
             ->orderBy('month')
             ->get();
 
+        // Monthly revenue
         $monthlyRevenueData = Quotations::selectRaw('MONTH(created_at) as month, SUM(total) as revenue')
+            ->where('user_id', $userId)
             ->whereYear('created_at', date('Y'))
             ->where('status', 'accepted')
             ->groupBy('month')
@@ -60,22 +71,30 @@ class DashboardController extends Controller
 
     public function report()
     {
-                     
-        $totalQuotations    = Quotations::count();
-        $acceptedQuotations = Quotations::where('status', 'accepted')->count();
-        $declinedQuotations = Quotations::where('status', 'declined')->count();
-        $pendingQuotations  = Quotations::whereIn('status', ['sent', 'draft'])->count();
-        $totalRevenue       = Quotations::where('status', 'accepted')->sum('total');
+        $userId = auth()->id(); 
 
+        // Counts
+        $totalQuotations    = Quotations::where('user_id', $userId)->count();
+        $acceptedQuotations = Quotations::where('user_id', $userId)->where('status', 'accepted')->count();
+        $declinedQuotations = Quotations::where('user_id', $userId)->where('status', 'declined')->count();
+        $pendingQuotations  = Quotations::where('user_id', $userId)->whereIn('status', ['sent', 'draft'])->count();
 
+        // Total revenue from accepted quotations only
+        $totalRevenue = Quotations::where('user_id', $userId)
+            ->where('status', 'accepted')
+            ->sum('total');
+
+        // Monthly counts
         $monthlyData = Quotations::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
+            ->where('user_id', $userId)
             ->whereYear('created_at', date('Y'))
             ->groupBy('month')
             ->orderBy('month')
             ->get();
 
-            
+        // Monthly revenue
         $monthlyRevenueData = Quotations::selectRaw('MONTH(created_at) as month, SUM(total) as revenue')
+            ->where('user_id', $userId)
             ->whereYear('created_at', date('Y'))
             ->where('status', 'accepted')
             ->groupBy('month')
