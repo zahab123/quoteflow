@@ -268,15 +268,15 @@ class QuotationController extends Controller
         return back()->with('error', 'Client email not found.');
     }
 
-    // Send Email
+   
     Mail::to($quotation->client->email)
         ->send(new QuotationMail($quotation, null, true));
 
-    // Update status
+
     $quotation->status = 'sent';
     $quotation->save();
 
-    // Add log entry
+    
     QuotationStatusLog::create([
         'quotation_id' => $quotation->id,
         'status' => 'sent',
@@ -284,7 +284,7 @@ class QuotationController extends Controller
         'remarks' => 'Quotation PDF sent to client'
     ]);
 
-    return back()->with('success', 'Email sent and status updated!');
+    return back()->with('success', 'Email sent Sucessfully');
 }
 
 

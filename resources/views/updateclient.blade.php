@@ -88,30 +88,38 @@
                     </a>
                 </li>
             </ul>
-            <div class="px-6 py-6 flex items-center gap-3 border-t" x-data="{ open: false }">
-                <div class="relative">
-                    <button @click="open = !open"
-                            class="w-12 h-12 rounded-full flex items-center justify-center text-white text-lg font-bold"
-                            style="background: linear-gradient(135deg, #6366F1, #EC4899);">
-                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                    </button>
-                    <div>
-                        <div class="font-medium text-gray-800">{{ Auth::user()->name }}</div>
-                        <div class="text-sm text-gray-500">{{ Auth::user()->email }}</div>
-                    </div>
-                    <div x-show="open" @click.away="open = false"
-                         class="absolute bottom-full mb-2 left-0 w-48 bg-white border rounded shadow-lg z-50">
-                        <x-dropdown-link :href="route('profile.edit')" class="block px-4 py-2 hover:bg-gray-100">Profile</x-dropdown-link>
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <x-dropdown-link :href="route('logout')" class="block px-4 py-2 hover:bg-gray-100"
-                                             onclick="event.preventDefault(); this.closest('form').submit();">
-                                Log Out
-                            </x-dropdown-link>
-                        </form>
-                    </div>
-                </div>
+            <div class="px-6 py-4 flex items-center gap-3 border-t border-gray-100">
+        <div class="relative w-full flex items-center gap-3" x-data="{ open: false }">
+            <button @click="open = !open"
+                    class="w-12 h-12 rounded-full flex items-center justify-center text-white text-lg font-bold flex-shrink-0"
+                    style="background: linear-gradient(135deg, #6366F1, #EC4899);">
+                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+            </button>
+            <div class="truncate">
+                <div class="font-semibold text-gray-800 truncate">{{ Auth::user()->name }}</div>
+                <div class="text-xs text-gray-500 truncate">{{ Auth::user()->email }}</div>
             </div>
+
+            <div x-show="open" @click.away="open = false"
+                 class="absolute bottom-full mb-3 left-0 w-full bg-white border border-gray-200 rounded-lg shadow-xl z-50 origin-bottom"
+                 x-transition:enter="transition ease-out duration-100"
+                 x-transition:enter-start="transform opacity-0 scale-95"
+                 x-transition:enter-end="transform opacity-100 scale-100"
+                 x-transition:leave="transition ease-in duration-75"
+                 x-transition:leave-start="transform opacity-100 scale-100"
+                 x-transition:leave-end="transform opacity-0 scale-95">
+                <x-dropdown-link :href="route('profile.edit')" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-t-lg">Profile</x-dropdown-link>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <x-dropdown-link :href="route('logout')" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-b-lg"
+                                     onclick="event.preventDefault(); this.closest('form').submit();">
+                        Log Out
+                    </x-dropdown-link>
+                </form>
+            </div>
+        </div>
+    </div>
+
         </aside>
 
 

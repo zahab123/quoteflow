@@ -40,7 +40,7 @@
                 <p>Email: {{ $company->email ?? '-' }}</p>
                 <p>Phone: {{ $company->phone ?? '-' }}</p>
                 <p>Website: {{ $company->website ?? '-' }}</p>
-                <p>{{ $company->address ?? 'Company Address' }}</p>
+                <p>Address: {{ $company->address ?? 'Company Address' }}</p>
             </td>
             <td style="width:50%; text-align:right;">
                 <p class="bold gradient-text" style="font-size:18px;">QUOTATION</p>
