@@ -128,6 +128,7 @@
             </div>
     </aside>
 
+
     <!-- Main Content -->
     <div class="flex-1 flex flex-col overflow-y-auto">
         <!-- Navbar -->
@@ -195,7 +196,17 @@
                     <h1 class="text-3xl font-bold text-gray-800">View Quotation</h1>
                     <p class="text-sm text-gray-500">Detailed view of quotation #{{ $quotation->id }}</p>
                 </div>
+@if(session('success'))
+    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
+        {{ session('success') }}
+    </div>
+@endif
 
+@if(session('error'))
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+        {{ session('error') }}
+    </div>
+@endif
                 <div class="flex flex-wrap gap-2">
                     <!-- Back, Download, Send Email, Add Payment buttons -->
                     <a href="{{ route('quotationlist') }}" 
