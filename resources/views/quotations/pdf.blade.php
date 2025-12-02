@@ -10,40 +10,46 @@
         table { width: 100%; border-collapse: collapse; }
         td, th { padding: 3px; vertical-align: top; }
         .items-table th, .items-table td { border: 1px solid #000; padding: 2mm; }
-        .items-table th { background-color: #ccc; }
+        .items-table th { background-color: #6366F1; color: #fff; }
         .text-right { text-align: right; }
         .bold { font-weight: bold; }
-        .logo { width: 60px; height: 60px; }
+        .logo-container { width: 80px; height: 80px; border-radius: 50%; overflow: hidden; display: inline-block; margin-bottom: 5px; }
+        .logo-container img { width: 100%; height: 100%; object-fit: contain; }
         .totals-container { width: 100%; margin-top: 5mm; }
         .totals-table { width: 40%; margin-left: auto; border: 1px solid #000; }
+        .gradient-text { background: linear-gradient(135deg, #6366F1, #EC4899); -webkit-background-clip: text; color: transparent; }
+        .payment-table th { background-color: #6366F1; color: white; border: 1px solid #000; padding: 2mm; }
+        .payment-table td { border: 1px solid #000; padding: 2mm; }
+        .status-paid { color: green; font-weight: bold; }
     </style>
 </head>
 <body>
 <div class="a4-page">
-   
+    <!-- Company & Quotation Header -->
     <table>
         <tr>
             <td style="width:50%;">
-                @if($company && $company->logo)
-                    <img src="{{ storage_path('app/public/' . $company->logo) }}" class="logo">
-                @else
-                    <img src="{{ public_path('images/logo.PNG') }}" class="logo">
-                @endif
+                <div class="logo-container">
+                    @if($company && $company->logo)
+                        <img src="{{ storage_path('app/public/' . $company->logo) }}">
+                    @else
+                        <img src="{{ public_path('images/logo.PNG') }}">
+                    @endif
+                </div>
                 <p class="bold">{{ $company->company_name ?? 'Company Name' }}</p>
-               
                 <p>Email: {{ $company->email ?? '-' }}</p>
                 <p>Phone: {{ $company->phone ?? '-' }}</p>
                 <p>Website: {{ $company->website ?? '-' }}</p>
                 <p>{{ $company->address ?? 'Company Address' }}</p>
             </td>
             <td style="width:50%; text-align:right;">
-                <p class="bold" style="font-size:18px;">QUOTATION</p>
+                <p class="bold gradient-text" style="font-size:18px;">QUOTATION</p>
                 <p>#{{ $quotation->id }}</p>
             </td>
         </tr>
     </table>
 
-    
+    <!-- Billed To & Dates -->
     <table style="margin-top:10px;">
         <tr>
             <td style="width:50%;">
@@ -55,12 +61,18 @@
             <td style="width:50%; text-align:right;">
                 <p>Quotation Date: {{ $quotation->created_at->format('Y-m-d') }}</p>
                 <p>Due Date: {{ $quotation->due_date ?? 'N/A' }}</p>
-                <p>Status: {{ $quotation->status }}</p>
+                <p>Status: 
+                    @if($quotation->total - $quotation->payments->sum('amount') <= 0)
+                        <span class="status-paid">Paid</span>
+                    @else
+                        {{ $quotation->status }}
+                    @endif
+                </p>
             </td>
         </tr>
     </table>
 
-    
+    <!-- Items Table -->
     <table class="items-table" style="margin-top:10px;">
         <thead>
             <tr>
@@ -88,6 +100,11 @@
         </tbody>
     </table>
 
+    <!-- Totals -->
+    @php
+        $totalPaid = $quotation->payments->sum('amount');
+        $remainingAmount = $quotation->total - $totalPaid;
+    @endphp
     <div class="totals-container">
         <table class="totals-table">
             <tr>
@@ -103,9 +120,40 @@
                 <td class="text-right">RS{{ number_format($quotation->discount,2) }}</td>
             </tr>
             <tr>
-                <td class="bold">Total:</td>
-                <td class="text-right bold">RS{{ number_format($quotation->total,2) }}</td>
+                <td class="bold">Total Paid:</td>
+                <td class="text-right bold">RS{{ number_format($totalPaid,2) }}</td>
             </tr>
+            <tr>
+                <td class="bold">Remaining:</td>
+                <td class="text-right bold">RS{{ number_format($remainingAmount,2) }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Payment History -->
+    <div style="margin-top:10mm;">
+        <p class="bold">Payment History:</p>
+        <table class="payment-table">
+            <thead>
+                <tr>
+                    <th>Amount</th>
+                    <th>Method</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse ($quotation->payments ?? [] as $payment)
+                    <tr>
+                        <td class="text-right">RS{{ number_format($payment->amount,2) }}</td>
+                        <td>{{ $payment->payment_method }}</td>
+                        <td>{{ $payment->created_at->format('d M Y') }}</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="3" style="text-align:center;">No payments recorded yet.</td>
+                    </tr>
+                @endforelse
+            </tbody>
         </table>
     </div>
 

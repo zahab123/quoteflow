@@ -45,6 +45,13 @@ class Quotations extends Model
     {
         return $this->hasOne(QuotationStatusLog::class, 'quotation_id')->latestOfMany('changed_at');
     }
+    
+
+public function payments()
+{
+    return $this->hasMany(Payment::class, 'quotation_id', 'id');
+}
+
 
 
 

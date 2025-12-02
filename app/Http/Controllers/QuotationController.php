@@ -259,20 +259,34 @@ class QuotationController extends Controller
     }
 
     // Send quotation email
-    public function sendEmail($id)
-    {
-        $quotation = Quotations::where('user_id', Auth::id())
-            ->findOrFail($id);
+   public function sendEmail($id)
+{
+    $quotation = Quotations::where('user_id', Auth::id())
+        ->findOrFail($id);
 
-        if (!$quotation->client || !$quotation->client->email) {
-            return back()->with('error', 'Client email not found.');
-        }
-
-        Mail::to($quotation->client->email)
-            ->send(new QuotationMail($quotation, null, true)); // attach = true
-
-        return back()->with('success', 'Email sent successfully!');
+    if (!$quotation->client || !$quotation->client->email) {
+        return back()->with('error', 'Client email not found.');
     }
+
+    // Send Email
+    Mail::to($quotation->client->email)
+        ->send(new QuotationMail($quotation, null, true));
+
+    // Update status
+    $quotation->status = 'sent';
+    $quotation->save();
+
+    // Add log entry
+    QuotationStatusLog::create([
+        'quotation_id' => $quotation->id,
+        'status' => 'sent',
+        'changed_at' => now(),
+        'remarks' => 'Quotation PDF sent to client'
+    ]);
+
+    return back()->with('success', 'Email sent and status updated!');
+}
+
 
     // Generate AI description
     public function generateDescription(Request $request)

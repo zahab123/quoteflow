@@ -319,7 +319,7 @@
 
                     <!-- Buttons -->
                     <div class="flex gap-3">
-                        <button type="submit" name="status" value="sent" class="px-5 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition">Save & Send</button>
+
                         <button type="submit" name="status" value="draft" class="px-5 py-2 rounded-lg bg-gray-500 text-white hover:bg-gray-600 transition">Save as Draft</button>
                     </div>
                 </form>

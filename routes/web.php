@@ -85,18 +85,11 @@ use App\Http\Controllers\PaymentController;
     Route::post('/settings/company', [CompanyController::class, 'update'])->name('company.settings.store');
     Route::get('/setting', [CompanyController::class, 'settings'])->name('setting');
    
-    // payment method
-    Route::get('form', [PaymentController::class, 'showPaymentForm']);
-    Route::post('/payment/stripe', [PaymentController::class, 'processStripePayment'])->name('payment.stripe');
+    // payment history
+    Route::post('/quotations/{id}/payments', [PaymentController::class, 'store'])
+    ->name('payments.store');
+
     
-    // EasyPaisa
-    Route::post('/payment/easypaisa', [PaymentController::class, 'payWithEasyPaisa'])->name('payment.easypaisa');
-    Route::any('/payment/easypaisa/callback', [PaymentController::class, 'easyPaisaCallback'])->name('payment.easypaisa.callback');
-
-    // JazzCash
-    Route::post('/payment/jazzcash', [PaymentController::class, 'payWithJazzCash'])->name('payment.jazzcash');
-    Route::any('/payment/jazzcash/callback', [PaymentController::class, 'jazzCashCallback'])->name('payment.jazzcash.callback');
-
 });
 
 

@@ -15,7 +15,8 @@
         .gradient-bg { background: linear-gradient(135deg, #6366F1, #EC4899); }
     </style>
 </head>
-<body class="h-screen flex">
+<body class="h-screen flex bg-gray-50">
+    <!-- Sidebar Overlay -->
     <div x-show="sidebarOpen" @click="sidebarOpen = false"
          class="fixed inset-0 bg-gray-600 bg-opacity-75 z-40 md:hidden"
          x-transition:enter="transition-opacity ease-linear duration-300"
@@ -24,11 +25,14 @@
          x-transition:leave="transition-opacity ease-linear duration-300"
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"></div>
+
+    <!-- Sidebar -->
     <aside class="fixed inset-y-0 left-0 z-50 w-60 bg-white h-screen shadow-md border-r flex flex-col
                   transform md:translate-x-0 md:static md:flex-shrink-0"
            :class="{ 'translate-x-0 ease-out': sidebarOpen, '-translate-x-full ease-in': !sidebarOpen }"
            x-transition:enter="transition ease-out duration-300"
            x-transition:leave="transition ease-in duration-300">
+        <!-- Logo & Title -->
         <div class="px-6 py-6 flex items-center gap-2 border-b">
             <button @click="sidebarOpen = false" class="md:hidden mr-3 text-gray-500 hover:text-gray-800">
                 <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -41,6 +45,7 @@
             </span>
         </div>
 
+        <!-- Navigation -->
         <ul class="mt-4 flex-1 overflow-y-auto text-gray-700 font-medium">
             <li>
                 <a href="/admin/dashboard"
@@ -89,7 +94,7 @@
             </li>
         </ul>
 
-        
+        <!-- Profile -->
         <div class="px-6 py-6 border-t mt-auto" x-data="{ open: false }">
             <div class="relative flex items-center gap-3">
                 <button @click="open = !open"
@@ -116,106 +121,151 @@
         </div>
     </aside>
 
-        <div class="flex-1 flex flex-col overflow-y-auto">
-            <nav class="bg-white border-b border-gray-200 shadow-sm">
-                <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex justify-between h-16 items-center">
-                        <div class="flex items-center space-x-4">
-                            <button @click="sidebarOpen = true" class="text-gray-500 hover:text-gray-800 md:hidden">
-                                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                                </svg>
-                            </button>
-                            <h1 class="text-xl font-semibold text-gray-800 hidden sm:block">View Quotation</h1>
-                             <div class="relative w-full">
-                                <input type="text" placeholder="Search..."
-                                       class="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none w-40 sm:w-64">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 3a7.5 7.5 0 006.15 13.65z" />
-                                </svg>
-                            </div>
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col overflow-y-auto">
+        <!-- Navbar -->
+        <nav class="bg-white border-b border-gray-200 shadow-sm">
+            <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16 items-center">
+                    <div class="flex items-center space-x-4">
+                        <button @click="sidebarOpen = true" class="text-gray-500 hover:text-gray-800 md:hidden">
+                            <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            </svg>
+                        </button>
+                        <h1 class="text-xl font-semibold text-gray-800 hidden sm:block">View Quotation</h1>
+                        <div class="relative w-full">
+                            <input type="text" placeholder="Search..."
+                                   class="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none w-40 sm:w-64">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 3a7.5 7.5 0 006.15 13.65z" />
+                            </svg>
                         </div>
-                        <div class="flex items-center space-x-3 sm:space-x-6">
-                            <button class="relative p-2 rounded-full hover:bg-gray-100">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M15 17h5l-1.405-1.405C18.21 15.21 18 14.11 18 13V9a6 6 0 10-12 0v4c0 
-                                             1.11-.21 2.21-.595 3.595L4 17h5m6 0v1a3 3 
-                                             0 11-6 0v-1m6 0H9" />
-                                </svg>
-                                <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </div>
+                    <div class="flex items-center space-x-3 sm:space-x-6">
+                        <!-- Notifications and Profile -->
+                        <button class="relative p-2 rounded-full hover:bg-gray-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M15 17h5l-1.405-1.405C18.21 15.21 18 14.11 18 13V9a6 6 0 10-12 0v4c0 
+                                         1.11-.21 2.21-.595 3.595L4 17h5m6 0v1a3 3 
+                                         0 11-6 0v-1m6 0H9" />
+                            </svg>
+                            <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+                        </button>
+                        <div x-data="{ open: false }" class="relative hidden sm:block">
+                            <button @click="open = !open"
+                                    class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-pink-500 hover:ring-2 ring-purple-400 flex items-center justify-center text-white text-lg font-bold">
+                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                             </button>
-                            <button class="p-2 rounded-full hover:bg-gray-100 hidden sm:block">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M12 3v1m0 16v1m8.485-8.485l-.707.707M4.222 4.222l-.707.707M21 12h-1M4 
-                                             12H3m16.485 4.485l-.707-.707M4.222 19.778l-.707-.707M16 
-                                             12a4 4 0 11-8 0 4 4 0 018 0z" />
-                                </svg>
-                            </button>
-                            <div x-data="{ open: false }" class="relative hidden sm:block">
-                                <button @click="open = !open"
-                                        class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-pink-500 hover:ring-2 ring-purple-400 flex items-center justify-center text-white text-lg font-bold">
-                                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                                </button>
-                                <div x-show="open" @click.away="open = false"
-                                     class="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-50">
-                                    <x-dropdown-link :href="route('profile.edit')" class="block px-4 py-2 hover:bg-gray-100">
-                                        Profile
+                            <div x-show="open" @click.away="open = false"
+                                 class="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg z-50">
+                                <x-dropdown-link :href="route('profile.edit')" class="block px-4 py-2 hover:bg-gray-100">
+                                    Profile
+                                </x-dropdown-link>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+                                    <x-dropdown-link :href="route('logout')" class="block px-4 py-2 hover:bg-gray-100"
+                                                     onclick="event.preventDefault(); this.closest('form').submit();">
+                                        Log Out
                                     </x-dropdown-link>
-                                    <form method="POST" action="{{ route('logout') }}">
-                                        @csrf
-                                        <x-dropdown-link :href="route('logout')" class="block px-4 py-2 hover:bg-gray-100"
-                                                         onclick="event.preventDefault(); this.closest('form').submit();">
-                                            Log Out
-                                        </x-dropdown-link>
-                                    </form>
-                                </div>
+                                </form>
                             </div>
                         </div>
-
                     </div>
                 </div>
-            </nav> 
-        <main class="flex-1 p-4 md:p-10 overflow-auto bg-gray-50" x-data="{ selectedDesign: 'minimal', quotation: {{ json_encode($quotation) }} }">
-            <div class="no-print mb-6 flex justify-between items-center">
+            </div>
+        </nav>
+ @php
+                                    $totalPaid = $quotation->payments->sum('amount');
+                                    $remainingAmount = $quotation->total - $totalPaid;
+                                @endphp
+        <!-- Main Quotation Content -->
+        <main class="flex-1 p-4 md:p-10 overflow-auto" x-data="{ selectedDesign: 'minimal', quotation: {{ json_encode($quotation) }} }">
+            <div class="no-print mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 class="text-3xl font-bold text-gray-800">View Quotation</h1>
                     <p class="text-sm text-gray-500">Detailed view of quotation #{{ $quotation->id }}</p>
                 </div>
-                        @if(session('success'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                {{ session('success') }}
-            </div>
-            @endif
 
-            @if(session('error'))
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                    {{ session('error') }}
-                </div>
-            @endif
-
-                <div class="flex gap-2">
-                    <a href="{{ route('quotationlist') }}" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 shadow-md transition">
+                <div class="flex flex-wrap gap-2">
+                    <!-- Back, Download, Send Email, Add Payment buttons -->
+                    <a href="{{ route('quotationlist') }}" 
+                       class="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 shadow-md transition">
                         Back to List
                     </a>
-                   <a href="{{ route('quotations.download', $quotation->id) }}" target="_blank"
-                        class="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white rounded-lg hover:opacity-90 shadow-md transition">
+                    <a href="{{ route('quotations.download', $quotation->id) }}" target="_blank"
+                       class="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white rounded-lg hover:opacity-90 shadow-md transition">
                         Download PDF
                     </a>
-                  <form action="{{ route('quotations.sendEmail', $quotation->id) }}" method="GET">
-                    <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 shadow-md transition flex items-center gap-1">
-                     Send Email
-                     </button>
+                    <form action="{{ route('quotations.sendEmail', $quotation->id) }}" method="GET">
+                        <button type="submit" 
+                                class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 shadow-md transition flex items-center gap-1">
+                            Send Email
+                        </button>
                     </form>
 
+                    <!-- Add Payment Toggle & Modal Form -->
+                    <div x-data="{ showPayment: false }">
+                        <button @click="showPayment = true"
+                                class="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white rounded-lg hover:opacity-90 shadow-md transition"
+                                @click.prevent="{{ $remainingAmount <= 0 ? '' : 'showPayment = true' }}">
+                            Add Payment
+                        </button>
+                        <!-- Modal -->
+                        <div x-show="showPayment" x-transition
+                             class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+                             style="display: none;">
+                            <div class="bg-white w-96 p-6 rounded-lg shadow-lg relative">
+                                <button @click="showPayment = false"
+                                        class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 font-bold text-lg">
+                                    &times;
+                                </button>
+                                <h3 class="text-xl font-bold text-gray-800 mb-4">Add Payment</h3>
+                               
+                                @if($remainingAmount <= 0)
+                                    <div class="p-4 bg-green-100 text-green-800 rounded">
+                                        Client has already fully paid.
+                                    </div>
+                                @else
+                                    <form action="{{ route('payments.store', $quotation->id) }}" method="POST" class="space-y-3">
+                                        @csrf
+                                        <div>
+                                            <label class="block font-semibold text-gray-700 mb-1">Amount Paid</label>
+                                            <input type="number" step="0.01" name="amount" 
+                                                   class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+                                                   placeholder="Enter payment amount" 
+                                                   value="{{ $remainingAmount }}" 
+                                                   min="1" max="{{ $remainingAmount }}" required>
+                                            <small class="text-gray-500">Remaining amount: RS{{ number_format($remainingAmount, 2) }}</small>
+                                        </div>
+                                        <div>
+                                            <label class="block font-semibold text-gray-700 mb-1">Payment Method</label>
+                                            <select name="payment_method"
+                                                    class="w-full border border-gray-300 p-2 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none">
+                                                <option value="Cash">Cash</option>
+                                                <option value="Bank Transfer">Bank Transfer</option>
+                                                <option value="EasyPaisa">EasyPaisa</option>
+                                                <option value="JazzCash">JazzCash</option>
+                                            </select>
+                                        </div>
+                                        <button type="submit" 
+                                                class="w-full bg-gradient-to-r from-purple-600 to-pink-500 text-white px-4 py-2 rounded-lg shadow-md hover:opacity-90 transition">
+                                            Add Payment
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
+            <!-- Design Selector -->
             <div class="no-print mb-6 max-w-4xl mx-auto">
                 <h2 class="text-xl font-semibold mb-3 text-gray-800">Select Quotation Summary Design</h2>
-                <div class="grid grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <button @click="selectedDesign = 'minimal'"
                             :class="{'ring-4 ring-purple-500 ring-offset-2': selectedDesign === 'minimal', 'hover:shadow-lg': selectedDesign !== 'minimal'}"
                             class="p-4 rounded-lg bg-white shadow-md text-left transition duration-150 border">
@@ -236,47 +286,38 @@
                     </button>
                 </div>
             </div>
+
+            <!-- Quotation Container -->
             <div class="a4-container mx-auto bg-white rounded-xl shadow-xl p-8 lg:p-12 mb-10 a4-page">
-                <div class="flex justify-between items-start border-b-2 border-gray-200 pb-4 mb-8">
-    
-    <div class="text-left">
-
-        <div class="w-16 h-16 rounded-full overflow-hidden shadow-lg flex items-center justify-center bg-white mb-2">
-            @if(!empty($company->logo))
-                <img src="{{ asset('storage/' . $company->logo) }}" alt="Logo" class="w-full h-full object-contain p-1">
-            @else
-                <img src="{{ asset('images/logo.PNG') }}" alt="Default Logo" class="w-full h-full object-contain p-1">
-            @endif
-        </div>
-
-        <div class="text-lg font-bold text-purple-600">
-            {{ $company->company_name ?? 'Your Company Name' }}
-        </div>
-
-       
-        <div class="text-sm text-gray-600">
-           Phone no: {{ $company->phone ?? '' }}
-        </div>
-         <div class="text-sm text-gray-600">
-           Email: {{ $company->email ?? '' }}
-        </div>
-        <div class="text-sm text-gray-600">
-           Website: {{ $company->website ?? '' }}
-        </div>
-         <div class="text-sm text-gray-600">
-          Address: {{ $company->address ?? '' }}
-        </div>
-
+                <!-- Company & Quotation Header -->
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b-2 border-gray-200 pb-4 mb-8 gap-4">
+                    <div class="flex flex-col items-start gap-3">
+    <!-- Company Logo -->
+    <div class="w-24 h-24 rounded-full overflow-hidden shadow-lg flex items-center justify-center bg-white">
+        @if(!empty($company->logo))
+            <img src="{{ asset('storage/' . $company->logo) }}" alt="Logo" class="w-full h-full object-contain p-1">
+        @else
+            <img src="{{ asset('images/logo.PNG') }}" alt="Default Logo" class="w-full h-full object-contain p-1">
+        @endif
     </div>
 
-
-
-                <div class="text-right">
-                    <div class="text-3xl font-extrabold text-gray-800 mb-1">QUOTATION</div>
-                    <div class="text-sm text-purple-600 font-semibold">#{{ $quotation->id }}</div>
+    <!-- Company Details -->
+    <div class="text-left">
+        <div class="text-lg font-bold text-purple-600">{{ $company->company_name ?? 'Your Company Name' }}</div>
+        <div class="text-sm text-gray-600">Phone: {{ $company->phone ?? '' }}</div>
+        <div class="text-sm text-gray-600">Email: {{ $company->email ?? '' }}</div>
+        <div class="text-sm text-gray-600">Website: {{ $company->website ?? '' }}</div>
+        <div class="text-sm text-gray-600">Address: {{ $company->address ?? '' }}</div>
+    </div>
+</div>
+<div class="text-right">
+                        <div class="text-3xl font-extrabold text-gray-800 mb-1">QUOTATION</div>
+                        <div class="text-sm text-purple-600 font-semibold">#{{ $quotation->id }}</div>
+                    </div>
                 </div>
-            </div>
-                <div class="grid grid-cols-2 gap-8 mb-8">
+
+                <!-- Billed To & Dates -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                     <div>
                         <h3 class="font-semibold text-lg text-purple-600 mb-2 border-b border-purple-200 inline-block">Billed To</h3>
                         <p class="font-bold text-gray-800 text-xl">Name: {{ $quotation->client->name ?? 'N/A' }}</p>
@@ -289,6 +330,8 @@
                         <div class="mb-2"><span class="font-semibold text-gray-700">Status:</span> <span class="font-bold text-green-600">{{ $quotation->status }}</span></div>
                     </div>
                 </div>
+
+                <!-- Items Table -->
                 <div class="mb-8 shadow-md rounded-lg overflow-hidden border border-gray-200">
                     <table class="w-full text-left">
                         <thead class="gradient-bg text-white">
@@ -317,6 +360,8 @@
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Totals -->
                 <div class="flex justify-end gap-4 text-gray-700">
                     <div class="w-64">
                         <div class="flex justify-between mb-2">
@@ -332,118 +377,63 @@
                             <span>RS{{ number_format($quotation->discount,2) }}</span>
                         </div>
                         <div class="flex justify-between font-bold text-lg mt-3 border-t pt-2">
-                            <span>Total:</span>
-                            <span>RS{{ number_format($quotation->total,2) }}</span>
+                            <span>Total Payable:</span>
+                            <span>RS{{ number_format($remainingAmount,2) }}</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="mt-12 text-center text-gray-500 text-sm">
-                    Thank you for doing business with us!
+                <!-- Payment History -->
+                <div class="mt-12 border-t pt-6 space-y-6">
+                    <h3 class="text-xl font-bold mb-4 text-gray-800">Payment History</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border border-gray-200 rounded-lg overflow-hidden">
+                            <thead class="gradient-bg text-white">
+                                <tr>
+                                    <th class="px-4 py-3 font-semibold">Amount</th>
+                                    <th class="px-4 py-3 font-semibold">Method</th>
+                                    <th class="px-4 py-3 font-semibold">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse ($quotation->payments ?? [] as $payment)
+                                    <tr class="{{ $loop->even ? 'bg-gray-50' : '' }}">
+                                        <td class="px-4 py-3 font-medium">RS{{ number_format($payment->amount, 2) }}</td>
+                                        <td class="px-4 py-3">{{ $payment->payment_method }}</td>
+                                        <td class="px-4 py-3">{{ $payment->created_at->format('d M Y') }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3" class="text-center py-4 text-gray-500">No payments recorded yet.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-            <div class="flex justify-center gap-4 mt-8">
-    
-    <form action="{{ route('quotation.status.update', $quotation->id) }}" method="POST">
-        @csrf
-        <input type="hidden" name="status" value="accepted">
-        <input type="hidden" name="remarks" value="Accepted by client">
-        <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-            Accept
-        </button>
-    </form>
 
-    <form action="{{ route('quotation.status.update', $quotation->id) }}" method="POST">
-        @csrf
-             <input type="hidden" name="status" value="declined">
-             <input type="hidden" name="remarks" value="Declined by client">
-             <button type="submit" class="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700">
-             Decline
-            </button>
-        </form>
+            <!-- Accept/Decline -->
+            <div class="flex flex-col md:flex-row justify-center gap-4 mt-8">
+                <form action="{{ route('quotation.status.update', $quotation->id) }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="status" value="accepted">
+                    <input type="hidden" name="remarks" value="Accepted by client">
+                    <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 w-full md:w-auto">
+                        Accept
+                    </button>
+                </form>
+
+                <form action="{{ route('quotation.status.update', $quotation->id) }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="status" value="declined">
+                    <input type="hidden" name="remarks" value="Declined by client">
+                    <button type="submit" class="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700 w-full md:w-auto">
+                        Decline
+                    </button>
+                </form>
+            </div>
+        </main>
     </div>
-
-    <!-- Payment Section -->
-    <div class="mt-12 max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg no-print" x-data="{ method: 'stripe' }">
-        <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Make a Payment</h2>
-
-        <!-- Payment Method Tabs -->
-        <div class="flex justify-center mb-6 space-x-4">
-            <button @click="method = 'stripe'" :class="method === 'stripe' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700'" class="px-4 py-2 rounded-md font-medium transition">Stripe</button>
-            <button @click="method = 'easypaisa'" :class="method === 'easypaisa' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700'" class="px-4 py-2 rounded-md font-medium transition">EasyPaisa</button>
-            <button @click="method = 'jazzcash'" :class="method === 'jazzcash' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700'" class="px-4 py-2 rounded-md font-medium transition">JazzCash</button>
-        </div>
-
-        <!-- Stripe Form -->
-        <div x-show="method === 'stripe'" x-transition>
-            <form action="{{ route('payment.stripe') }}" method="POST" class="space-y-4">
-                @csrf
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Amount (USD)</label>
-                    <input type="number" name="amount" value="{{ $quotation->total }}" readonly class="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-2 border">
-                </div>
-                
-                <div class="flex justify-center">
-                    <script
-                        src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                        data-key="{{ env('STRIPE_KEY') }}"
-                        data-name="Quotation Payment"
-                        data-description="Pay for Quotation #{{ $quotation->id }}"
-                        data-amount="{{ $quotation->total * 100 }}"
-                        data-currency="usd">
-                    </script>
-                </div>
-            </form>
-        </div>
-
-        <!-- EasyPaisa Form -->
-        <div x-show="method === 'easypaisa'" x-transition style="display: none;">
-            <form action="{{ route('payment.easypaisa') }}" method="POST" class="space-y-4">
-                @csrf
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Amount (PKR)</label>
-                    <input type="number" name="amount" value="{{ $quotation->total }}" readonly class="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm p-2 border">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Mobile Number</label>
-                    <input type="text" name="mobile_number" placeholder="03XXXXXXXXX" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm p-2 border">
-                </div>
-                <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition">Pay with EasyPaisa</button>
-            </form>
-        </div>
-
-        <!-- JazzCash Form -->
-        <div x-show="method === 'jazzcash'" x-transition style="display: none;">
-            <form action="{{ route('payment.jazzcash') }}" method="POST" class="space-y-4">
-                @csrf
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Amount (PKR)</label>
-                    <input type="number" name="amount" value="{{ $quotation->total }}" readonly class="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm p-2 border">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">JazzCash Mobile Number</label>
-                    <input type="text" name="mobile_number" placeholder="03XXXXXXXXX" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm p-2 border">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">CNIC Last 6 Digits</label>
-                    <input type="text" name="cnic_last_6" placeholder="XXXXXX" required maxlength="6" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm p-2 border">
-                </div>
-                <button type="submit" class="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 transition">Pay with JazzCash</button>
-            </form>
-        </div>
-    </div>
- </main>
-</div>
-
-    <script>
-    function printQuotation() {
-        const printContent = document.querySelector('.a4-page').innerHTML;
-        const originalContent = document.body.innerHTML;
-        document.body.innerHTML = printContent;
-        window.print();
-        document.body.innerHTML = originalContent;
-        window.location.reload();
-    }
-    </script>
 </body>
 </html>
