@@ -289,47 +289,75 @@ class QuotationController extends Controller
 
 
     // Generate AI description
-    public function generateDescription(Request $request)
-    {
-        $request->validate([
-            'title' => 'required|string|max:255',
+ public function generateDescription(Request $request)
+{
+    $request->validate([
+        'title' => 'required|string|max:255',
+    ]);
+
+    $title = $request->input('title');
+    $apiKey = env('GEMINI_API_KEY');
+
+    if (!$apiKey) {
+        return response()->json(['error' => 'GEMINI_API_KEY not set'], 500);
+    }
+
+    $apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' . $apiKey;
+
+    $payload = [
+        'contents' => [
+            ['parts' => [['text' => 
+                "Write a clear and engaging description for a quotation. 
+                 Use only plain words without any bullets, commas, or symbols. 
+                 Write it in a single paragraph. 
+                 Keep it concise and write according to the description column size (255 varchar). 
+                 Title: \"$title\"."
+            ]]]
+        ],
+        'generationConfig' => [
+            'temperature' => 0.8,
+            'maxOutputTokens' => 2048
+        ]
+    ];
+
+    try {
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+        ])->post($apiUrl, $payload);
+
+        if ($response->failed()) {
+            return response()->json(['error' => 'AI request failed'], 500);
+        }
+
+        $data = $response->json();
+        $generated = $data['candidates'][0]['content']['parts'][0]['text'] ?? null;
+
+        // If AI gives no output
+        if (!$generated) {
+            Log::error('Gemini returned empty response', ['response' => $data]);
+            return response()->json(['error' => 'AI did not return a description'], 500);
+        }
+
+        $generated = trim($generated);
+
+        // ✅ NEW CHECK — Limit to 255 characters
+        if (strlen($generated) > 255) {
+            return response()->json([
+                'error' => 'AI description is too long. Maximum allowed is 255 characters.'
+            ], 422);
+        }
+
+        return response()->json(['description' => $generated]);
+
+    } catch (\Exception $e) {
+        Log::error('Gemini API failed: ' . $e->getMessage(), [
+            'trace' => $e->getTraceAsString()
         ]);
 
-        $title = $request->input('title');
-        $apiKey = env('GEMINI_API_KEY');
-
-        if (!$apiKey) {
-            return response()->json(['error' => 'GEMINI_API_KEY not set'], 500);
-        }
-
-        $apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' . $apiKey;
-
-        $payload = [
-            'contents' => [
-                ['parts' => [['text' => "Write a clear and engaging description for a quotation Use only plain words without any bullets commas or symbols Write it in a single paragraph Keep it concise and write accord the discription column size is 255 varchar \"$title\"."]]]
-            ],
-            'generationConfig' => [
-                'temperature' => 0.8,
-                'maxOutputTokens' => 2048
-            ]
-        ];
-
-        try {
-            $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-            ])->post($apiUrl, $payload)->json();
-
-            $generated = $response['candidates'][0]['content']['parts'][0]['text'] ?? null;
-
-            if (!$generated) {
-                Log::error('Gemini returned empty response', ['response' => $response]);
-                return response()->json(['error' => 'AI did not return a description'], 500);
-            }
-
-            return response()->json(['description' => trim($generated)]);
-        } catch (\Exception $e) {
-            Log::error('Gemini API failed: '.$e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            return response()->json(['error' => 'Server error: '.$e->getMessage()], 500);
-        }
+        return response()->json([
+            'error' => 'Server error: ' . $e->getMessage()
+        ], 500);
     }
+}
+
 }

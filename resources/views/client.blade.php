@@ -225,49 +225,72 @@
 
 
             <div class="bg-white p-6 md:p-8 rounded-xl shadow">
-                <form action="{{ route('addclient') }}" method="POST">
-                    @csrf
+    <form action="{{ route('addclient') }}" method="POST">
+        @csrf
 
-                    <div class="mb-4">
-                        <label class="text-gray-700 font-medium">Client Name *</label>
-                        <input type="text" name="name" class="w-full border rounded-lg p-2 mt-1" placeholder="Enter client name" required>
-                    </div>
+        <!-- Client Name -->
+        <div class="mb-4">
+            <label class="text-gray-700 font-medium">Client Name *</label>
+            <input type="text" name="name" 
+                class="w-full border rounded-lg p-2 mt-1"
+                placeholder="Enter client name"
+                required
+                pattern="[A-Za-z\s]{3,50}"
+                title="Only letters allowed, minimum 3 characters">
+        </div>
 
-                    <div class="mb-4">
-                        <label class="text-gray-700 font-medium">Company</label>
-                        <input type="text" name="company" class="w-full border rounded-lg p-2 mt-1" placeholder="Company name">
-                    </div>
+        <!-- Company -->
+        <div class="mb-4">
+            <label class="text-gray-700 font-medium">Company</label>
+            <input type="text" name="company" 
+                required
+                class="w-full border rounded-lg p-2 mt-1"
+                placeholder="Company name"
+                pattern="[A-Za-z0-9\s]{2,50}"
+                title="Only letters, numbers & spaces allowed">
+        </div>
 
-                    <div class="mb-4">
-                        <label class="text-gray-700 font-medium">Email *</label>
-                        <input type="email" name="email" class="w-full border rounded-lg p-2 mt-1" placeholder="Client email" required>
-                    </div>
+        <!-- Email -->
+        <div class="mb-4">
+            <label class="text-gray-700 font-medium">Email *</label>
+            <input type="email" name="email" 
+                class="w-full border rounded-lg p-2 mt-1"
+                placeholder="Client email"
+                required>
+        </div>
 
-                    <div class="mb-4">
-                        <label class="text-gray-700 font-medium">Phone</label>
-                        <input type="text" name="phone" class="w-full border rounded-lg p-2 mt-1" placeholder="Client phone number">
-                    </div>
+        <!-- Phone -->
+        <div class="mb-4">
+            <label class="text-gray-700 font-medium">Phone</label>
+            <input type="tel" name="phone" 
+                required
+                class="w-full border rounded-lg p-2 mt-1"
+                placeholder="Client phone number"
+                pattern="^\+?[0-9]{10,15}$"
+                title="Only numbers allowed, 10 to 15 digits">
+        </div>
 
-                    <div class="mb-4">
-                        <label class="text-gray-700 font-medium">Address</label>
-                        <textarea name="address" rows="3" class="w-full border rounded-lg p-2 mt-1" placeholder="Client address"></textarea>
-                    </div>
+        <!-- Address -->
+        <div class="mb-4">
+            <label class="text-gray-700 font-medium">Address</label>
+            <textarea name="address" rows="3" required class="w-full border rounded-lg p-2 mt-1" placeholder="Client address"></textarea>
+        </div>
 
-                    <div class="mb-4">
-                        <label class="text-gray-700 font-medium">Notes (Optional)</label>
-                        <textarea name="notes" rows="3" class="w-full border rounded-lg p-2 mt-1" placeholder="Any additional notes"></textarea>
-                    </div>
+        <!-- Notes -->
+        <div class="mb-4">
+            <label class="text-gray-700 font-medium">Notes (Optional)</label>
+            <textarea name="notes" rows="3" class="w-full border rounded-lg p-2 mt-1" placeholder="Any additional notes"></textarea>
+        </div>
 
-                    <div class="flex flex-col md:flex-row gap-4 justify-start">
-                        <button type="submit" class="bg-purple-600 text-white px-5 py-2 rounded-lg w-full md:w-auto">
-                            Save Client
-                        </button>
-                        <a href="/clientlist" class="px-5 py-2 border rounded-lg w-full md:w-auto text-center hover:bg-gray-100">
-                            Client List
-                        </a>
-                    </div>
-                </form>
-            </div>
+        <div class="flex flex-col md:flex-row gap-4 justify-start">
+            <button type="submit" class="bg-purple-600 text-white px-5 py-2 rounded-lg w-full md:w-auto">
+                Save Client
+            </button>
+            
+        </div>
+    </form>
+</div>
+
         </main>
 
     </div>

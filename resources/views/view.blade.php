@@ -431,26 +431,37 @@
                 </div>
             </div>
 
-            <!-- Accept/Decline -->
-            <div class="flex flex-col md:flex-row justify-center gap-4 mt-8">
-                <form action="{{ route('quotation.status.update', $quotation->id) }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="status" value="accepted">
-                    <input type="hidden" name="remarks" value="Accepted by client">
-                    <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 w-full md:w-auto">
-                        Accept
-                    </button>
-                </form>
+            @if($quotation->status == 'pending')
+    <!-- Accept/Decline -->
+    <div class="flex flex-col md:flex-row justify-center gap-4 mt-8">
+        <form action="{{ route('quotation.status.update', $quotation->id) }}" method="POST">
+            @csrf
+            <input type="hidden" name="status" value="accepted">
+            <input type="hidden" name="remarks" value="Accepted by client">
+            <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 w-full md:w-auto">
+                Accept
+            </button>
+        </form>
 
-                <form action="{{ route('quotation.status.update', $quotation->id) }}" method="POST">
-                    @csrf
-                    <input type="hidden" name="status" value="declined">
-                    <input type="hidden" name="remarks" value="Declined by client">
-                    <button type="submit" class="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700 w-full md:w-auto">
-                        Decline
-                    </button>
-                </form>
-            </div>
+        <form action="{{ route('quotation.status.update', $quotation->id) }}" method="POST">
+            @csrf
+            <input type="hidden" name="status" value="declined">
+            <input type="hidden" name="remarks" value="Declined by client">
+            <button type="submit" class="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700 w-full md:w-auto">
+                Decline
+            </button>
+        </form>
+    </div>
+@else
+    <p class="text-center mt-6 font-semibold">
+        @if($quotation->status == 'accepted')
+            ✅ Quotation Accepted by Client
+        @elseif($quotation->status == 'declined')
+            ❌ Quotation Declined by Client
+        @endif
+    </p>
+@endif
+
         </main>
     </div>
 </body>

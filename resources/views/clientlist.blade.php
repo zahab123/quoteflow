@@ -224,47 +224,48 @@
             @endif
 
 
-                <div class="bg-white rounded-xl shadow **overflow-x-auto**">
-                    <table class="w-full text-sm text-left border-collapse">
-                        <thead class="bg-gray-100 text-gray-700">
-                        <tr>
-                            <th class="p-3 border">ID</th>
-                            <th class="p-3 border">Name</th>
-                            <th class="p-3 border **min-w-[150px]**">Company</th>
-                            <th class="p-3 border **min-w-[200px]**">Email</th>
-                            <th class="p-3 border">Phone</th>
-                            <th class="p-3 border **min-w-[200px]**">Address</th>
-                            <th class="p-3 border **min-w-[100px]**">Notes</th>
-                            <th class="p-3 border text-center">Action</th>
-                        </tr>
-                        </thead>
+                <div class="bg-white rounded-xl shadow overflow-x-auto">
+    <table class="w-full text-sm text-left border-collapse min-w-max">
+        <thead class="bg-gray-100 text-gray-700 sticky top-0 z-10">
+            <tr>
+                <th class="p-3 border">ID</th>
+                <th class="p-3 border">Name</th>
+                <th class="p-3 border min-w-[150px]">Company</th>
+                <th class="p-3 border min-w-[200px]">Email</th>
+                <th class="p-3 border">Phone</th>
+                <th class="p-3 border min-w-[200px]">Address</th>
+                <th class="p-3 border min-w-[120px]">Notes</th>
+                <th class="p-3 border text-center min-w-[100px]">Action</th>
+            </tr>
+        </thead>
 
-                        <tbody>
-                        <template x-for="client in filteredClients()" :key="client.id">
-                            <tr class="hover:bg-gray-50">
-                                <td class="p-3 border" x-text="client.id"></td>
-                                <td class="p-3 border" x-text="client.name"></td>
-                                <td class="p-3 border" x-text="client.company"></td>
-                                <td class="p-3 border" x-text="client.email"></td>
-                                <td class="p-3 border" x-text="client.phone"></td>
-                                <td class="p-3 border" x-text="client.address"></td>
-                                <td class="p-3 border" x-text="client.notes"></td>
-                                <td class="p-3 border text-center flex justify-center gap-2">
-                                    <a :href="`/updateclient/${client.id}`" class="text-blue-500 hover:text-blue-700">
-                                        ✏️
-                                    </a>
-                                   <a href="#" 
-                                        @click.prevent="confirmDelete(client.id)" 
-                                        class="text-red-500 hover:text-red-700">
-                                            🗑️
-                                    </a>
+        <tbody>
+            <template x-for="client in filteredClients()" :key="client.id">
+                <tr class="hover:bg-gray-50">
+                    <td class="p-3 border" x-text="client.id"></td>
+                    <td class="p-3 border" x-text="client.name"></td>
+                    <td class="p-3 border" x-text="client.company"></td>
+                    <td class="p-3 border" x-text="client.email"></td>
+                    <td class="p-3 border" x-text="client.phone"></td>
+                    <td class="p-3 border" x-text="client.address"></td>
+                    <td class="p-3 border" x-text="client.notes"></td>
 
-                                </td>
-                            </tr>
-                        </template>
-                        </tbody>
-                    </table>
-                </div>
+                    <td class="p-3 border text-center">
+                        <div class="flex justify-center gap-3">
+                            <a :href="`/updateclient/${client.id}`" class="text-blue-600 hover:text-blue-800 text-lg">
+                                ✏️
+                            </a>
+                            <button @click.prevent="confirmDelete(client.id)" class="text-red-600 hover:text-red-800 text-lg">
+                                🗑️
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </template>
+        </tbody>
+    </table>
+</div>
+
             </main>
         </div>
     </div>
@@ -273,20 +274,28 @@
 
     <script>
         function clientsData() {
-            return {
-                search: '',
-                clients: @json($clients),
-                filteredClients() {
-                    if (!this.search) return this.clients;
-                    return this.clients.filter(c => 
-                        c.name.toLowerCase().includes(this.search.toLowerCase()) ||
-                        c.company.toLowerCase().includes(this.search.toLowerCase()) ||
-                        c.email.toLowerCase().includes(this.search.toLowerCase()) ||
-                        c.phone.toLowerCase().includes(this.search.toLowerCase())
-                    );
-                }
-            }
+    return {
+        search: '',
+        clients: @json($clients),
+
+        filteredClients() {
+            // 1. reverse so latest appears first
+            let list = this.clients.slice().reverse();
+
+            // 2. if no search, return reversed list
+            if (!this.search) return list;
+
+            // 3. filter on search
+            return list.filter(c =>
+                c.name.toLowerCase().includes(this.search.toLowerCase()) ||
+                c.company.toLowerCase().includes(this.search.toLowerCase()) ||
+                c.email.toLowerCase().includes(this.search.toLowerCase()) ||
+                c.phone.toLowerCase().includes(this.search.toLowerCase())
+            );
         }
+    }
+}
+
 
         
         function confirmDelete(id) {

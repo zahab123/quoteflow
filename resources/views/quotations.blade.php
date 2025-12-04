@@ -210,82 +210,105 @@
 
                 <form action="{{ route('addquotation') }}" method="POST">
                     @csrf
-                    <!-- Basic Information -->
+                 
                     <div class="bg-white p-6 rounded-xl shadow mb-6">
-                        <h2 class="font-semibold text-gray-600 mb-4">Basic Information</h2>
-                        <div class="grid grid-cols-3 gap-5">
-                            <div>
-                                <label class="text-sm text-gray-600 font-medium">Client *</label>
-                                <select name="client_id" class="w-full border rounded-lg p-2 mt-1" required>
-                                    <option value="">Select Client</option>
-                                    @foreach($clients as $client)
-                                        <option value="{{ $client->id }}">{{ $client->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div>
-                                <label class="text-sm text-gray-600 font-medium">Quotation Title *</label>
-                                <input type="text" name="title" placeholder="e.g. Website Development Project" class="w-full border rounded-lg p-2 mt-1" required>
-                            </div>
-                            <div>
-                                <label class="text-sm text-gray-600 font-medium">Quotation Date *</label>
-                                <input type="date" name="quotation_date" value="{{ date('Y-m-d') }}" class="w-full border rounded-lg p-2 mt-1" required>
-                            </div>
-                        </div>
-                    </div>
+    <h2 class="font-semibold text-gray-600 mb-4">Basic Information</h2>
 
-                    <!-- Line Items -->
-                    <div class="bg-white p-6 rounded-xl shadow mb-6">
-    <h2 class="font-semibold text-gray-600 mb-4">Line Items</h2>
-    <div id="items-container">
-        <div class="mb-4 item-row">
-            <!-- Description on top -->
-          <div class="flex flex-col relative mb-4 p-4 border border-gray-300 rounded-lg shadow-md transition duration-300 hover:shadow-lg">
-    <label class="text-sm font-semibold text-gray-700 mb-1" for="item-description">Description</label>
-    <div class="relative">
-        <input 
-            name="items[0][description]" 
-            id="item-description"
-            placeholder="Enter item description..." 
-            class="w-full border-2 border-gray-300 p-3 pr-16 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 description" 
-            required
-        >
-        <button 
-            type="button" 
-            onclick="generateDescription(this)" 
-            class="absolute top-1/2 right-2 transform -translate-y-1/2 px-3 py-1 bg-indigo-600 text-white font-medium rounded-md text-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150"
-            aria-label="Generate description using AI"
-        >
-            AI
-        </button>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Client -->
+        <div class="w-full">
+            <label class="text-sm text-gray-600 font-medium">Client *</label>
+            <select name="client_id" class="w-full border rounded-lg p-2 mt-1" required>
+                <option value="">Select Client</option>
+                @foreach($clients as $client)
+                    <option value="{{ $client->id }}">{{ $client->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <!-- Quotation Title -->
+        <div class="w-full">
+            <label class="text-sm text-gray-600 font-medium">Quotation Title *</label>
+            <input type="text" name="title" placeholder="e.g. Website Development Project"
+                   class="w-full border rounded-lg p-2 mt-1" required>
+        </div>
+
+        <!-- Quotation Date -->
+        <div class="w-full">
+            <label class="text-sm text-gray-600 font-medium">Quotation Date *</label>
+            <input type="date" name="quotation_date" value="{{ date('Y-m-d') }}"
+                   class="w-full border rounded-lg p-2 mt-1" required>
+        </div>
     </div>
 </div>
-            <!-- Other fields stacked below -->
-            <div class="grid grid-cols-6 gap-3">
+
+
+                  <div class="bg-white p-6 rounded-xl shadow mb-6">
+    <h2 class="font-semibold text-gray-600 mb-4">Line Items</h2>
+
+    <div id="items-container">
+        <p class="error-msg text-red-600 text-sm mt-1 hidden"></p>
+
+        <div class="mb-4 item-row">
+            
+            <!-- Description Input -->
+            <div class="flex flex-col relative mb-4 p-4 border border-gray-300 rounded-lg shadow-md transition duration-300 hover:shadow-lg">
+                <label class="text-sm font-semibold text-gray-700 mb-1">Description</label>
+                <div class="relative">
+                    <input 
+                        name="items[0][description]"
+                        placeholder="Enter item description..."
+                        class="w-full border-2 border-gray-300 p-3 pr-16 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 description"
+                        required
+                    >
+                    <button 
+                        type="button"
+                        onclick="generateDescription(this)"
+                        class="absolute top-1/2 right-2 transform -translate-y-1/2 px-3 py-1 bg-indigo-600 text-white font-medium rounded-md text-sm hover:bg-indigo-700"
+                    >
+                        AI
+                    </button>
+                </div>
+            </div>
+
+            <!-- Item Inputs Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
+
                 <div class="flex flex-col">
                     <label class="text-xs text-gray-500">Quantity</label>
-                    <input name="items[0][qty]" type="number" value="1" class="border p-2 rounded qty" min="1" required>
+                    <input name="items[0][qty]" type="number" value="1"
+                           class="border p-2 rounded qty" min="1" required>
                 </div>
+
                 <div class="flex flex-col">
                     <label class="text-xs text-gray-500">Unit Price</label>
-                    <input name="items[0][unit_price]" type="number" step="0.01" value="0" class="border p-2 rounded unit_price" required>
+                    <input name="items[0][unit_price]" type="number" step="0.01"
+                           value="0" class="border p-2 rounded unit_price" required>
                 </div>
+
                 <div class="flex flex-col">
                     <label class="text-xs text-gray-500">Tax</label>
-                    <input name="items[0][tax]" type="number" step="0.01" value="0" class="border p-2 rounded tax">
+                    <input name="items[0][tax]" type="number" step="0.01"
+                           value="0" class="border p-2 rounded tax">
                 </div>
+
                 <div class="flex flex-col">
                     <label class="text-xs text-gray-500">Discount</label>
-                    <input name="items[0][discount]" type="number" step="0.01" value="0" class="border p-2 rounded discount">
+                    <input name="items[0][discount]" type="number" step="0.01"
+                           value="0" class="border p-2 rounded discount">
                 </div>
+
                 <div class="flex flex-col">
                     <label class="text-xs text-gray-500">Total</label>
-                    <input type="text" value="RS0.00" readonly class="border p-2 rounded bg-gray-100 text-gray-500 total">
+                    <input type="text" value="RS0.00" readonly
+                           class="border p-2 rounded bg-gray-100 text-gray-500 total">
                 </div>
+
                 <div class="flex flex-col">
                     <label class="text-xs text-gray-500">Remove</label>
-                    <button type="button" onclick="removeItem(this)" class="p-2 bg-red-500 text-white rounded hover:bg-red-600 flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <button type="button" onclick="removeItem(this)"
+                            class="p-2 bg-red-500 text-white rounded hover:bg-red-600 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" stroke="currentColor">
                             <polyline points="3 6 5 6 21 6"></polyline>
                             <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
                             <path d="M10 11v6"></path>
@@ -293,13 +316,18 @@
                         </svg>
                     </button>
                 </div>
+
             </div>
         </div>
     </div>
-    <button type="button" onclick="addItem()" class="mt-2 px-4 py-1 bg-black text-white rounded hover:bg-gray-800">+ Add Item</button>
+
+    <button type="button" onclick="addItem()"
+            class="mt-2 px-4 py-1 bg-black text-white rounded hover:bg-gray-800">
+        + Add Item
+    </button>
 </div>
 
-                    <!-- Summary -->
+
                     <div class="bg-white p-6 rounded-xl shadow mb-6">
                         <h2 class="font-semibold text-gray-600 mb-4">Summary</h2>
                         <div class="text-right space-y-1 text-gray-700">
@@ -311,25 +339,23 @@
                         </div>
                     </div>
 
-                    <!-- Notes -->
                     <div class="bg-white p-6 rounded-xl shadow mb-6">
                         <label class="text-sm font-medium text-gray-600">Notes (Optional)</label>
                         <textarea id="notes_field" name="notes" class="w-full border rounded-lg p-3 mt-2" placeholder="Add any additional notes..."></textarea>
                     </div>
 
-                    <!-- Buttons -->
                     <div class="flex gap-3">
 
-                        <button type="submit" name="status" value="draft" class="px-5 py-2 rounded-lg bg-gray-500 text-white hover:bg-gray-600 transition">Save as Draft</button>
+                       <button type="submit" id="saveDraftBtn" name="status" value="draft"
+        class="px-5 py-2 rounded-lg bg-gray-500 text-white hover:bg-gray-600 transition">
+    Save as Draft
+</button>
+
                     </div>
                 </form>
             </main>
         </div>
     </div>
-
-
-
-
 
     <script>
         let index = 1;
@@ -362,6 +388,30 @@
             document.getElementById('grand-total').innerText = 'RS' + grandTotal.toFixed(2);
         }
 
+        document.getElementById("saveDraftBtn").addEventListener("click", function (e) {
+    const items = document.querySelectorAll(".item-row");
+    const errorBox = document.querySelector(".error-msg");
+
+    if (items.length < 1) {
+        e.preventDefault();
+        errorBox.textContent = "At least one line item is required before saving.";
+        errorBox.classList.remove("hidden");
+        return false;
+    }
+
+    // Hide previous error
+    errorBox.classList.add("hidden");
+
+    // If only 1 item, set unit price to 1 if it's empty or 0
+    if (items.length === 1) {
+        const unitPriceInput = items[0].querySelector(".unit_price");
+        if (!unitPriceInput.value || parseFloat(unitPriceInput.value) <= 0) {
+            unitPriceInput.value = 100;
+        }
+    }
+});
+
+
         function attachListenersToRow(row) {
             ['qty', 'unit_price', 'tax', 'discount'].forEach(cls => {
                 row.querySelector(`.${cls}`).addEventListener('input', () => calculateTotal(row));
@@ -380,61 +430,71 @@
             document.querySelectorAll('.item-row').forEach(row => attachListenersToRow(row));
         }
 
-       
 function addItem() {
     const container = document.getElementById('items-container');
 
     const html = `
     <div class="mb-4 item-row">
-        <!-- Description on top -->
+
+        <!-- Description Input -->
         <div class="flex flex-col relative mb-4 p-4 border border-gray-300 rounded-lg shadow-md transition duration-300 hover:shadow-lg">
-    <label class="text-sm font-semibold text-gray-700 mb-1" for="item-description-${index}">Description</label>
-    <div class="relative">
-        <input 
-            name="items[${index}][description]" 
-            id="item-description-${index}"
-            placeholder="Enter item description..." 
-            class="w-full border-2 border-gray-300 p-3 pr-16 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 description" 
-            required
-        >
-        <button 
-            type="button" 
-            onclick="generateDescription(this)" 
-            class="absolute top-1/2 right-2 transform -translate-y-1/2 px-3 py-1 bg-indigo-600 text-white font-medium rounded-md text-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150"
-            aria-label="Generate description using AI"
-        >
-            AI
-        </button>
-    </div>
-</div>
+            <label class="text-sm font-semibold text-gray-700 mb-1">Description</label>
+            <div class="relative">
+                <input 
+                    name="items[${index}][description]"
+                    id="item-description-${index}"
+                    placeholder="Enter item description..."
+                    class="w-full border-2 border-gray-300 p-3 pr-16 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 description"
+                    required
+                >
+                <button 
+                    type="button"
+                    onclick="generateDescription(this)"
+                    class="absolute top-1/2 right-2 transform -translate-y-1/2 px-3 py-1 bg-indigo-600 text-white font-medium rounded-md text-sm hover:bg-indigo-700"
+                >
+                    AI
+                </button>
+            </div>
+        </div>
 
+        <!-- Responsive Fields Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
 
-        <!-- Other fields stacked below -->
-        <div class="grid grid-cols-6 gap-3">
             <div class="flex flex-col">
                 <label class="text-xs text-gray-500">Quantity</label>
-                <input name="items[${index}][qty]" type="number" value="1" class="border p-2 rounded qty" min="1" required>
+                <input name="items[${index}][qty]" type="number" value="1"
+                       class="border p-2 rounded qty" min="1" required>
             </div>
+
             <div class="flex flex-col">
                 <label class="text-xs text-gray-500">Unit Price</label>
-                <input name="items[${index}][unit_price]" type="number" step="0.01" value="0" class="border p-2 rounded unit_price" required>
+                <input name="items[${index}][unit_price]" type="number" step="0.01"
+                       value="0" class="border p-2 rounded unit_price" required>
             </div>
+
             <div class="flex flex-col">
                 <label class="text-xs text-gray-500">Tax</label>
-                <input name="items[${index}][tax]" type="number" step="0.01" value="0" class="border p-2 rounded tax">
+                <input name="items[${index}][tax]" type="number" step="0.01"
+                       value="0" class="border p-2 rounded tax">
             </div>
+
             <div class="flex flex-col">
                 <label class="text-xs text-gray-500">Discount</label>
-                <input name="items[${index}][discount]" type="number" step="0.01" value="0" class="border p-2 rounded discount">
+                <input name="items[${index}][discount]" type="number" step="0.01"
+                       value="0" class="border p-2 rounded discount">
             </div>
+
             <div class="flex flex-col">
                 <label class="text-xs text-gray-500">Total</label>
-                <input type="text" value="RS0.00" readonly class="border p-2 rounded bg-gray-100 text-gray-500 total">
+                <input type="text" value="RS0.00" readonly
+                       class="border p-2 rounded bg-gray-100 text-gray-500 total">
             </div>
+
             <div class="flex flex-col">
                 <label class="text-xs text-gray-500">Remove</label>
-                <button type="button" onclick="removeItem(this)" class="p-2 bg-red-500 text-white rounded hover:bg-red-600 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <button type="button" onclick="removeItem(this)"
+                        class="p-2 bg-red-500 text-white rounded hover:bg-red-600 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" stroke="currentColor">
                         <polyline points="3 6 5 6 21 6"></polyline>
                         <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
                         <path d="M10 11v6"></path>
@@ -442,29 +502,80 @@ function addItem() {
                     </svg>
                 </button>
             </div>
+
         </div>
     </div>
     `;
 
     container.insertAdjacentHTML('beforeend', html);
-    attachListenersToRow(container.lastElementChild); // keep your existing event listeners
+    attachListenersToRow(container.lastElementChild);
     index++;
 }
+
 function removeItem(button) {
-    const itemRow = button.closest('.item-row'); // find the parent row
+    const itemRow = button.closest('.item-row'); 
     if (itemRow) {
-        itemRow.remove(); // remove it from DOM
+        itemRow.remove(); 
     }
 }
 
         attachListeners();
- async function generateDescription(button) {
-    const row = button.closest('.item-row'); 
+ // Put this in your <script> area (replace existing generateDescription)
+const MAX_DESCRIPTION_LENGTH = 255; // sync with backend limit
+
+function showRowError(row, message) {
+    const err = row.querySelector('.error-msg');
+    const desc = row.querySelector('.description');
+    if (err) {
+        err.innerText = message;
+        err.classList.remove('hidden');
+    }
+    if (desc) {
+        desc.classList.add('border-red-500', 'ring-1', 'ring-red-400');
+    }
+}
+
+function clearRowError(row) {
+    const err = row.querySelector('.error-msg');
+    const desc = row.querySelector('.description');
+    if (err) {
+        err.innerText = '';
+        err.classList.add('hidden');
+    }
+    if (desc) {
+        desc.classList.remove('border-red-500', 'ring-1', 'ring-red-400');
+    }
+}
+
+function showGlobalToast(message) {
+    const toast = document.getElementById('global-toast');
+    const msg = document.getElementById('global-toast-msg');
+    if (!toast || !msg) return;
+    msg.innerText = message;
+    toast.classList.remove('hidden');
+    // auto-hide after 6s
+    clearTimeout(showGlobalToast._timeout);
+    showGlobalToast._timeout = setTimeout(() => {
+        hideGlobalToast();
+    }, 6000);
+}
+
+function hideGlobalToast() {
+    const toast = document.getElementById('global-toast');
+    if (!toast) return;
+    toast.classList.add('hidden');
+}
+
+// Updated generateDescription (async)
+async function generateDescription(button) {
+    const row = button.closest('.item-row');
     const titleInput = document.querySelector('input[name="title"]');
     const descriptionInput = row.querySelector('.description');
 
+    clearRowError(row);
+
     if (!titleInput.value) {
-        alert("Please enter a quotation title first.");
+        showRowError(row, "Please enter a quotation title first.");
         return;
     }
 
@@ -478,19 +589,45 @@ function removeItem(button) {
             body: JSON.stringify({ title: titleInput.value })
         });
 
-        const data = await response.json();
-
-        if (data.description) {
-            descriptionInput.value = data.description;
-        } else {
-            console.error(data.error);
-            alert("AI failed to generate a description. Check console for details.");
+        let data;
+        try {
+            data = await response.json();
+        } catch (jsonErr) {
+            showGlobalToast("Unexpected server response (not JSON).");
+            console.error('Invalid JSON response', jsonErr);
+            return;
         }
+
+        if (!response.ok) {
+            const serverMsg = data.error || 'AI service error';
+            if (data.error && data.error.toLowerCase().includes('long')) {
+                showRowError(row, serverMsg);
+            } else {
+                showGlobalToast(serverMsg);
+            }
+            return;
+        }
+
+        if (!data.description) {
+            const errMsg = data.error || 'AI did not return a description.';
+            showGlobalToast(errMsg);
+            return;
+        }
+
+        if (data.description.length > MAX_DESCRIPTION_LENGTH) {
+            showRowError(row, `Description is too long. Maximum ${MAX_DESCRIPTION_LENGTH} characters allowed.`);
+            return;
+        }
+
+        descriptionInput.value = data.description;
+        clearRowError(row);
     } catch (err) {
-        console.error(err);
-        alert("An error occurred while calling AI.");
+    
+        console.error('generateDescription failed:', err);
+        showGlobalToast('An error occurred while calling the AI. Please try again.');
     }
 }
+
 
     </script>
 </body>

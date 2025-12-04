@@ -234,10 +234,9 @@
                 <option value="">All Status</option>
                 <option value="Accepted" {{ request('status')=='Accepted' ? 'selected' : '' }}>Accepted</option>
                 <option value="Sent" {{ request('status')=='Sent' ? 'selected' : '' }}>Sent</option>
-                <option value="Pending" {{ request('status')=='Pending' ? 'selected' : '' }}>Pending</option>
-                <option value="Rejected" {{ request('status')=='Rejected' ? 'selected' : '' }}>Rejected</option>
+                <option value="Declined" {{ request('status')=='Declined' ? 'selected' : '' }}>Rejected</option>
                 <option value="Draft" {{ request('status')=='Draft' ? 'selected' : '' }}>Draft</option>
-                <option value="Viewed" {{ request('status')=='Viewed' ? 'selected' : '' }}>Viewed</option>
+                
             </select>
 
             <button type="submit" 
