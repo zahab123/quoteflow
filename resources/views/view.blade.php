@@ -431,10 +431,11 @@
                 </div>
             </div>
 
-            @if($quotation->status == 'pending')
-    <!-- Accept/Decline -->
-    <div class="flex flex-col md:flex-row justify-center gap-4 mt-8">
-        <form action="{{ route('quotation.status.update', $quotation->id) }}" method="POST">
+    
+    <div class="flex flex-col md:flex-row justify-center gap-4 mt-8" id="quotation-{{ $quotation->id }}">
+    @if($quotation->status != 'accepted' && $quotation->status != 'declined')
+        <!-- Show buttons -->
+        <form action="{{ route('quotation.status.update', $quotation->id) }}" method="POST" class="inline-block">
             @csrf
             <input type="hidden" name="status" value="accepted">
             <input type="hidden" name="remarks" value="Accepted by client">
@@ -443,7 +444,7 @@
             </button>
         </form>
 
-        <form action="{{ route('quotation.status.update', $quotation->id) }}" method="POST">
+        <form action="{{ route('quotation.status.update', $quotation->id) }}" method="POST" class="inline-block">
             @csrf
             <input type="hidden" name="status" value="declined">
             <input type="hidden" name="remarks" value="Declined by client">
@@ -451,18 +452,18 @@
                 Decline
             </button>
         </form>
-    </div>
-@else
-    <p class="text-center mt-6 font-semibold">
-        @if($quotation->status == 'accepted')
-            ✅ Quotation Accepted by Client
-        @elseif($quotation->status == 'declined')
-            ❌ Quotation Declined by Client
-        @endif
-    </p>
-@endif
+    @elseif($quotation->status == 'accepted')
+        <span class="px-6 py-2 bg-green-100 text-green-800 rounded w-full md:w-auto text-center">
+            Accepted by client
+        </span>
+    @elseif($quotation->status == 'declined')
+        <span class="px-6 py-2 bg-red-100 text-red-800 rounded w-full md:w-auto text-center">
+            Declined by client
+        </span>
+    @endif
+</div>
 
-        </main>
+     </main>
     </div>
 </body>
 </html>

@@ -273,7 +273,7 @@
     </div>
 
     <script>
-        function clientsData() {
+       function clientsData() {
     return {
         search: '',
         clients: @json($clients),
@@ -285,16 +285,18 @@
             // 2. if no search, return reversed list
             if (!this.search) return list;
 
-            // 3. filter on search
-            return list.filter(c =>
-                c.name.toLowerCase().includes(this.search.toLowerCase()) ||
-                c.company.toLowerCase().includes(this.search.toLowerCase()) ||
-                c.email.toLowerCase().includes(this.search.toLowerCase()) ||
-                c.phone.toLowerCase().includes(this.search.toLowerCase())
-            );
+            const term = this.search.toLowerCase();
+
+            // 3. filter on ALL fields (id, name, company, phone, email, etc.)
+            return list.filter(c => {
+                return Object.values(c).some(value =>
+                    value !== null && String(value).toLowerCase().includes(term)
+                );
+            });
         }
     }
 }
+
 
 
         

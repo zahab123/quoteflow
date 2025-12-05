@@ -319,6 +319,90 @@
                     <span class="text-gray-500 ml-1">from last month</span>
                 </div>
             </div>
+ <!-- Total Paid Amount -->
+<div class="bg-white p-6 rounded-xl shadow-md transition duration-300 hover:bg-gray-50">
+    <div class="flex items-start justify-between">
+        <p class="text-sm font-medium text-gray-500">Total Paid</p>
+        <div class="w-10 h-10 flex items-center justify-center rounded-xl text-white bg-gradient-to-br from-teal-500 to-teal-600 shadow-lg shadow-teal-500/50">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12v1a9 9 0 0018 0v-1M4 12a9 9 0 0118 0"></path>
+            </svg>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <p class="text-4xl font-semibold text-gray-900">RS{{ number_format($totalPaid ?? 0, 2) }}</p>
+    </div>
+
+    <div class="mt-4 flex items-center text-sm font-medium">
+        @php
+            $prevPaid = \App\Models\Payment::whereHas('quotation', function($q) {
+                    $q->where('user_id', auth()->id())
+                      ->where('status', 'accepted');
+                })
+                ->whereMonth('created_at', now()->subMonth()->month)
+                ->sum('amount');
+
+            $paidPercent = $prevPaid > 0 ? round((($totalPaid - $prevPaid) / $prevPaid) * 100) : 0;
+            $paidColor = $paidPercent >= 0 ? 'text-green-500' : 'text-red-500';
+        @endphp
+
+        <svg class="w-4 h-4 {{ $paidColor }} mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8m-6 4H4"></path>
+        </svg>
+        <span class="{{ $paidColor }}">{{ $paidPercent }}%</span>
+        <span class="text-gray-500 ml-1">from last month</span>
+    </div>
+</div>
+
+
+<!-- Total Unpaid Amount -->
+<div class="bg-white p-6 rounded-xl shadow-md transition duration-300 hover:bg-gray-50">
+    <div class="flex items-start justify-between">
+        <p class="text-sm font-medium text-gray-500">Total Unpaid</p>
+        <div class="w-10 h-10 flex items-center justify-center rounded-xl text-white bg-gradient-to-br from-red-500 to-red-600 shadow-lg shadow-red-500/50">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="15" y1="9" x2="9" y2="15"></line>
+                <line x1="9" y1="9" x2="15" y2="15"></line>
+            </svg>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <p class="text-4xl font-semibold text-gray-900">RS{{ number_format($totalUnpaid ?? 0, 2) }}</p>
+    </div>
+
+    <div class="mt-4 flex items-center text-sm font-medium">
+        @php
+            // Get total quotations last month
+            $prevQuotationTotal = \App\Models\Quotations::where('user_id', auth()->id())
+                ->where('status', 'accepted')
+                ->whereMonth('created_at', now()->subMonth()->month)
+                ->sum('total');
+
+            // Get total paid last month
+            $prevPaidLastMonth = \App\Models\Payment::whereHas('quotation', function($q) {
+                    $q->where('user_id', auth()->id())
+                      ->where('status', 'accepted');
+                })
+                ->whereMonth('created_at', now()->subMonth()->month)
+                ->sum('amount');
+
+            $prevUnpaid = $prevQuotationTotal - $prevPaidLastMonth;
+
+            $unpaidPercent = $prevUnpaid > 0 ? round((($totalUnpaid - $prevUnpaid) / $prevUnpaid) * 100) : 0;
+            $unpaidColor = $unpaidPercent >= 0 ? 'text-red-500' : 'text-green-500';
+        @endphp
+
+        <svg class="w-4 h-4 {{ $unpaidColor }} mr-1 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8m-6 4H4"></path>
+        </svg>
+        <span class="{{ $unpaidColor }}">{{ $unpaidPercent }}%</span>
+        <span class="text-gray-500 ml-1">from last month</span>
+    </div>
+</div>
+
 
         </div>
 
@@ -359,7 +443,57 @@
                 </table>
             </div>
         </div>
+<h3 class="font-bold text-xl mt-8 text-gray-800 border-b pb-2">💰 Quotations Amount Not Fully Paid</h3>
 
+<div class="mt-4 overflow-x-auto">
+    <table class="w-full border border-gray-300 rounded-xl overflow-hidden shadow-md">
+        <thead class="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+            <tr>
+                <th class="p-3 text-left">Client</th>
+                <th class="p-3 text-left">Total</th>
+                <th class="p-3 text-left">Paid</th>
+                <th class="p-3 text-left">Remaining</th>
+                <th class="p-3 text-left">Action</th>
+            </tr>
+        </thead>
+        <tbody class="bg-white">
+            @foreach($unpaidQuotations as $q)
+                @php 
+                    $paid = $q->payments->sum('amount');
+                    $remaining = $q->total - $paid;
+                @endphp
+                <tr class="border-b hover:bg-gray-100 transition">
+                    <td class="p-3 font-semibold text-gray-700">{{ $q->client->name }}</td>
+
+                    <td class="p-3">
+                        <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
+                            RS {{ number_format($q->total,2) }}
+                        </span>
+                    </td>
+
+                    <td class="p-3">
+                        <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
+                            RS {{ number_format($paid,2) }}
+                        </span>
+                    </td>
+
+                    <td class="p-3">
+                        <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-semibold">
+                            RS {{ number_format($remaining,2) }}
+                        </span>
+                    </td>
+
+                    <td class="p-3">
+                        <a href="{{ route('view', $q->id) }}" 
+                           class="px-4 py-1 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 transition">
+                            View
+                        </a>
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
     </main>
 </div>
 

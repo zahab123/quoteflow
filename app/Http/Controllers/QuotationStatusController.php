@@ -39,4 +39,8 @@ class QuotationStatusController extends Controller
 
         return view('quotation_status_history', compact('quotation'));
     }
+// Example: In your QuotationController.php
+
+
+    
 }

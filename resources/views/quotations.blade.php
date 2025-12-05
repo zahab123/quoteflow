@@ -251,26 +251,23 @@
 
         <div class="mb-4 item-row">
             
-            <!-- Description Input -->
-            <div class="flex flex-col relative mb-4 p-4 border border-gray-300 rounded-lg shadow-md transition duration-300 hover:shadow-lg">
-                <label class="text-sm font-semibold text-gray-700 mb-1">Description</label>
-                <div class="relative">
-                    <input 
-                        name="items[0][description]"
-                        placeholder="Enter item description..."
-                        class="w-full border-2 border-gray-300 p-3 pr-16 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 description"
-                        required
-                    >
-                    <button 
-                        type="button"
-                        onclick="generateDescription(this)"
-                        class="absolute top-1/2 right-2 transform -translate-y-1/2 px-3 py-1 bg-indigo-600 text-white font-medium rounded-md text-sm hover:bg-indigo-700"
-                    >
-                        AI
-                    </button>
-                </div>
-            </div>
-
+           <div class="flex flex-col relative mb-4 p-4 border border-gray-300 rounded-lg shadow-md transition duration-300 hover:shadow-lg">
+    <label class="text-sm font-semibold text-gray-700 mb-1">Description</label>
+    <div class="relative">
+        <input 
+            name="items[0][description]"
+            placeholder="Enter item description..."
+            class="w-full border-2 border-gray-300 p-3 pr-16 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 description"
+            required
+            id="item-0-description" >
+        <button 
+            type="button"
+            onclick="generateDescription(this, 'item-0-description')" class="absolute top-1/2 right-2 transform -translate-y-1/2 px-3 py-1 bg-indigo-600 text-white font-medium rounded-md text-sm hover:bg-indigo-700"
+            id="item-0-ai-button" >
+            AI
+        </button>
+    </div>
+</div>
             <!-- Item Inputs Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3">
 
@@ -572,6 +569,18 @@ async function generateDescription(button) {
     const titleInput = document.querySelector('input[name="title"]');
     const descriptionInput = row.querySelector('.description');
 
+    // Store original state to restore later
+    const originalButtonText = button.textContent;
+    const originalPlaceholder = descriptionInput.placeholder;
+    
+    // Function to reset the state in case of success or error
+    const resetState = () => {
+        button.textContent = originalButtonText;
+        button.disabled = false;
+        descriptionInput.placeholder = originalPlaceholder;
+        descriptionInput.disabled = false;
+    };
+
     clearRowError(row);
 
     if (!titleInput.value) {
@@ -579,7 +588,14 @@ async function generateDescription(button) {
         return;
     }
 
+    // --- START: Set Loading State ---
     try {
+        button.textContent = '...'; // Change button text to an indicator
+        button.disabled = true; // Disable the button
+        descriptionInput.value = ''; // Clear previous value
+        descriptionInput.placeholder = 'AI content is generating...'; // Set loading message
+        descriptionInput.disabled = true; // Disable the input
+        
         const response = await fetch("{{ route('quotations.generateDescription') }}", {
             method: 'POST',
             headers: {
@@ -595,6 +611,7 @@ async function generateDescription(button) {
         } catch (jsonErr) {
             showGlobalToast("Unexpected server response (not JSON).");
             console.error('Invalid JSON response', jsonErr);
+            resetState(); // Reset state on JSON error
             return;
         }
 
@@ -605,29 +622,34 @@ async function generateDescription(button) {
             } else {
                 showGlobalToast(serverMsg);
             }
+            resetState(); // Reset state on server error
             return;
         }
 
         if (!data.description) {
             const errMsg = data.error || 'AI did not return a description.';
             showGlobalToast(errMsg);
+            resetState(); // Reset state on no description
             return;
         }
 
         if (data.description.length > MAX_DESCRIPTION_LENGTH) {
             showRowError(row, `Description is too long. Maximum ${MAX_DESCRIPTION_LENGTH} characters allowed.`);
+            resetState(); // Reset state on length error
             return;
         }
 
+        // --- SUCCESS: Apply result and Reset State ---
         descriptionInput.value = data.description;
         clearRowError(row);
+        resetState(); // Reset state on success
+
     } catch (err) {
-    
         console.error('generateDescription failed:', err);
         showGlobalToast('An error occurred while calling the AI. Please try again.');
+        resetState(); // Reset state on network/unexpected error
     }
 }
-
 
     </script>
 </body>
