@@ -94,10 +94,3 @@ use App\Http\Controllers\PaymentController;
 
 
 require __DIR__.'/auth.php';
-
-
-
-
-
-
-

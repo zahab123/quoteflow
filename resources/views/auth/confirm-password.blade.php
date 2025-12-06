@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Confirm Password</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="min-h-screen flex flex-col lg:flex-row bg-gray-100">
-    <div class="hidden lg:flex w-full lg:w-1/2 bg-gradient-to-br from-purple-600 to-blue-500 text-white flex-col justify-center p-16">
+    <div
+        class="hidden lg:flex w-full lg:w-1/2 bg-gradient-to-br from-purple-600 to-blue-500 text-white flex-col justify-center p-16">
         <h1 class="text-5xl font-extrabold mb-6 leading-snug">
             Confirm Your Password
         </h1>
@@ -26,11 +29,14 @@
                 @csrf
                 <div class="mb-4">
                     <x-input-label for="password" :value="__('Password')" />
-                    <x-text-input id="password" class="block mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition duration-200" type="password" name="password" required autocomplete="current-password" />
+                    <x-text-input id="password"
+                        class="block mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition duration-200"
+                        type="password" name="password" required autocomplete="current-password" />
                     <x-input-error :messages="$errors->get('password')" class="mt-2" />
                 </div>
                 <div class="flex justify-end mt-6">
-                    <x-primary-button class="bg-gradient-to-r from-purple-600 to-blue-500 hover:opacity-90 text-white font-semibold py-2 px-6 rounded-lg transition duration-200">
+                    <x-primary-button
+                        class="bg-gradient-to-r from-purple-600 to-blue-500 hover:opacity-90 text-white font-semibold py-2 px-6 rounded-lg transition duration-200">
                         {{ __('Confirm') }}
                     </x-primary-button>
                 </div>
@@ -41,4 +47,5 @@
     </div>
 
 </body>
+
 </html>

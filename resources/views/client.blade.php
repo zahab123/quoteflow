@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" class="h-full">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,42 +8,40 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
+
 <body class="h-full bg-gray-100 flex flex-col" x-data="clientsData()">
     <div x-data="{ sidebarOpen: false }" class="h-full flex">
-        
         <div x-show="sidebarOpen" @click="sidebarOpen = false"
-             class="fixed inset-0 bg-gray-900 bg-opacity-50 z-40 md:hidden"
-             x-transition:enter="transition-opacity ease-linear duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="transition-opacity ease-linear duration-300"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0">
+            class="fixed inset-0 bg-gray-900 bg-opacity-50 z-40 md:hidden"
+            x-transition:enter="transition-opacity ease-linear duration-300" x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-linear duration-300"
+            x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
         </div>
 
         <aside class="fixed inset-y-0 left-0 z-50 transform w-64 bg-white h-full shadow-2xl border-r border-gray-100 flex flex-col justify-between
                       md:static md:translate-x-0 md:flex-shrink-0
-                      "
-              :class="{ 'translate-x-0 ease-out': sidebarOpen, '-translate-x-full ease-in': !sidebarOpen }"
-              x-transition:enter="transition ease-out duration-300"
-              x-transition:leave="transition ease-in duration-300">
-            
+            " :class="{ 'translate-x-0 ease-out': sidebarOpen, '-translate-x-full ease-in': !sidebarOpen }"
+            x-transition:enter="transition ease-out duration-300" x-transition:leave="transition ease-in duration-300">
+
             <div class="px-6 py-6 flex items-center gap-2 border-b border-gray-100">
-                <button @click="sidebarOpen = false" class="md:hidden mr-3 text-gray-400 hover:text-gray-800 p-1 rounded-full hover:bg-gray-100 transition">
-                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                <button @click="sidebarOpen = false"
+                    class="md:hidden mr-3 text-gray-400 hover:text-gray-800 p-1 rounded-full hover:bg-gray-100 transition">
+                    <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
                 <img src="{{ asset('images/logo.PNG') }}" alt="Logo" class="w-8 h-8 object-contain">
-                <span class="text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-blue-500 to-pink-500 tracking-wider">
+                <span
+                    class="text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-blue-500 to-pink-500 tracking-wider">
                     QuoteFlow
                 </span>
             </div>
-            
+
             <ul class="mt-4 flex-1 space-y-1 text-gray-700 font-medium">
                 <li>
-                    <a href="/admin/dashboard"
-                       class="flex items-center mx-3 px-3 py-2 transition duration-150 ease-in-out rounded-lg
+                    <a href="/admin/dashboard" class="flex items-center mx-3 px-3 py-2 transition duration-150 ease-in-out rounded-lg
                               {{ request()->is('admin/dashboard') 
                                   ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-md' 
                                   : 'hover:bg-purple-50 hover:text-purple-600 text-gray-700' }}">
@@ -51,8 +50,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/clientlist"
-                       class="flex items-center mx-3 px-3 py-2 transition duration-150 ease-in-out rounded-lg
+                    <a href="/clientlist" class="flex items-center mx-3 px-3 py-2 transition duration-150 ease-in-out rounded-lg
                               {{ request()->is('clientlist') 
                                   ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-md' 
                                   : 'hover:bg-purple-50 hover:text-purple-600 text-gray-700' }}">
@@ -61,8 +59,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('quotationlist') }}"
-                       class="flex items-center mx-3 px-3 py-2 transition duration-150 ease-in-out rounded-lg
+                    <a href="{{ route('quotationlist') }}" class="flex items-center mx-3 px-3 py-2 transition duration-150 ease-in-out rounded-lg
                               {{ request()->is('quotationlist') 
                                   ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-md' 
                                   : 'hover:bg-purple-50 hover:text-purple-600 text-gray-700' }}">
@@ -71,8 +68,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/report"
-                       class="flex items-center mx-3 px-3 py-2 transition duration-150 ease-in-out rounded-lg
+                    <a href="/report" class="flex items-center mx-3 px-3 py-2 transition duration-150 ease-in-out rounded-lg
                               {{ request()->is('reports') 
                                   ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-md' 
                                   : 'hover:bg-purple-50 hover:text-purple-600 text-gray-700' }}">
@@ -81,8 +77,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/setting"
-                       class="flex items-center mx-3 px-3 py-2 transition duration-150 ease-in-out rounded-lg
+                    <a href="/setting" class="flex items-center mx-3 px-3 py-2 transition duration-150 ease-in-out rounded-lg
                               {{ request()->is('settings') 
                                   ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-md' 
                                   : 'hover:bg-purple-50 hover:text-purple-600 text-gray-700' }}">
@@ -95,8 +90,8 @@
             <div class="px-6 py-4 flex items-center gap-3 border-t border-gray-100" x-data="{ open: false }">
                 <div class="relative w-full flex items-center gap-3">
                     <button @click="open = !open"
-                            class="w-12 h-12 rounded-full flex items-center justify-center text-white text-lg font-bold flex-shrink-0"
-                            style="background: linear-gradient(135deg, #6366F1, #EC4899);">
+                        class="w-12 h-12 rounded-full flex items-center justify-center text-white text-lg font-bold flex-shrink-0"
+                        style="background: linear-gradient(135deg, #6366F1, #EC4899);">
                         {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                     </button>
                     <div class="truncate">
@@ -105,18 +100,21 @@
                     </div>
 
                     <div x-show="open" @click.away="open = false"
-                         class="absolute bottom-full mb-3 left-0 w-full bg-white border border-gray-200 rounded-lg shadow-xl z-50 origin-bottom"
-                         x-transition:enter="transition ease-out duration-100"
-                         x-transition:enter-start="transform opacity-0 scale-95"
-                         x-transition:enter-end="transform opacity-100 scale-100"
-                         x-transition:leave="transition ease-in duration-75"
-                         x-transition:leave-start="transform opacity-100 scale-100"
-                         x-transition:leave-end="transform opacity-0 scale-95">
-                        <x-dropdown-link :href="route('profile.edit')" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-t-lg">Profile</x-dropdown-link>
+                        class="absolute bottom-full mb-3 left-0 w-full bg-white border border-gray-200 rounded-lg shadow-xl z-50 origin-bottom"
+                        x-transition:enter="transition ease-out duration-100"
+                        x-transition:enter-start="transform opacity-0 scale-95"
+                        x-transition:enter-end="transform opacity-100 scale-100"
+                        x-transition:leave="transition ease-in duration-75"
+                        x-transition:leave-start="transform opacity-100 scale-100"
+                        x-transition:leave-end="transform opacity-0 scale-95">
+                        <x-dropdown-link :href="route('profile.edit')"
+                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-t-lg">Profile
+                        </x-dropdown-link>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <x-dropdown-link :href="route('logout')" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-b-lg"
-                                             onclick="event.preventDefault(); this.closest('form').submit();">
+                            <x-dropdown-link :href="route('logout')"
+                                class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-b-lg"
+                                onclick="event.preventDefault(); this.closest('form').submit();">
                                 Log Out
                             </x-dropdown-link>
                         </form>
@@ -130,63 +128,79 @@
                 <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between h-16 items-center">
                         <div class="flex items-center space-x-4 w-full sm:w-auto">
-                            <button @click="sidebarOpen = true" class="text-gray-500 hover:text-gray-800 md:hidden p-2 rounded-full hover:bg-gray-100 transition">
-                                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            <button @click="sidebarOpen = true"
+                                class="text-gray-500 hover:text-gray-800 md:hidden p-2 rounded-full hover:bg-gray-100 transition">
+                                <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 6h16M4 12h16M4 18h16" />
                                 </svg>
                             </button>
                             <h1 class="text-xl font-semibold text-gray-800 hidden sm:block">Dashboard</h1>
-                            
+
                             <div class="relative flex-1 max-w-sm">
                                 <input type="text" placeholder="Search..."
-                                       class="pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none w-full text-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    class="pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none w-full text-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    class="h-5 w-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 3a7.5 7.5 0 006.15 13.65z" />
+                                        d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 3a7.5 7.5 0 006.15 13.65z" />
                                 </svg>
                             </div>
                         </div>
 
                         <div class="flex items-center space-x-3 sm:space-x-4">
                             <button class="relative p-2 rounded-full hover:bg-gray-100 transition">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405C18.21 15.21 18 14.11 18 13V9a6 6 0 10-12 0v4c0 1.11-.21 2.21-.595 3.595L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 17h5l-1.405-1.405C18.21 15.21 18 14.11 18 13V9a6 6 0 10-12 0v4c0 1.11-.21 2.21-.595 3.595L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                                 </svg>
-                                <span class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+                                <span
+                                    class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
                             </button>
-                            
-                            <button id="themeToggle" class="p-2 rounded-full hover:bg-gray-100 transition hidden sm:block">
-                                <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.485-8.485l-.707.707M4.222 4.222l-.707.707M21 12h-1M4 12H3m16.485 4.485l-.707-.707M4.222 19.778l-.707-.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+
+                            <button id="themeToggle"
+                                class="p-2 rounded-full hover:bg-gray-100 transition hidden sm:block">
+                                <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg"
+                                    class="h-6 w-6 text-gray-600 dark:hidden" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 3v1m0 16v1m8.485-8.485l-.707.707M4.222 4.222l-.707.707M21 12h-1M4 12H3m16.485 4.485l-.707-.707M4.222 19.778l-.707-.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                                 </svg>
-                                <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500 hidden dark:block" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z"/>
+                                <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg"
+                                    class="h-6 w-6 text-yellow-500 hidden dark:block" fill="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z" />
                                 </svg>
                             </button>
 
                             <div x-data="{ open: false }" class="relative hidden sm:block">
                                 <button @click="open = !open"
-                                        class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-pink-500 hover:ring-2 ring-purple-400 flex items-center justify-center text-white text-lg font-bold transition duration-150">
+                                    class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-pink-500 hover:ring-2 ring-purple-400 flex items-center justify-center text-white text-lg font-bold transition duration-150">
                                     {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                                 </button>
                                 <div x-show="open" @click.away="open = false"
-                                     class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-50 origin-top-right"
-                                     x-transition:enter="transition ease-out duration-100"
-                                     x-transition:enter-start="transform opacity-0 scale-95"
-                                     x-transition:enter-end="transform opacity-100 scale-100"
-                                     x-transition:leave="transition ease-in duration-75"
-                                     x-transition:leave-start="transform opacity-100 scale-100"
-                                     x-transition:leave-end="transform opacity-0 scale-95">
+                                    class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-50 origin-top-right"
+                                    x-transition:enter="transition ease-out duration-100"
+                                    x-transition:enter-start="transform opacity-0 scale-95"
+                                    x-transition:enter-end="transform opacity-100 scale-100"
+                                    x-transition:leave="transition ease-in duration-75"
+                                    x-transition:leave-start="transform opacity-100 scale-100"
+                                    x-transition:leave-end="transform opacity-0 scale-95">
                                     <div class="px-4 py-2 text-sm text-gray-700 border-b border-gray-100">
                                         {{ Auth::user()->email }}
                                     </div>
-                                    <x-dropdown-link :href="route('profile.edit')" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                    <x-dropdown-link :href="route('profile.edit')"
+                                        class="block px-4 py-2 text-gray-700 hover:bg-gray-100">
                                         Profile
                                     </x-dropdown-link>
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
-                                        <x-dropdown-link :href="route('logout')" class="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-                                                         onclick="event.preventDefault(); this.closest('form').submit();">
+                                        <x-dropdown-link :href="route('logout')"
+                                            class="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                                            onclick="event.preventDefault(); this.closest('form').submit();">
                                             Log Out
                                         </x-dropdown-link>
                                     </form>
@@ -198,105 +212,94 @@
                 </div>
             </nav>
 
-        <main class="flex-1 px-6 md:px-10 py-8 overflow-auto">
-            <div class="flex justify-between items-center mb-6">
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-800">Create Client</h1>
-                    <p class="text-gray-500">Add a new client record</p>
+            <main class="flex-1 px-6 md:px-10 py-8 overflow-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">Create Client</h1>
+                        <p class="text-gray-500">Add a new client record</p>
+                    </div>
+                    <a href="/clientlist" class="bg-purple-600 text-white px-4 py-2 rounded-lg shadow">
+                        Back to Client List
+                    </a>
                 </div>
-                <a href="/clientlist" class="bg-purple-600 text-white px-4 py-2 rounded-lg shadow">
-                   Back to Client List
-                </a>
-            </div>
-            @if(session('success'))
+                @if(session('success'))
                 <div class="mb-4 p-3 rounded-lg bg-green-100 text-green-700 border border-green-300">
                     {{ session('success') }}
                 </div>
-            @endif
-            @if ($errors->any())
+                @endif
+                @if ($errors->any())
                 <div class="mb-4 p-3 rounded-lg bg-red-100 text-red-700 border border-red-300">
                     <ul class="list-disc ml-4">
                         @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
+                        <li>{{ $error }}</li>
                         @endforeach
                     </ul>
                 </div>
-            @endif
+                @endif
 
 
-            <div class="bg-white p-6 md:p-8 rounded-xl shadow">
-    <form action="{{ route('addclient') }}" method="POST">
-        @csrf
+                <div class="bg-white p-6 md:p-8 rounded-xl shadow">
+                    <form action="{{ route('addclient') }}" method="POST">
+                        @csrf
+                        <!-- Client Name -->
+                        <div class="mb-4">
+                            <label class="text-gray-700 font-medium">Client Name *</label>
+                            <input type="text" name="name" class="w-full border rounded-lg p-2 mt-1"
+                                placeholder="Enter client name" required pattern="[A-Za-z\s]{3,50}"
+                                title="Only letters allowed, minimum 3 characters">
+                        </div>
 
-        <!-- Client Name -->
-        <div class="mb-4">
-            <label class="text-gray-700 font-medium">Client Name *</label>
-            <input type="text" name="name" 
-                class="w-full border rounded-lg p-2 mt-1"
-                placeholder="Enter client name"
-                required
-                pattern="[A-Za-z\s]{3,50}"
-                title="Only letters allowed, minimum 3 characters">
+                        <!-- Company -->
+                        <div class="mb-4">
+                            <label class="text-gray-700 font-medium">Company</label>
+                            <input type="text" name="company" required class="w-full border rounded-lg p-2 mt-1"
+                                placeholder="Company name" pattern="[A-Za-z0-9\s]{2,50}"
+                                title="Only letters, numbers & spaces allowed">
+                        </div>
+
+                        <!-- Email -->
+                        <div class="mb-4">
+                            <label class="text-gray-700 font-medium">Email *</label>
+                            <input type="email" name="email" class="w-full border rounded-lg p-2 mt-1"
+                                placeholder="Client email" required>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="mb-4">
+                            <label class="text-gray-700 font-medium">Phone</label>
+                            <input type="tel" name="phone" required class="w-full border rounded-lg p-2 mt-1"
+                                placeholder="Client phone number" pattern="^\+?[0-9]{10,15}$"
+                                title="Only numbers allowed, 10 to 15 digits">
+                        </div>
+
+                        <!-- Address -->
+                        <div class="mb-4">
+                            <label class="text-gray-700 font-medium">Address</label>
+                            <textarea name="address" rows="3" required class="w-full border rounded-lg p-2 mt-1"
+                                placeholder="Client address"></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="text-gray-700 font-medium">Notes (Optional)</label>
+                            <textarea name="notes" rows="3" class="w-full border rounded-lg p-2 mt-1"
+                                placeholder="Any additional notes"></textarea>
+                        </div>
+
+                        <div class="flex flex-col md:flex-row gap-4 justify-start">
+                            <button type="submit"
+                                class="bg-purple-600 text-white px-5 py-2 rounded-lg w-full md:w-auto">
+                                Save Client
+                            </button>
+
+                        </div>
+                    </form>
+                </div>
+            </main>
         </div>
-
-        <!-- Company -->
-        <div class="mb-4">
-            <label class="text-gray-700 font-medium">Company</label>
-            <input type="text" name="company" 
-                required
-                class="w-full border rounded-lg p-2 mt-1"
-                placeholder="Company name"
-                pattern="[A-Za-z0-9\s]{2,50}"
-                title="Only letters, numbers & spaces allowed">
-        </div>
-
-        <!-- Email -->
-        <div class="mb-4">
-            <label class="text-gray-700 font-medium">Email *</label>
-            <input type="email" name="email" 
-                class="w-full border rounded-lg p-2 mt-1"
-                placeholder="Client email"
-                required>
-        </div>
-
-        <!-- Phone -->
-        <div class="mb-4">
-            <label class="text-gray-700 font-medium">Phone</label>
-            <input type="tel" name="phone" 
-                required
-                class="w-full border rounded-lg p-2 mt-1"
-                placeholder="Client phone number"
-                pattern="^\+?[0-9]{10,15}$"
-                title="Only numbers allowed, 10 to 15 digits">
-        </div>
-
-        <!-- Address -->
-        <div class="mb-4">
-            <label class="text-gray-700 font-medium">Address</label>
-            <textarea name="address" rows="3" required class="w-full border rounded-lg p-2 mt-1" placeholder="Client address"></textarea>
-        </div>
-
-        <!-- Notes -->
-        <div class="mb-4">
-            <label class="text-gray-700 font-medium">Notes (Optional)</label>
-            <textarea name="notes" rows="3" class="w-full border rounded-lg p-2 mt-1" placeholder="Any additional notes"></textarea>
-        </div>
-
-        <div class="flex flex-col md:flex-row gap-4 justify-start">
-            <button type="submit" class="bg-purple-600 text-white px-5 py-2 rounded-lg w-full md:w-auto">
-                Save Client
-            </button>
-            
-        </div>
-    </form>
-</div>
-
-        </main>
-
     </div>
-</div>
-            </div>
+    </div>
     </div>
 
 </body>
+
 </html>

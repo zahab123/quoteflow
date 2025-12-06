@@ -47,12 +47,9 @@ class Quotations extends Model
     }
     
 
-public function payments()
-{
-    return $this->hasMany(Payment::class, 'quotation_id', 'id');
-}
-
-
-
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'quotation_id', 'id');
+    }
 
 }

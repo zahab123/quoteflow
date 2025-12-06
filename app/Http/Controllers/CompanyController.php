@@ -14,7 +14,7 @@ class CompanyController extends Controller
         $company = Company::where('user_id', $userId)->first();
         return view('settings.company', compact('company'));
     }
-
+    // save the compnay data in Database
     public function store(Request $request)
     {
         $request->validate([
@@ -28,7 +28,7 @@ class CompanyController extends Controller
 
         $userId = auth()->id();
         $company = Company::where('user_id', $userId)->first() ?? new Company();
-        $company->user_id = $userId; // Associate with current user
+        $company->user_id = $userId;
 
         if ($request->hasFile('logo')) {
             $logoPath = $request->file('logo')->store('company_logo', 'public');
@@ -45,7 +45,7 @@ class CompanyController extends Controller
 
         return back()->with('success', 'Company details saved successfully!');
     }
-
+    // Show the company Data in required Field in real time
     public function showQuotation($id)
     {
         $userId = auth()->id();
@@ -56,14 +56,14 @@ class CompanyController extends Controller
 
         return view('view', compact('company', 'quotation'));
     }
-
+    // Where show data of company for edit in same fields
     public function edit()
     {
         $userId = auth()->id();
         $company = Company::where('user_id', $userId)->first();
         return view('setting', compact('company'));
     }
-
+    // edit the company data
     public function update(Request $request)
     {
         $request->validate([
@@ -96,7 +96,7 @@ class CompanyController extends Controller
 
         return redirect()->route('company.settings.edit')->with('success', 'Company details saved successfully!');
     }
-
+    // The set the every user have our company details
     public function settings()
     {
         $userId = auth()->id();

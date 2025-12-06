@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" class="h-full">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Profile</title>
-<script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="h-full bg-gray-100 py-10">
 
     <main class="max-w-4xl mx-auto px-6">
@@ -30,8 +32,9 @@
                     @include('profile.partials.delete-user-form')
                 </div>
             </div>
-            
+
         </div>
     </main>
 </body>
+
 </html>

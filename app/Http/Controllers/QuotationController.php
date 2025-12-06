@@ -22,7 +22,8 @@ class QuotationController extends Controller
     // Show create quotation page
     public function create()
     {
-        $clients = Clients::where('user_id', Auth::id())->get(); // Only current user's clients
+        // every user have only our data
+        $clients = Clients::where('user_id', Auth::id())->get(); 
         return view('quotations', compact('clients'));
     }
 
@@ -260,104 +261,102 @@ class QuotationController extends Controller
 
     // Send quotation email
    public function sendEmail($id)
-{
-    $quotation = Quotations::where('user_id', Auth::id())
-        ->findOrFail($id);
+    {
+        $quotation = Quotations::where('user_id', Auth::id())
+            ->findOrFail($id);
 
-    if (!$quotation->client || !$quotation->client->email) {
-        return back()->with('error', 'Client email not found.');
-    }
-
-   
-    Mail::to($quotation->client->email)
-        ->send(new QuotationMail($quotation, null, true));
-
-
-    $quotation->status = 'sent';
-    $quotation->save();
+        if (!$quotation->client || !$quotation->client->email) {
+            return back()->with('error', 'Client email not found.');
+        }
 
     
-    QuotationStatusLog::create([
-        'quotation_id' => $quotation->id,
-        'status' => 'sent',
-        'changed_at' => now(),
-        'remarks' => 'Quotation PDF sent to client'
-    ]);
+        Mail::to($quotation->client->email)
+            ->send(new QuotationMail($quotation, null, true));
 
-    return back()->with('success', 'Email sent Sucessfully');
-}
+
+        $quotation->status = 'sent';
+        $quotation->save();
+
+        
+        QuotationStatusLog::create([
+            'quotation_id' => $quotation->id,
+            'status' => 'sent',
+            'changed_at' => now(),
+            'remarks' => 'Quotation PDF sent to client'
+        ]);
+
+        return back()->with('success', 'Email sent Sucessfully');
+    }
 
 
     // Generate AI description
- public function generateDescription(Request $request)
-{
-    $request->validate([
-        'title' => 'required|string|max:255',
-    ]);
-
-    $title = $request->input('title');
-    $apiKey = env('GEMINI_API_KEY');
-
-    if (!$apiKey) {
-        return response()->json(['error' => 'GEMINI_API_KEY not set'], 500);
-    }
-
-    $apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' . $apiKey;
-
-    $payload = [
-        'contents' => [
-            ['parts' => [['text' => 
-                "Write a clear and engaging description for a quotation. 
-                 Use only plain words without any bullets, commas, or symbols. 
-                 Write it in a single paragraph. 
-                 Keep it concise and write according to the description column size (255 varchar). 
-                 Title: \"$title\"."
-            ]]]
-        ],
-        'generationConfig' => [
-            'temperature' => 0.8,
-            'maxOutputTokens' => 2048
-        ]
-    ];
-
-    try {
-        $response = Http::withHeaders([
-            'Content-Type' => 'application/json',
-        ])->post($apiUrl, $payload);
-
-        if ($response->failed()) {
-            return response()->json(['error' => 'AI request failed'], 500);
-        }
-
-        $data = $response->json();
-        $generated = $data['candidates'][0]['content']['parts'][0]['text'] ?? null;
-
-        // If AI gives no output
-        if (!$generated) {
-            Log::error('Gemini returned empty response', ['response' => $data]);
-            return response()->json(['error' => 'AI did not return a description'], 500);
-        }
-
-        $generated = trim($generated);
-
-        // ✅ NEW CHECK — Limit to 255 characters
-        if (strlen($generated) > 255) {
-            return response()->json([
-                'error' => 'AI description is too long. Maximum allowed is 255 characters.'
-            ], 422);
-        }
-
-        return response()->json(['description' => $generated]);
-
-    } catch (\Exception $e) {
-        Log::error('Gemini API failed: ' . $e->getMessage(), [
-            'trace' => $e->getTraceAsString()
+    public function generateDescription(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
         ]);
 
-        return response()->json([
-            'error' => 'Server error: ' . $e->getMessage()
-        ], 500);
+        $title = $request->input('title');
+        $apiKey = env('GEMINI_API_KEY');
+
+        if (!$apiKey) {
+            return response()->json(['error' => 'GEMINI_API_KEY not set'], 500);
+        }
+
+        $apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' . $apiKey;
+
+        $payload = [
+            'contents' => [
+                ['parts' => [['text' => 
+                    "Write a clear and engaging description for a quotation. 
+                    Use only plain words without any bullets, commas, or symbols. 
+                    Write it in a single paragraph. 
+                    Keep it concise and write according to the description column size (255 varchar). 
+                    Title: \"$title\"."
+                ]]]
+            ],
+            'generationConfig' => [
+                'temperature' => 0.8,
+                'maxOutputTokens' => 2048
+            ]
+        ];
+
+        try {
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+            ])->post($apiUrl, $payload);
+
+            if ($response->failed()) {
+                return response()->json(['error' => 'AI request failed'], 500);
+            }
+
+            $data = $response->json();
+            $generated = $data['candidates'][0]['content']['parts'][0]['text'] ?? null;
+
+            if (!$generated) {
+                Log::error('Gemini returned empty response', ['response' => $data]);
+                return response()->json(['error' => 'AI did not return a description'], 500);
+            }
+
+            $generated = trim($generated);
+
+            if (strlen($generated) > 255) {
+                return response()->json([
+                    'error' => 'AI description is too long. Maximum allowed is 255 characters.'
+                ], 422);
+            }
+
+            return response()->json(['description' => $generated]);
+
+        } catch (\Exception $e) {
+            Log::error('Gemini API failed: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'error' => 'Server error: ' . $e->getMessage()
+            ], 500);
+        }
     }
-}
 
 }

@@ -21,7 +21,7 @@ class ClientController extends Controller
 
         // Save client
         $clients = new Clients();
-        $clients->user_id = auth()->id(); // Associate with current user
+        $clients->user_id = auth()->id(); 
         $clients->name = $request->name;
         $clients->company = $request->company;
         $clients->email = $request->email;
@@ -33,21 +33,21 @@ class ClientController extends Controller
 
         return redirect()->back()->with('success', 'Client added successfully!');
     }
-
+    // show the list of cilent
     public function clientlist()
     {
         $userId = auth()->id();
         $clients = Clients::where('user_id', $userId)->get();
         return view('clientlist', compact('clients'));
     }
-
+    // send data in update page for update the client data
     public function updateclient($id)
     {
         $userId = auth()->id();
         $clients = Clients::where('id', $id)->where('user_id', $userId)->firstOrFail();
         return view('updateclient', compact('clients'));
     }
-
+    // update the client data 
     public function postupdateclient(Request $request, $id)
     {
         $userId = auth()->id();
@@ -64,7 +64,7 @@ class ClientController extends Controller
 
         return redirect('/clientlist')->with('success', 'Client updated successfully!');
     }
-
+    // Delete the cilent data
     public function deleteclient($id)
     {
         $userId = auth()->id();

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class QuotationStatusController extends Controller
 {
+    // update the status
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
@@ -30,7 +31,7 @@ class QuotationStatusController extends Controller
 
         return redirect()->back()->with('success', 'Quotation status updated successfully!');
     }
-
+    // TAke history of Status of current quotation
     public function history($id)
     {
         $quotation = Quotations::with('statusLogs')
@@ -39,8 +40,5 @@ class QuotationStatusController extends Controller
 
         return view('quotation_status_history', compact('quotation'));
     }
-// Example: In your QuotationController.php
-
-
     
 }

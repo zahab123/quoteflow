@@ -304,7 +304,7 @@
                     </div>
                 </div>
                 <div class="mt-4">
-                    <p class="text-4xl font-semibold text-gray-900">${{ number_format($totalRevenue ?? 0, 2) }}</p>
+                    <p class="text-4xl font-semibold text-gray-900">RS {{ number_format($totalRevenue ?? 0) }}</p>
                 </div>
                 <div class="mt-4 flex items-center text-sm font-medium">
                     @php
@@ -331,7 +331,7 @@
     </div>
 
     <div class="mt-4">
-        <p class="text-4xl font-semibold text-gray-900">RS{{ number_format($totalPaid ?? 0, 2) }}</p>
+        <p class="text-4xl font-semibold text-gray-900">RS {{ number_format($totalPaid ?? 0) }}</p>
     </div>
 
     <div class="mt-4 flex items-center text-sm font-medium">
@@ -370,7 +370,7 @@
     </div>
 
     <div class="mt-4">
-        <p class="text-4xl font-semibold text-gray-900">RS{{ number_format($totalUnpaid ?? 0, 2) }}</p>
+        <p class="text-4xl font-semibold text-gray-900">RS {{ number_format($totalUnpaid ?? 0) }}</p>
     </div>
 
     <div class="mt-4 flex items-center text-sm font-medium">
@@ -467,19 +467,19 @@
 
                     <td class="p-3">
                         <span class="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm">
-                            RS {{ number_format($q->total,2) }}
+                            RS {{ number_format($q->total) }}
                         </span>
                     </td>
 
                     <td class="p-3">
                         <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
-                            RS {{ number_format($paid,2) }}
+                            RS {{ number_format($paid) }}
                         </span>
                     </td>
 
                     <td class="p-3">
                         <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-semibold">
-                            RS {{ number_format($remaining,2) }}
+                            RS {{ number_format($remaining) }}
                         </span>
                     </td>
 
