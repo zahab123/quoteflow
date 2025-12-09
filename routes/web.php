@@ -64,6 +64,28 @@ use App\Http\Controllers\PaymentController;
         Route::get('{id}/status/history', [QuotationStatusController::class, 'history'])->name('quotation.status.history');
     });
 
+
+    // order routes
+     Route::get('/orderlist', function () {
+        return view('orderlist'); 
+    })->name('orderlist');
+
+
+
+     Route::get('/order', function () {
+        return view('order'); 
+    })->name('order');
+
+
+    
+     Route::get('/invoice', function () {
+        return view('invoice'); 
+    })->name('invoice');
+
+
+
+
+
     // Reports & Settings
     Route::get('/report', function () {
         return view('report');

@@ -69,6 +69,16 @@
                         Quotations
                     </a>
                 </li>
+                 <li>
+                <a href="/orderlist"
+                class="flex items-center mx-3 px-3 py-2 transition duration-150 ease-in-out rounded-lg
+                        {{ request()->is('orderlist') 
+                            ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-md' 
+                            : 'hover:bg-purple-50 hover:text-purple-600 text-gray-700' }}">
+                    <x-heroicon-o-shopping-cart class="w-5 h-5 mr-3" />
+                    Orders
+                </a>
+            </li>
                 <li>
                     <a href="/report" class="flex items-center mx-3 px-3 py-2 transition duration-150 ease-in-out rounded-lg
                               {{ request()->is('reports') 
@@ -297,6 +307,7 @@
                                             class="border p-2 rounded unit_price" required>
                                     </div>
 
+
                                     <div class="flex flex-col">
                                         <label class="text-xs text-gray-500">Tax</label>
                                         <input name="items[0][tax]" type="number" step="0.01" value="0"
@@ -404,25 +415,36 @@
     }
 
     document.getElementById("saveDraftBtn").addEventListener("click", function(e) {
-        const items = document.querySelectorAll(".item-row");
-        const errorBox = document.querySelector(".error-msg");
+    const items = document.querySelectorAll(".item-row");
+    const errorBox = document.querySelector(".error-msg");
 
-        if (items.length < 1) {
-            e.preventDefault();
-            errorBox.textContent = "At least one line item is required before saving.";
+    // Check if there is at least one line item
+    if (items.length < 1) {
+        e.preventDefault();
+        errorBox.textContent = "At least one line item is required before saving.";
+        errorBox.classList.remove("hidden");
+        return false;
+    }
+
+    errorBox.classList.add("hidden");
+
+    // Validate unit price for each item
+    let valid = true;
+    items.forEach((item, index) => {
+        const unitPriceInput = item.querySelector(".unit_price");
+        if (!unitPriceInput.value || parseFloat(unitPriceInput.value) <= 0) {
+            valid = false;
+            errorBox.textContent = `Please enter a valid unit price for item ${index + 1}.`;
             errorBox.classList.remove("hidden");
+            unitPriceInput.focus();
             return false;
         }
-
-        errorBox.classList.add("hidden");
-
-        if (items.length === 1) {
-            const unitPriceInput = items[0].querySelector(".unit_price");
-            if (!unitPriceInput.value || parseFloat(unitPriceInput.value) <= 0) {
-                unitPriceInput.value = 100;
-            }
-        }
     });
+
+    if (!valid) {
+        e.preventDefault(); // Stop form submission if invalid
+    }
+});
 
 
     function attachListenersToRow(row) {

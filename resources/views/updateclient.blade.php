@@ -64,6 +64,16 @@
                         Quotations
                     </a>
                 </li>
+                 <li>
+                <a href="/orderlist"
+                class="flex items-center mx-3 px-3 py-2 transition duration-150 ease-in-out rounded-lg
+                        {{ request()->is('orderlist') 
+                            ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-md' 
+                            : 'hover:bg-purple-50 hover:text-purple-600 text-gray-700' }}">
+                    <x-heroicon-o-shopping-cart class="w-5 h-5 mr-3" />
+                    Orders
+                </a>
+            </li>
                 <li>
                     <a href="/report" class="flex items-center px-6 py-3 transition rounded-lg
                               {{ request()->is('reports') 

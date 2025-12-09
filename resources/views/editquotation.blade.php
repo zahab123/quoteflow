@@ -68,6 +68,16 @@
                         Quotations
                     </a>
                 </li>
+                 <li>
+                <a href="/orderlist"
+                class="flex items-center mx-3 px-3 py-2 transition duration-150 ease-in-out rounded-lg
+                        {{ request()->is('orderlist') 
+                            ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-md' 
+                            : 'hover:bg-purple-50 hover:text-purple-600 text-gray-700' }}">
+                    <x-heroicon-o-shopping-cart class="w-5 h-5 mr-3" />
+                    Orders
+                </a>
+            </li>
                 <li>
                     <a href="/report" class="flex items-center mx-3 px-3 py-2 transition duration-150 ease-in-out rounded-lg
                               {{ request()->is('reports') 
@@ -365,11 +375,8 @@
     </div>
 
     <script>
-    let index = {
-        {
-            isset($quotation) ? $quotation - > items - > count() : 0
-        }
-    };
+    // Initialize index from PHP
+    let index = {{ isset($quotation) ? $quotation->items->count() : 0 }};
 
     function calculateTotal(row) {
         const qty = parseFloat(row.querySelector('.qty').value) || 0;
@@ -377,14 +384,12 @@
         const tax = parseFloat(row.querySelector('.tax').value) || 0;
         const discount = parseFloat(row.querySelector('.discount').value) || 0;
         const total = (qty * price) + tax - discount;
-        row.querySelector('.total').value = '$' + total.toFixed(2);
+        row.querySelector('.total').value = 'RS' + total.toFixed(2);
         updateSummary();
     }
 
     function updateSummary() {
-        let subtotal = 0,
-            totalTax = 0,
-            totalDiscount = 0;
+        let subtotal = 0, totalTax = 0, totalDiscount = 0;
 
         document.querySelectorAll('.item-row').forEach(row => {
             const qty = parseFloat(row.querySelector('.qty').value) || 0;
@@ -398,10 +403,10 @@
         });
 
         const grandTotal = subtotal + totalTax - totalDiscount;
-        document.getElementById('subtotal').innerText = '$' + subtotal.toFixed(2);
-        document.getElementById('total-tax').innerText = '$' + totalTax.toFixed(2);
-        document.getElementById('total-discount').innerText = '$' + totalDiscount.toFixed(2);
-        document.getElementById('grand-total').innerText = '$' + grandTotal.toFixed(2);
+        document.getElementById('subtotal').innerText = 'RS' + subtotal.toFixed(2);
+        document.getElementById('total-tax').innerText = 'RS' + totalTax.toFixed(2);
+        document.getElementById('total-discount').innerText = 'RS' + totalDiscount.toFixed(2);
+        document.getElementById('grand-total').innerText = 'RS' + grandTotal.toFixed(2);
     }
 
     function attachListenersToRow(row) {
@@ -417,50 +422,33 @@
             });
         }
 
-        calculateTotal(row);
+        calculateTotal(row); // calculate total on load
     }
 
     // Initialize existing rows
     document.querySelectorAll('.item-row').forEach(row => attachListenersToRow(row));
-    updateSummary(); // ensure totals are correct on page load
+    updateSummary(); // recalc totals on page load
 
-    // Add a new item row
     function addItem() {
         const container = document.getElementById('items-container');
         const html = `
-    <div class="grid grid-cols-7 gap-3 mb-2 item-row">
-        <input name="items[${index}][description]" placeholder="Description" class="border p-2 rounded" required>
-        <input name="items[${index}][qty]" type="number" value="1" class="border p-2 rounded qty" min="1" required>
-        <input name="items[${index}][unit_price]" type="number" step="0.01" value="0" class="border p-2 rounded unit_price" required>
-        <input name="items[${index}][tax]" type="number" step="0.01" value="0" class="border p-2 rounded tax" placeholder="Tax">
-        <input name="items[${index}][discount]" type="number" step="0.01" value="0" class="border p-2 rounded discount" placeholder="Discount">
-        <input type="text" value="RS0.00" readonly class="border p-2 rounded bg-gray-100 text-gray-500 total">
-        <button type="button" class="delete-btn p-2 bg-red-500 text-white rounded hover:bg-red-600 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="3 6 5 6 21 6"></polyline>
-                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
-                <path d="M10 11v6"></path>
-                <path d="M14 11v6"></path>
-            </svg>
-        </button>
-    </div>`;
+        <div class="grid grid-cols-7 gap-3 mb-2 item-row">
+            <input name="items[${index}][description]" placeholder="Description" class="border p-2 rounded" required>
+            <input name="items[${index}][qty]" type="number" value="1" class="border p-2 rounded qty" min="1" required>
+            <input name="items[${index}][unit_price]" type="number" step="0.01" value="0" class="border p-2 rounded unit_price" required>
+            <input name="items[${index}][tax]" type="number" step="0.01" value="0" class="border p-2 rounded tax" placeholder="Tax">
+            <input name="items[${index}][discount]" type="number" step="0.01" value="0" class="border p-2 rounded discount" placeholder="Discount">
+            <input type="text" value="RS0.00" readonly class="border p-2 rounded bg-gray-100 text-gray-500 total">
+            <button type="button" class="delete-btn p-2 bg-red-500 text-white rounded hover:bg-red-600 flex items-center justify-center">
+                🗑
+            </button>
+        </div>`;
 
         container.insertAdjacentHTML('beforeend', html);
         attachListenersToRow(container.lastElementChild);
-        index++;
-
-
+        index++; // increment index
     }
-
-    function removeItem(button) {
-        // Find the row that contains this button
-        const row = button.closest('.item-row');
-        if (row) {
-            row.remove(); // remove this row only
-            updateSummary(); // update totals
-        }
-    }
-    </script>
+</script>
 
 </body>
 
